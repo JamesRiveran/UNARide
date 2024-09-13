@@ -132,7 +132,15 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Source.cpp" />
+    <ClCompile Include="Map.cpp" />
+    <ClCompile Include="Node.cpp" />
+    <ClCompile Include="Main.cpp" />
+    <ClCompile Include="Street.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Map.h" />
+    <ClInclude Include="Node.h" />
+    <ClInclude Include="Street.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
