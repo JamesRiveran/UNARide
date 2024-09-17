@@ -1,7 +1,14 @@
 ﻿  CarController.cpp
   Main.cpp
-  Map.cpp
-  RouteManager.cpp
-  UIManager.cpp
+C:\Proyectos\UNARide\UNARide\Main.cpp(34,80): warning C4244: 'argumento': conversión de 'T' a 'float'; posible pérdida de datos
+C:\Proyectos\UNARide\UNARide\Main.cpp(34,80): warning C4244:         with
+C:\Proyectos\UNARide\UNARide\Main.cpp(34,80): warning C4244:         [
+C:\Proyectos\UNARide\UNARide\Main.cpp(34,80): warning C4244:             T=unsigned int
+C:\Proyectos\UNARide\UNARide\Main.cpp(34,80): warning C4244:         ]
+C:\Proyectos\UNARide\UNARide\Main.cpp(34,50): warning C4244: 'argumento': conversión de 'T' a 'float'; posible pérdida de datos
+C:\Proyectos\UNARide\UNARide\Main.cpp(34,50): warning C4244:         with
+C:\Proyectos\UNARide\UNARide\Main.cpp(34,50): warning C4244:         [
+C:\Proyectos\UNARide\UNARide\Main.cpp(34,50): warning C4244:             T=unsigned int
+C:\Proyectos\UNARide\UNARide\Main.cpp(34,50): warning C4244:         ]
   Generando código...
   UNARide.vcxproj -> C:\Proyectos\UNARide\x64\Debug\UNARide.exe

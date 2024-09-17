@@ -23,22 +23,22 @@ UIManager::UIManager(sf::RenderWindow& window, sf::Font& font) {
 
     clearButtonText.setFont(font);
     clearButtonText.setString("Limpiar");
-    clearButtonText.setCharacterSize(18); 
+    clearButtonText.setCharacterSize(18);
     clearButtonText.setFillColor(sf::Color::White);
 
     startButtonText.setFont(font);
     startButtonText.setString("Iniciar");
-    startButtonText.setCharacterSize(18); 
+    startButtonText.setCharacterSize(18);
     startButtonText.setFillColor(sf::Color::White);
 
     dijkstraText.setFont(font);
     dijkstraText.setString("Dijkstra");
-    dijkstraText.setCharacterSize(18); 
+    dijkstraText.setCharacterSize(18);
     dijkstraText.setFillColor(sf::Color::Black);
 
     floydText.setFont(font);
     floydText.setString("Floyd-Warshall");
-    floydText.setCharacterSize(18); 
+    floydText.setCharacterSize(18);
     floydText.setFillColor(sf::Color::Black);
 
     resizeUI(window);
@@ -70,11 +70,11 @@ void UIManager::drawUI(sf::RenderWindow& window) {
 
 void UIManager::setAlgorithmSelected(bool isDijkstra) {
     if (isDijkstra) {
-        dijkstraCheckBox.setFillColor(sf::Color::Green);
-        floydCheckBox.setFillColor(sf::Color::White);
+        dijkstraCheckBox.setFillColor(sf::Color::Black); 
+        floydCheckBox.setFillColor(sf::Color::White); 
     }
     else {
-        floydCheckBox.setFillColor(sf::Color::Green);
+        floydCheckBox.setFillColor(sf::Color::Black);
         dijkstraCheckBox.setFillColor(sf::Color::White);
     }
 }

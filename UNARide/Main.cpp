@@ -8,9 +8,9 @@
 int main() {
     sf::RenderWindow window(sf::VideoMode(800, 600), "UNARide");
 
-    sf::Texture mapTexture, carTexture;
-    if (!mapTexture.loadFromFile("../map.png") || !carTexture.loadFromFile("../car.png")) {
-        std::cerr << "Error cargando texturas." << std::endl;
+    sf::Texture mapTexture;
+    if (!mapTexture.loadFromFile("../map.png")) {
+        std::cerr << "Error loading map texture." << std::endl;
         return 1;
     }
 
@@ -19,12 +19,23 @@ int main() {
         static_cast<float>(window.getSize().x) / mapTexture.getSize().x,
         static_cast<float>(window.getSize().y) / mapTexture.getSize().y
     );
-    sf::Sprite carSprite(carTexture);
-    carSprite.setScale(0.2f, 0.2f);
+
+    sf::Texture carTextureUp, carTextureDown, carTextureLeft, carTextureRight;
+    if (!carTextureUp.loadFromFile("../car_up.png") ||
+        !carTextureDown.loadFromFile("../car_down.png") ||
+        !carTextureLeft.loadFromFile("../car_left.png") ||
+        !carTextureRight.loadFromFile("../car_right.png")) {
+        std::cerr << "Error loading car textures." << std::endl;
+        return 1;
+    }
+
+    sf::Sprite carSprite(carTextureUp);
+    carSprite.setScale(0.15f, 0.15f);
+    carSprite.setOrigin(carTextureUp.getSize().x / 2, carTextureUp.getSize().y / 2);
 
     sf::Font font;
     if (!font.loadFromFile("../arial.ttf")) {
-        std::cerr << "Error cargando la fuente." << std::endl;
+        std::cerr << "Error loading font." << std::endl;
         return 1;
     }
 
@@ -33,13 +44,9 @@ int main() {
 
     UIManager uiManager(window, font);
     RouteManager routeManager(map);
-    CarController carController(carSprite, 75.0f);
+    CarController carController(carSprite, 75.0f, carTextureUp, carTextureDown, carTextureLeft, carTextureRight);
 
-    bool useDijkstra = true;
-    bool startMovement = false;
-    bool routeCalculated = false;
-    bool algorithmSelected = false;
-    bool carVisible = false;  
+    bool useDijkstra = true, startMovement = false, routeCalculated = false, algorithmSelected = false, carVisible = false;
     sf::Clock gameClock;
 
     while (window.isOpen()) {
@@ -61,26 +68,27 @@ int main() {
                     routeManager.resetRoute();
                     startMovement = false;
                     routeCalculated = false;
-                    carVisible = false;  
+                    carVisible = false;
                 }
 
-                if (uiManager.startButton.getGlobalBounds().contains(mousePos) && routeCalculated && algorithmSelected && routeManager.isStartNodeSelected() && routeManager.isEndNodeSelected()) {
+                if (uiManager.startButton.getGlobalBounds().contains(mousePos) && routeCalculated && algorithmSelected &&
+                    routeManager.isStartNodeSelected() && routeManager.isEndNodeSelected()) {
                     std::cout << "Botón 'Iniciar' presionado." << std::endl;
                     carController.startMovement(routeManager.getPath(), map);
                     startMovement = true;
-                    carVisible = true;  
+                    carVisible = true;
                 }
 
                 if (uiManager.dijkstraCheckBox.getGlobalBounds().contains(mousePos)) {
                     useDijkstra = true;
                     algorithmSelected = true;
-                    uiManager.setAlgorithmSelected(true);
+                    uiManager.setAlgorithmSelected(true);  
                     std::cout << "Algoritmo Dijkstra seleccionado." << std::endl;
                 }
-                else if (uiManager.floydCheckBox.getGlobalBounds().contains(mousePos)) {
+                if (uiManager.floydCheckBox.getGlobalBounds().contains(mousePos)) {
                     useDijkstra = false;
                     algorithmSelected = true;
-                    uiManager.setAlgorithmSelected(false);
+                    uiManager.setAlgorithmSelected(false); 
                     std::cout << "Algoritmo Floyd-Warshall seleccionado." << std::endl;
                 }
 
@@ -104,7 +112,7 @@ int main() {
         if (routeCalculated) {
             routeManager.drawRoute(window);
         }
-        if (carVisible) { 
+        if (carVisible) {
             window.draw(carSprite);
         }
         uiManager.drawUI(window);
