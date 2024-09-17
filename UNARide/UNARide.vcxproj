@@ -132,15 +132,21 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="CarController.cpp" />
     <ClCompile Include="Map.cpp" />
     <ClCompile Include="Node.cpp" />
     <ClCompile Include="Main.cpp" />
+    <ClCompile Include="RouteManager.cpp" />
     <ClCompile Include="Street.cpp" />
+    <ClCompile Include="UIManager.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="CarController.h" />
     <ClInclude Include="Map.h" />
     <ClInclude Include="Node.h" />
+    <ClInclude Include="RouteManager.h" />
     <ClInclude Include="Street.h" />
+    <ClInclude Include="UIManager.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

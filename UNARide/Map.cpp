@@ -122,6 +122,35 @@ void Map::draw(sf::RenderWindow& window) {
     }
 }
 
+void Map::drawStreet(sf::RenderWindow& window, std::size_t startNode, std::size_t endNode) const {
+    if (startNode >= nodes.size() || endNode >= nodes.size()) {
+        return;  
+    }
+
+    sf::Vector2f p1 = nodes[startNode].getPosition();
+    sf::Vector2f p2 = nodes[endNode].getPosition();
+
+    sf::VertexArray line(sf::Quads, 4);
+    sf::Vector2f direction = p2 - p1;
+    float length = std::sqrt(direction.x * direction.x + direction.y * direction.y);
+    sf::Vector2f unitDir = direction / length;
+
+    sf::Vector2f offset = sf::Vector2f(-unitDir.y, unitDir.x) * 2.5f;
+
+    line[0].position = p1 + offset;
+    line[1].position = p2 + offset;
+    line[2].position = p2 - offset;
+    line[3].position = p1 - offset;
+
+    line[0].color = sf::Color::Black; 
+    line[1].color = sf::Color::Black;
+    line[2].color = sf::Color::Black;
+    line[3].color = sf::Color::Black;
+
+    window.draw(line);
+}
+
+
 const std::vector<Node>& Map::getNodes() const {
     return nodes;
 }

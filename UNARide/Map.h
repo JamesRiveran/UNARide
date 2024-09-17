@@ -4,6 +4,7 @@
 #include <vector>
 #include "Node.h"
 #include "Street.h"
+#include <SFML/Graphics.hpp>
 #include <unordered_map>
 #include <queue>
 
@@ -15,6 +16,8 @@ public:
     std::vector<std::size_t> dijkstra(std::size_t start, std::size_t goal);
 
     void draw(sf::RenderWindow& window);
+    void drawStreet(sf::RenderWindow& window, std::size_t startNode, std::size_t endNode) const; 
+
     const std::vector<Node>& getNodes() const;
     const std::vector<Street>& getStreets() const;
 
