@@ -5,8 +5,6 @@
 #include "Node.h"
 #include "Street.h"
 #include <SFML/Graphics.hpp>
-#include <unordered_map>
-#include <queue>
 
 class Map {
 public:
@@ -14,9 +12,12 @@ public:
     void saveNodesAndStreets(const std::string& filename) const;
     void loadNodesAndStreets(const std::string& filename);
     std::vector<std::size_t> dijkstra(std::size_t start, std::size_t goal);
+    std::pair<std::vector<std::vector<float>>, std::vector<std::vector<int>>> floydWarshall();
 
     void draw(sf::RenderWindow& window);
-    void drawStreet(sf::RenderWindow& window, std::size_t startNode, std::size_t endNode) const; 
+    void drawStreet(sf::RenderWindow& window, std::size_t startNode, std::size_t endNode) const;
+
+    void drawWeights(sf::RenderWindow& window, sf::Font& font);
 
     const std::vector<Node>& getNodes() const;
     const std::vector<Street>& getStreets() const;

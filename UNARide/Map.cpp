@@ -1,12 +1,34 @@
+#include <iomanip> 
 #include "Map.h"
 #include <fstream>
 #include <sstream>
 #include <algorithm>
 #include <cmath>
 #include <limits>
-#include "iostream"
+#include <iostream>
 
 Map::Map() {}
+
+void Map::drawWeights(sf::RenderWindow& window, sf::Font& font) {
+    for (const auto& street : streets) {
+        sf::Vector2f startPos = nodes[street.getNode1()].getPosition();
+        sf::Vector2f endPos = nodes[street.getNode2()].getPosition();
+
+        sf::Vector2f midPoint((startPos.x + endPos.x) / 2.0f, (startPos.y + endPos.y) / 2.0f);
+
+        std::ostringstream weightStream;
+        weightStream << std::fixed << std::setprecision(2) << street.getWeight();  
+
+        sf::Text weightText;
+        weightText.setFont(font);
+        weightText.setString(weightStream.str()); 
+        weightText.setCharacterSize(14);  
+        weightText.setFillColor(sf::Color::Black); 
+        weightText.setPosition(midPoint);  
+
+        window.draw(weightText);
+    }
+}
 
 void Map::saveNodesAndStreets(const std::string& filename) const {
     std::ofstream file(filename);
@@ -22,7 +44,7 @@ void Map::saveNodesAndStreets(const std::string& filename) const {
 
     file << "Streets\n";
     for (const auto& street : streets) {
-        file << street.getNode1() << ' ' << street.getNode2() << '\n';
+        file << street.getNode1() << ' ' << street.getNode2() << ' ' << (street.isBidirectional() ? 1 : 0) << ' ' << street.getWeight() << '\n';
     }
 
     std::cout << "Nodes and streets successfully saved to '" << filename << "'." << std::endl;
@@ -54,13 +76,51 @@ void Map::loadNodesAndStreets(const std::string& filename) {
         else {
             std::istringstream iss(line);
             std::size_t node1, node2;
+            float weight;
             int directionality;
-            if (iss >> node1 >> node2 >> directionality && node1 < nodes.size() && node2 < nodes.size()) {
+            if (iss >> node1 >> node2 >> directionality >> weight && node1 < nodes.size() && node2 < nodes.size()) {
                 bool isBidirectional = (directionality == 1);
-                streets.emplace_back(node1, node2, nodes[node1].getPosition(), nodes[node2].getPosition(), true, isBidirectional);
+                streets.emplace_back(node1, node2, nodes[node1].getPosition(), nodes[node2].getPosition(), true, isBidirectional, weight);
             }
         }
     }
+}
+
+std::pair<std::vector<std::vector<float>>, std::vector<std::vector<int>>> Map::floydWarshall() {
+    std::size_t numNodes = nodes.size();
+
+    std::vector<std::vector<float>> dist(numNodes, std::vector<float>(numNodes, std::numeric_limits<float>::infinity()));
+    std::vector<std::vector<int>> pred(numNodes, std::vector<int>(numNodes, -1));
+
+    for (const auto& street : streets) {
+        dist[street.getNode1()][street.getNode2()] = street.getWeight();
+        pred[street.getNode1()][street.getNode2()] = street.getNode1();
+
+        if (street.isBidirectional()) {
+            dist[street.getNode2()][street.getNode1()] = street.getWeight();
+            pred[street.getNode2()][street.getNode1()] = street.getNode2();
+        }
+    }
+
+    for (std::size_t i = 0; i < numNodes; ++i) {
+        dist[i][i] = 0.0f;
+        pred[i][i] = i;
+    }
+
+    for (std::size_t k = 0; k < numNodes; ++k) {
+        for (std::size_t i = 0; i < numNodes; ++i) {
+            for (std::size_t j = 0; j < numNodes; ++j) {
+                if (dist[i][k] < std::numeric_limits<float>::infinity() && dist[k][j] < std::numeric_limits<float>::infinity()) {
+                    if (dist[i][j] > dist[i][k] + dist[k][j]) {
+                        dist[i][j] = dist[i][k] + dist[k][j];
+                        pred[i][j] = pred[k][j];
+                    }
+                }
+            }
+        }
+    }
+
+    return { dist, pred }; 
 }
 
 std::vector<std::size_t> Map::dijkstra(std::size_t start, std::size_t goal) {
@@ -90,10 +150,7 @@ std::vector<std::size_t> Map::dijkstra(std::size_t start, std::size_t goal) {
         for (const auto& street : streets) {
             if (street.getNode1() == current || (street.isBidirectional() && street.getNode2() == current)) {
                 std::size_t neighbor = (current == street.getNode1()) ? street.getNode2() : street.getNode1();
-                float distance = std::hypot(
-                    nodes[neighbor].getPosition().x - nodes[current].getPosition().x,
-                    nodes[neighbor].getPosition().y - nodes[current].getPosition().y
-                );
+                float distance = street.getWeight();
 
                 if (distances[neighbor] > distances[current] + distance) {
                     distances[neighbor] = distances[current] + distance;
@@ -105,6 +162,9 @@ std::vector<std::size_t> Map::dijkstra(std::size_t start, std::size_t goal) {
 
     std::vector<std::size_t> path;
     for (std::size_t at = goal; at != start; at = predecessors[at]) {
+        if (predecessors[at] == std::numeric_limits<std::size_t>::max()) {
+            return {};
+        }
         path.push_back(at);
     }
     path.push_back(start);
@@ -112,6 +172,8 @@ std::vector<std::size_t> Map::dijkstra(std::size_t start, std::size_t goal) {
 
     return path;
 }
+
+
 
 void Map::draw(sf::RenderWindow& window) {
     for (const auto& street : streets) {
@@ -124,7 +186,7 @@ void Map::draw(sf::RenderWindow& window) {
 
 void Map::drawStreet(sf::RenderWindow& window, std::size_t startNode, std::size_t endNode) const {
     if (startNode >= nodes.size() || endNode >= nodes.size()) {
-        return;  
+        return;
     }
 
     sf::Vector2f p1 = nodes[startNode].getPosition();
@@ -142,14 +204,13 @@ void Map::drawStreet(sf::RenderWindow& window, std::size_t startNode, std::size_
     line[2].position = p2 - offset;
     line[3].position = p1 - offset;
 
-    line[0].color = sf::Color::Black; 
+    line[0].color = sf::Color::Black;
     line[1].color = sf::Color::Black;
     line[2].color = sf::Color::Black;
     line[3].color = sf::Color::Black;
 
     window.draw(line);
 }
-
 
 const std::vector<Node>& Map::getNodes() const {
     return nodes;

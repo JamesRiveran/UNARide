@@ -31,7 +31,7 @@ int main() {
 
     sf::Sprite carSprite(carTextureUp);
     carSprite.setScale(0.15f, 0.15f);
-    carSprite.setOrigin(carTextureUp.getSize().x / 2, carTextureUp.getSize().y / 2);
+    carSprite.setOrigin(static_cast<float>(carTextureUp.getSize().x) / 2.0f, static_cast<float>(carTextureUp.getSize().y) / 2.0f);
 
     sf::Font font;
     if (!font.loadFromFile("../arial.ttf")) {
@@ -48,6 +48,8 @@ int main() {
 
     bool useDijkstra = true, startMovement = false, routeCalculated = false, algorithmSelected = false, carVisible = false;
     sf::Clock gameClock;
+
+    std::pair<std::vector<std::vector<float>>, std::vector<std::vector<int>>> floydWarshallResult;
 
     while (window.isOpen()) {
         sf::Event event;
@@ -74,7 +76,7 @@ int main() {
                 if (uiManager.startButton.getGlobalBounds().contains(mousePos) && routeCalculated && algorithmSelected &&
                     routeManager.isStartNodeSelected() && routeManager.isEndNodeSelected()) {
                     std::cout << "Botón 'Iniciar' presionado." << std::endl;
-                    carController.startMovement(routeManager.getPath(), map);
+                    carController.startMovement(routeManager.getPath(), map);  
                     startMovement = true;
                     carVisible = true;
                 }
@@ -88,14 +90,17 @@ int main() {
                 if (uiManager.floydCheckBox.getGlobalBounds().contains(mousePos)) {
                     useDijkstra = false;
                     algorithmSelected = true;
-                    uiManager.setAlgorithmSelected(false); 
+                    floydWarshallResult = map.floydWarshall();  
+                    uiManager.setAlgorithmSelected(false);  
                     std::cout << "Algoritmo Floyd-Warshall seleccionado." << std::endl;
+                    routeManager.calculateRoute(useDijkstra, floydWarshallResult);
+                    routeCalculated = true;
                 }
 
                 routeManager.selectNode(mousePos);
                 if (routeManager.isStartNodeSelected() && routeManager.isEndNodeSelected() && algorithmSelected) {
                     std::cout << "Calculando la ruta..." << std::endl;
-                    routeManager.calculateRoute(useDijkstra);
+                    routeManager.calculateRoute(useDijkstra, floydWarshallResult);
                     routeCalculated = true;
                 }
             }
@@ -108,7 +113,8 @@ int main() {
 
         window.clear();
         window.draw(mapSprite);
-        map.draw(window);
+        map.draw(window); 
+        map.drawWeights(window, font);  
         if (routeCalculated) {
             routeManager.drawRoute(window);
         }

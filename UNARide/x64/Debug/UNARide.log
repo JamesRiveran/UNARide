@@ -1,14 +1,20 @@
-﻿  CarController.cpp
-  Main.cpp
-C:\Proyectos\UNARide\UNARide\Main.cpp(34,80): warning C4244: 'argumento': conversión de 'T' a 'float'; posible pérdida de datos
-C:\Proyectos\UNARide\UNARide\Main.cpp(34,80): warning C4244:         with
-C:\Proyectos\UNARide\UNARide\Main.cpp(34,80): warning C4244:         [
-C:\Proyectos\UNARide\UNARide\Main.cpp(34,80): warning C4244:             T=unsigned int
-C:\Proyectos\UNARide\UNARide\Main.cpp(34,80): warning C4244:         ]
-C:\Proyectos\UNARide\UNARide\Main.cpp(34,50): warning C4244: 'argumento': conversión de 'T' a 'float'; posible pérdida de datos
-C:\Proyectos\UNARide\UNARide\Main.cpp(34,50): warning C4244:         with
-C:\Proyectos\UNARide\UNARide\Main.cpp(34,50): warning C4244:         [
-C:\Proyectos\UNARide\UNARide\Main.cpp(34,50): warning C4244:             T=unsigned int
-C:\Proyectos\UNARide\UNARide\Main.cpp(34,50): warning C4244:         ]
+﻿  Main.cpp
+  Map.cpp
+C:\Proyectos\UNARide\UNARide\Map.cpp(97,69): warning C4267: '=': conversión de 'size_t' a '_Ty'; posible pérdida de datos
+C:\Proyectos\UNARide\UNARide\Map.cpp(97,69): warning C4267:         with
+C:\Proyectos\UNARide\UNARide\Map.cpp(97,69): warning C4267:         [
+C:\Proyectos\UNARide\UNARide\Map.cpp(97,69): warning C4267:             _Ty=int
+C:\Proyectos\UNARide\UNARide\Map.cpp(97,69): warning C4267:         ]
+C:\Proyectos\UNARide\UNARide\Map.cpp(101,73): warning C4267: '=': conversión de 'size_t' a '_Ty'; posible pérdida de datos
+C:\Proyectos\UNARide\UNARide\Map.cpp(101,73): warning C4267:         with
+C:\Proyectos\UNARide\UNARide\Map.cpp(101,73): warning C4267:         [
+C:\Proyectos\UNARide\UNARide\Map.cpp(101,73): warning C4267:             _Ty=int
+C:\Proyectos\UNARide\UNARide\Map.cpp(101,73): warning C4267:         ]
+C:\Proyectos\UNARide\UNARide\Map.cpp(107,22): warning C4267: '=': conversión de 'size_t' a '_Ty'; posible pérdida de datos
+C:\Proyectos\UNARide\UNARide\Map.cpp(107,22): warning C4267:         with
+C:\Proyectos\UNARide\UNARide\Map.cpp(107,22): warning C4267:         [
+C:\Proyectos\UNARide\UNARide\Map.cpp(107,22): warning C4267:             _Ty=int
+C:\Proyectos\UNARide\UNARide\Map.cpp(107,22): warning C4267:         ]
+  RouteManager.cpp
   Generando código...
   UNARide.vcxproj -> C:\Proyectos\UNARide\x64\Debug\UNARide.exe

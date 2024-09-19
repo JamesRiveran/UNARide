@@ -1,9 +1,20 @@
 #include "RouteManager.h"
-#include <cmath>
 #include <iostream>
+#include <algorithm>
 
-RouteManager::RouteManager(Map& map)
-    : map(map), startNode(0), endNode(0), startNodeSelected(false), endNodeSelected(false), routeCalculated(false) {
+RouteManager::RouteManager(Map& map) : map(map), startNodeSelected(false), endNodeSelected(false), routeCalculated(false) {}
+
+void printPredecessorMatrix(const std::vector<std::vector<int>>& pred) {
+    std::cout << "Matriz de predecesores (Floyd-Warshall):\n";
+    for (size_t i = 0; i < pred.size(); ++i) {
+        for (size_t j = 0; j < pred[i].size(); ++j) {
+            if (pred[i][j] == -1)
+                std::cout << "INF ";
+            else
+                std::cout << pred[i][j] << " ";
+        }
+        std::cout << "\n";
+    }
 }
 
 void RouteManager::selectNode(sf::Vector2f mousePos) {
@@ -22,17 +33,38 @@ void RouteManager::selectNode(sf::Vector2f mousePos) {
     }
 }
 
-void RouteManager::calculateRoute(bool useDijkstra) {
+void RouteManager::calculateRoute(bool useDijkstra, const std::pair<std::vector<std::vector<float>>, std::vector<std::vector<int>>>& floydWarshallResult) {
     if (startNodeSelected && endNodeSelected) {
         if (useDijkstra) {
-            path = map.dijkstra(startNode, endNode);
+            path = map.dijkstra(startNode, endNode);  
         }
         else {
+            const auto& dist = floydWarshallResult.first;
+            const auto& pred = floydWarshallResult.second;
+
+            if (pred[startNode][endNode] == -1) {
+                std::cerr << "No se puede encontrar un camino válido." << std::endl;
+                return;
+            }
+
+            //printPredecessorMatrix(pred); Print matrix predecessors
+
+            path.clear();
+            std::size_t current = endNode;
+            while (current != startNode) {
+                path.push_back(current);
+                current = pred[startNode][current];
+            }
+            path.push_back(startNode);
+            std::reverse(path.begin(), path.end());
         }
-        routeCalculated = true;
+
+        routeCalculated = true;  
         std::cout << "Ruta calculada entre nodos " << startNode << " y " << endNode << std::endl;
     }
 }
+
+
 
 void RouteManager::drawRoute(sf::RenderWindow& window) {
     if (routeCalculated) {
