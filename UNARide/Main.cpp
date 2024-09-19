@@ -47,6 +47,8 @@ int main() {
     CarController carController(carSprite, 75.0f, carTextureUp, carTextureDown, carTextureLeft, carTextureRight);
 
     bool useDijkstra = true, startMovement = false, routeCalculated = false, algorithmSelected = false, carVisible = false;
+    bool showWeights = false; 
+    bool showStreets = true;  
     sf::Clock gameClock;
 
     std::pair<std::vector<std::vector<float>>, std::vector<std::vector<int>>> floydWarshallResult;
@@ -76,7 +78,7 @@ int main() {
                 if (uiManager.startButton.getGlobalBounds().contains(mousePos) && routeCalculated && algorithmSelected &&
                     routeManager.isStartNodeSelected() && routeManager.isEndNodeSelected()) {
                     std::cout << "Botón 'Iniciar' presionado." << std::endl;
-                    carController.startMovement(routeManager.getPath(), map);  
+                    carController.startMovement(routeManager.getPath(), map); 
                     startMovement = true;
                     carVisible = true;
                 }
@@ -89,12 +91,22 @@ int main() {
                 }
                 if (uiManager.floydCheckBox.getGlobalBounds().contains(mousePos)) {
                     useDijkstra = false;
-                    algorithmSelected = true;
-                    floydWarshallResult = map.floydWarshall();  
-                    uiManager.setAlgorithmSelected(false);  
+                    algorithmSelected = true;  
+                    floydWarshallResult = map.floydWarshall();
+                    uiManager.setAlgorithmSelected(false); 
                     std::cout << "Algoritmo Floyd-Warshall seleccionado." << std::endl;
                     routeManager.calculateRoute(useDijkstra, floydWarshallResult);
                     routeCalculated = true;
+                }
+
+                if (uiManager.toggleWeightsButton.getGlobalBounds().contains(mousePos)) {
+                    showWeights = !showWeights; 
+                    std::cout << (showWeights ? "Mostrando pesos." : "Ocultando pesos.") << std::endl;
+                }
+
+                if (uiManager.toggleStreetsButton.getGlobalBounds().contains(mousePos)) {
+                    showStreets = !showStreets;  
+                    std::cout << (showStreets ? "Mostrando calles." : "Ocultando calles.") << std::endl;
                 }
 
                 routeManager.selectNode(mousePos);
@@ -113,8 +125,15 @@ int main() {
 
         window.clear();
         window.draw(mapSprite);
-        map.draw(window); 
-        map.drawWeights(window, font);  
+
+        if (showStreets) {
+            map.draw(window);  
+        }
+
+        if (showWeights) {
+            map.drawWeights(window, font);  
+        }
+
         if (routeCalculated) {
             routeManager.drawRoute(window);
         }

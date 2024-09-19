@@ -41,6 +41,26 @@ UIManager::UIManager(sf::RenderWindow& window, sf::Font& font) {
     floydText.setCharacterSize(18);
     floydText.setFillColor(sf::Color::Black);
 
+    toggleWeightsButton.setSize(sf::Vector2f(100.f, 40.f));
+    toggleWeightsButton.setFillColor(sf::Color::Black);
+    toggleWeightsButton.setOutlineColor(sf::Color::White);
+    toggleWeightsButton.setOutlineThickness(2.f);
+
+    toggleWeightsButtonText.setFont(font);
+    toggleWeightsButtonText.setString("Pesos");
+    toggleWeightsButtonText.setCharacterSize(18);
+    toggleWeightsButtonText.setFillColor(sf::Color::White);
+
+    toggleStreetsButton.setSize(sf::Vector2f(100.f, 40.f));
+    toggleStreetsButton.setFillColor(sf::Color::Black);
+    toggleStreetsButton.setOutlineColor(sf::Color::White);
+    toggleStreetsButton.setOutlineThickness(2.f);
+
+    toggleStreetsButtonText.setFont(font);
+    toggleStreetsButtonText.setString("Calles");
+    toggleStreetsButtonText.setCharacterSize(18);
+    toggleStreetsButtonText.setFillColor(sf::Color::White);
+
     resizeUI(window);
 }
 
@@ -52,6 +72,12 @@ void UIManager::resizeUI(sf::RenderWindow& window) {
 
     centerTextInButton(clearButtonText, clearButton);
     centerTextInButton(startButtonText, startButton);
+
+    toggleWeightsButton.setPosition(window.getSize().x - 120.f, window.getSize().y - 60.f); 
+    centerTextInButton(toggleWeightsButtonText, toggleWeightsButton); 
+
+    toggleStreetsButton.setPosition(window.getSize().x - 120.f, window.getSize().y - 120.f);
+    centerTextInButton(toggleStreetsButtonText, toggleStreetsButton);
 
     dijkstraText.setPosition(50.f, 20.f);
     floydText.setPosition(50.f, 60.f);
@@ -66,6 +92,10 @@ void UIManager::drawUI(sf::RenderWindow& window) {
     window.draw(floydCheckBox);
     window.draw(dijkstraText);
     window.draw(floydText);
+    window.draw(toggleWeightsButton);
+    window.draw(toggleWeightsButtonText);
+    window.draw(toggleStreetsButton);
+    window.draw(toggleStreetsButtonText);
 }
 
 void UIManager::setAlgorithmSelected(bool isDijkstra) {

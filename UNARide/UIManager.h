@@ -15,6 +15,12 @@ public:
     sf::RectangleShape dijkstraCheckBox;
     sf::RectangleShape floydCheckBox;
 
+    sf::RectangleShape toggleWeightsButton;
+    sf::Text toggleWeightsButtonText;
+
+    sf::RectangleShape toggleStreetsButton;
+    sf::Text toggleStreetsButtonText;
+
 private:
     sf::Text clearButtonText;
     sf::Text startButtonText;
