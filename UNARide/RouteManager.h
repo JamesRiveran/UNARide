@@ -7,12 +7,15 @@
 
 class RouteManager {
 public:
-    RouteManager(Map& map);
+    RouteManager(Map& map, float costPerKm = 1.0f);
 
     void selectNode(sf::Vector2f mousePos);
     void calculateRoute(bool useDijkstra, const std::pair<std::vector<std::vector<float>>, std::vector<std::vector<int>>>& floydWarshallResult);
     void drawRoute(sf::RenderWindow& window);
     void resetRoute();
+    float calculateTotalWeight() const;
+    float calculateTotalCost() const;
+    void updateCostPerKm(); 
 
     const std::vector<std::size_t>& getPath() const;
 
@@ -20,6 +23,7 @@ public:
     bool isEndNodeSelected() const;
 
 private:
+    float costPerKm;
     std::size_t findClosestNode(const sf::Vector2f& mousePos);
 
     bool startNodeSelected;

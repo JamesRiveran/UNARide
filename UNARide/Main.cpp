@@ -136,6 +136,10 @@ int main() {
 
         if (routeCalculated) {
             routeManager.drawRoute(window);
+            float totalWeight = routeManager.calculateTotalWeight();
+            float totalCost = routeManager.calculateTotalCost();
+            uiManager.setTotalWeight(totalWeight);
+            uiManager.setTotalCost(totalCost);
         }
         if (carVisible) {
             window.draw(carSprite);

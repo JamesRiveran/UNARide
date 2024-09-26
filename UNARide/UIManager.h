@@ -9,6 +9,8 @@ public:
     void resizeUI(sf::RenderWindow& window);
     void drawUI(sf::RenderWindow& window);
     void setAlgorithmSelected(bool isDijkstra);
+    void setTotalWeight(float totalWeight);
+    void setTotalCost(float totalCost);
 
     sf::RectangleShape clearButton;
     sf::RectangleShape startButton;
@@ -26,6 +28,8 @@ private:
     sf::Text startButtonText;
     sf::Text dijkstraText;
     sf::Text floydText;
+    sf::Text totalWeightText;
+    sf::Text totalCostText;
 
     void centerTextInButton(sf::Text& text, const sf::RectangleShape& button);
 };

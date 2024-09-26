@@ -1,8 +1,10 @@
 #include "RouteManager.h"
+#include <ctime>
 #include <iostream>
 #include <algorithm>
 
-RouteManager::RouteManager(Map& map) : map(map), startNodeSelected(false), endNodeSelected(false), routeCalculated(false) {}
+RouteManager::RouteManager(Map& map, float costPerKm)
+    : map(map), startNodeSelected(false), endNodeSelected(false), routeCalculated(false), costPerKm(costPerKm) {}
 
 void printPredecessorMatrix(const std::vector<std::vector<int>>& pred) {
     std::cout << "Matriz de predecesores (Floyd-Warshall):\n";
@@ -47,7 +49,7 @@ void RouteManager::calculateRoute(bool useDijkstra, const std::pair<std::vector<
                 return;
             }
 
-            //printPredecessorMatrix(pred); Print matrix predecessors
+            //printPredecessorMatrix(pred); //Print matrix predecessors
 
             path.clear();
             std::size_t current = endNode;
@@ -83,6 +85,52 @@ void RouteManager::resetRoute() {
     path.clear();
     std::cout << "Ruta reiniciada." << std::endl;
 }
+
+float RouteManager::calculateTotalWeight() const {
+    float totalWeight = 0.0f;
+
+    if (path.size() > 1) {
+        for (std::size_t i = 0; i < path.size() - 1; ++i) {
+            std::size_t currentNode = path[i];
+            std::size_t nextNode = path[i + 1];
+
+            for (const auto& street : map.getStreets()) {
+                if ((street.getNode1() == currentNode && street.getNode2() == nextNode) ||
+                    (street.isBidirectional() && street.getNode1() == nextNode && street.getNode2() == currentNode)) {
+                    totalWeight += street.getWeight();
+                    break;
+                }
+            }
+        }
+    }
+    return totalWeight;
+}
+
+void RouteManager::updateCostPerKm() {
+    std::time_t currentTime = std::time(nullptr);
+    std::tm localTime;
+    localtime_s(&localTime, &currentTime);
+
+    int hour = localTime.tm_hour;
+
+    if (hour >= 6 && hour < 12) {
+        costPerKm = 125.0f; 
+    }
+    else if (hour >= 12 && hour < 18) {
+        costPerKm = 150.0f; 
+    }
+    else {
+        costPerKm = 200.0f; 
+    }
+}
+
+
+float RouteManager::calculateTotalCost() const {
+    const_cast<RouteManager*>(this)->updateCostPerKm();
+    return calculateTotalWeight() * costPerKm;
+}
+
+
 
 std::size_t RouteManager::findClosestNode(const sf::Vector2f& mousePos) {
     float minDistance = 10.0f;

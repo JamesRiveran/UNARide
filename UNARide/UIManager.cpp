@@ -1,4 +1,5 @@
 #include "UIManager.h"
+#include <sstream>
 
 UIManager::UIManager(sf::RenderWindow& window, sf::Font& font) {
     clearButton.setSize(sf::Vector2f(100.f, 40.f));
@@ -61,6 +62,16 @@ UIManager::UIManager(sf::RenderWindow& window, sf::Font& font) {
     toggleStreetsButtonText.setCharacterSize(18);
     toggleStreetsButtonText.setFillColor(sf::Color::White);
 
+    totalWeightText.setFont(font);
+    totalWeightText.setCharacterSize(18);
+    totalWeightText.setFillColor(sf::Color::Black);
+    totalWeightText.setPosition(20.f, window.getSize().y - 80.f); 
+
+    totalCostText.setFont(font);
+    totalCostText.setCharacterSize(18);
+    totalCostText.setFillColor(sf::Color::Black);
+    totalCostText.setPosition(20.f, window.getSize().y - 40.f); 
+
     resizeUI(window);
 }
 
@@ -81,6 +92,9 @@ void UIManager::resizeUI(sf::RenderWindow& window) {
 
     dijkstraText.setPosition(50.f, 20.f);
     floydText.setPosition(50.f, 60.f);
+
+    totalWeightText.setPosition(20.f, window.getSize().y - 80.f);
+    totalCostText.setPosition(20.f, window.getSize().y - 40.f);
 }
 
 void UIManager::drawUI(sf::RenderWindow& window) {
@@ -96,6 +110,8 @@ void UIManager::drawUI(sf::RenderWindow& window) {
     window.draw(toggleWeightsButtonText);
     window.draw(toggleStreetsButton);
     window.draw(toggleStreetsButtonText);
+    window.draw(totalWeightText);
+    window.draw(totalCostText);
 }
 
 void UIManager::setAlgorithmSelected(bool isDijkstra) {
@@ -116,4 +132,16 @@ void UIManager::centerTextInButton(sf::Text& text, const sf::RectangleShape& but
         buttonRect.left + (buttonRect.width / 2.0f) - (textRect.width / 2.0f),
         buttonRect.top + (buttonRect.height / 2.0f) - (textRect.height / 2.0f) - 5.f
     );
+}
+
+void UIManager::setTotalWeight(float totalWeight) {
+    std::ostringstream oss;
+    oss << "Peso total: " << totalWeight;
+    totalWeightText.setString(oss.str());
+}
+
+void UIManager::setTotalCost(float totalCost) {
+    std::ostringstream oss;
+    oss << "Total a pagar: " << totalCost;
+    totalCostText.setString(oss.str());
 }
