@@ -48,7 +48,7 @@ int main() {
 
     bool useDijkstra = true, startMovement = false, routeCalculated = false, algorithmSelected = false, carVisible = false;
     bool showWeights = false; 
-    bool showStreets = true;  
+    bool showStreets = true;
     sf::Clock gameClock;
 
     std::pair<std::vector<std::vector<float>>, std::vector<std::vector<int>>> floydWarshallResult;
@@ -73,6 +73,11 @@ int main() {
                     startMovement = false;
                     routeCalculated = false;
                     carVisible = false;
+                    showWeights = false;
+                    algorithmSelected = false;
+                    uiManager.resetAlgorithmSelected(); 
+                    uiManager.setTotalWeight(0.0f);
+                    uiManager.setTotalCost(0.0f);
                 }
 
                 if (uiManager.startButton.getGlobalBounds().contains(mousePos) && routeCalculated && algorithmSelected &&

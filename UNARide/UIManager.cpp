@@ -125,6 +125,12 @@ void UIManager::setAlgorithmSelected(bool isDijkstra) {
     }
 }
 
+void UIManager::resetAlgorithmSelected() {
+    dijkstraCheckBox.setFillColor(sf::Color::White);
+    floydCheckBox.setFillColor(sf::Color::White);
+}
+
+
 void UIManager::centerTextInButton(sf::Text& text, const sf::RectangleShape& button) {
     sf::FloatRect textRect = text.getLocalBounds();
     sf::FloatRect buttonRect = button.getGlobalBounds();
@@ -135,13 +141,24 @@ void UIManager::centerTextInButton(sf::Text& text, const sf::RectangleShape& but
 }
 
 void UIManager::setTotalWeight(float totalWeight) {
-    std::ostringstream oss;
-    oss << "Peso total: " << totalWeight;
-    totalWeightText.setString(oss.str());
+    if (totalWeight == 0.0f) {
+        totalWeightText.setString(""); 
+    }
+    else {
+        std::ostringstream oss;
+        oss << "Peso total: " << totalWeight;
+        totalWeightText.setString(oss.str());
+    }
 }
 
 void UIManager::setTotalCost(float totalCost) {
-    std::ostringstream oss;
-    oss << "Total a pagar: " << totalCost;
-    totalCostText.setString(oss.str());
+    if (totalCost == 0.0f) {
+        totalCostText.setString(""); 
+    }
+    else {
+        std::ostringstream oss;
+        oss << "Total a pagar: " << totalCost;
+        totalCostText.setString(oss.str());
+    }
 }
+

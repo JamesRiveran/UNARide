@@ -11,6 +11,7 @@ public:
     void setAlgorithmSelected(bool isDijkstra);
     void setTotalWeight(float totalWeight);
     void setTotalCost(float totalCost);
+    void resetAlgorithmSelected();
 
     sf::RectangleShape clearButton;
     sf::RectangleShape startButton;
