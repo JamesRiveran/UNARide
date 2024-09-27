@@ -1,6 +1,4 @@
 #include "Street.h"
-#include <SFML/Graphics.hpp>
-#include <cmath>
 
 Street::Street(std::size_t node1, std::size_t node2, const sf::Vector2f& pos1, const sf::Vector2f& pos2, bool isFixed, bool isBidirectional, float weight)
     : node1(node1), node2(node2), bidirectional(isBidirectional), weight(weight) {
@@ -12,6 +10,9 @@ float Street::getWeight() const {
     return weight;
 }
 
+void Street::setWeight(float newWeight) {
+    weight = newWeight;
+}
 
 const std::array<sf::Vertex, 2>& Street::getLine() const {
     return line;

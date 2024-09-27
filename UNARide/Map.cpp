@@ -219,3 +219,7 @@ const std::vector<Node>& Map::getNodes() const {
 const std::vector<Street>& Map::getStreets() const {
     return streets;
 }
+
+std::vector<Street>& Map::getStreets() {
+    return streets;
+}

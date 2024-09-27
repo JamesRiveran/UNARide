@@ -21,7 +21,7 @@ public:
 
     const std::vector<Node>& getNodes() const;
     const std::vector<Street>& getStreets() const;
-
+    std::vector<Street>& getStreets(); 
 private:
     std::vector<Node> nodes;
     std::vector<Street> streets;

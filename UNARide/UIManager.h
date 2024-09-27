@@ -2,6 +2,7 @@
 #define UIMANAGER_H
 
 #include <SFML/Graphics.hpp>
+#include <vector>
 
 class UIManager {
 public:
@@ -12,6 +13,7 @@ public:
     void setTotalWeight(float totalWeight);
     void setTotalCost(float totalCost);
     void resetAlgorithmSelected();
+    int getTrafficMultiplier() const;
 
     sf::RectangleShape clearButton;
     sf::RectangleShape startButton;
@@ -24,6 +26,12 @@ public:
     sf::RectangleShape toggleStreetsButton;
     sf::Text toggleStreetsButtonText;
 
+    sf::RectangleShape trafficComboBox;
+    sf::Text selectedTrafficText;
+
+    std::vector<std::string> trafficOptions;
+    int selectedTrafficIndex = 0;
+
 private:
     sf::Text clearButtonText;
     sf::Text startButtonText;
@@ -33,6 +41,7 @@ private:
     sf::Text totalCostText;
 
     void centerTextInButton(sf::Text& text, const sf::RectangleShape& button);
+    void initializeComboBox(sf::Font& font);
 };
 
 #endif

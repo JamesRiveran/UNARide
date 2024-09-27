@@ -4,7 +4,8 @@
 #include <algorithm>
 
 RouteManager::RouteManager(Map& map, float costPerKm)
-    : map(map), startNodeSelected(false), endNodeSelected(false), routeCalculated(false), costPerKm(costPerKm) {}
+    : map(map), startNodeSelected(false), endNodeSelected(false), routeCalculated(false), costPerKm(costPerKm), startNode(0), endNode(0) {}
+
 
 void printPredecessorMatrix(const std::vector<std::vector<int>>& pred) {
     std::cout << "Matriz de predecesores (Floyd-Warshall):\n";
@@ -157,4 +158,12 @@ bool RouteManager::isStartNodeSelected() const {
 
 bool RouteManager::isEndNodeSelected() const {
     return endNodeSelected;
+}
+
+std::size_t RouteManager::getStartNode() const {
+    return startNode;
+}
+
+std::size_t RouteManager::getEndNode() const {
+    return endNode;
 }

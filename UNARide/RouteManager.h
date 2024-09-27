@@ -15,16 +15,18 @@ public:
     void resetRoute();
     float calculateTotalWeight() const;
     float calculateTotalCost() const;
-    void updateCostPerKm(); 
+    void updateCostPerKm();
 
     const std::vector<std::size_t>& getPath() const;
 
     bool isStartNodeSelected() const;
     bool isEndNodeSelected() const;
 
+    std::size_t getStartNode() const;
+    std::size_t getEndNode() const;
+    std::size_t findClosestNode(const sf::Vector2f& mousePos);
 private:
     float costPerKm;
-    std::size_t findClosestNode(const sf::Vector2f& mousePos);
 
     bool startNodeSelected;
     bool endNodeSelected;

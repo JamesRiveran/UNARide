@@ -1,4 +1,4 @@
-#include "UIManager.h"
+﻿#include "UIManager.h"
 #include <sstream>
 
 UIManager::UIManager(sf::RenderWindow& window, sf::Font& font) {
@@ -71,8 +71,21 @@ UIManager::UIManager(sf::RenderWindow& window, sf::Font& font) {
     totalCostText.setCharacterSize(18);
     totalCostText.setFillColor(sf::Color::Black);
     totalCostText.setPosition(20.f, window.getSize().y - 40.f); 
-
+    initializeComboBox(font); 
     resizeUI(window);
+}
+
+void UIManager::initializeComboBox(sf::Font& font) {
+    trafficOptions = { "Normal", "Moderado", "Lento" };
+    selectedTrafficText.setFont(font);
+    selectedTrafficText.setCharacterSize(18);
+    selectedTrafficText.setFillColor(sf::Color::Black);
+    selectedTrafficText.setString(trafficOptions[selectedTrafficIndex]);
+
+    trafficComboBox.setSize(sf::Vector2f(120.f, 30.f));
+    trafficComboBox.setFillColor(sf::Color::White);
+    trafficComboBox.setOutlineColor(sf::Color::Black);
+    trafficComboBox.setOutlineThickness(2.f);
 }
 
 void UIManager::resizeUI(sf::RenderWindow& window) {
@@ -95,6 +108,9 @@ void UIManager::resizeUI(sf::RenderWindow& window) {
 
     totalWeightText.setPosition(20.f, window.getSize().y - 80.f);
     totalCostText.setPosition(20.f, window.getSize().y - 40.f);
+
+    trafficComboBox.setPosition(20.f, 100.f);
+    selectedTrafficText.setPosition(trafficComboBox.getPosition().x + 10.f, trafficComboBox.getPosition().y + 5.f);
 }
 
 void UIManager::drawUI(sf::RenderWindow& window) {
@@ -112,6 +128,17 @@ void UIManager::drawUI(sf::RenderWindow& window) {
     window.draw(toggleStreetsButtonText);
     window.draw(totalWeightText);
     window.draw(totalCostText);
+    window.draw(trafficComboBox);
+    window.draw(selectedTrafficText);
+}
+
+int UIManager::getTrafficMultiplier() const {
+    switch (selectedTrafficIndex) {
+    case 0: return 1; 
+    case 1: return 2; 
+    case 2: return 3;
+    default: return 1;
+    }
 }
 
 void UIManager::setAlgorithmSelected(bool isDijkstra) {
@@ -142,7 +169,7 @@ void UIManager::centerTextInButton(sf::Text& text, const sf::RectangleShape& but
 
 void UIManager::setTotalWeight(float totalWeight) {
     if (totalWeight == 0.0f) {
-        totalWeightText.setString(""); 
+        totalWeightText.setString("");
     }
     else {
         std::ostringstream oss;
@@ -153,7 +180,7 @@ void UIManager::setTotalWeight(float totalWeight) {
 
 void UIManager::setTotalCost(float totalCost) {
     if (totalCost == 0.0f) {
-        totalCostText.setString(""); 
+        totalCostText.setString("");
     }
     else {
         std::ostringstream oss;
@@ -161,4 +188,5 @@ void UIManager::setTotalCost(float totalCost) {
         totalCostText.setString(oss.str());
     }
 }
+
 
