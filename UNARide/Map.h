@@ -15,7 +15,7 @@ public:
     std::pair<std::vector<std::vector<float>>, std::vector<std::vector<int>>> floydWarshall();
 
     void draw(sf::RenderWindow& window);
-    void drawStreet(sf::RenderWindow& window, std::size_t startNode, std::size_t endNode) const;
+    void drawStreet(sf::RenderWindow& window, std::size_t startNode, std::size_t endNode, sf::Color color = sf::Color::Black) const;
 
     void drawWeights(sf::RenderWindow& window, sf::Font& font);
 

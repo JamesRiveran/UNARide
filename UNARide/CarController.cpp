@@ -2,20 +2,28 @@
 #include <cmath>
 #include <iostream>
 
-CarController::CarController(sf::Sprite& carSprite, float speed, sf::Texture& upTexture, sf::Texture& downTexture, sf::Texture& leftTexture, sf::Texture& rightTexture)
-    : carSprite(carSprite), speed(speed), upTexture(upTexture), downTexture(downTexture), leftTexture(leftTexture), rightTexture(rightTexture),
-    currentNodeInPath(0), moving(false), progress(0.0f) {}
+CarController::CarController(sf::Sprite& carSprite, float speed, sf::Texture& upTexture, sf::Texture& downTexture,
+    sf::Texture& leftTexture, sf::Texture& rightTexture, UIManager& uiManager)
+    : carSprite(carSprite), speed(speed), upTexture(upTexture), downTexture(downTexture),
+    leftTexture(leftTexture), rightTexture(rightTexture), currentNodeInPath(0), moving(false), progress(0.0f),
+    uiManager(uiManager), isMoving(false) {}
 
-void CarController::startMovement(const std::vector<std::size_t>& path, const Map& map) {
+
+// Inicia el movimiento del carro
+void CarController::startMovement(const std::vector<std::size_t>& path, const Map& map, bool isNewRoute) {
     if (!path.empty()) {
         this->path = path;
-        currentNodeInPath = 0;
-        carSprite.setPosition(map.getNodes()[path[0]].getPosition());
+        currentNodeInPath = isNewRoute ? currentNodeInPath : 0; // Si es una nueva ruta, continuar desde el nodo actual
+        carSprite.setPosition(map.getNodes()[path[currentNodeInPath]].getPosition());
         moving = true;
         progress = 0.0f;
+        isMoving = true;
+        uiManager.setCarroEnMovimiento(true);
     }
 }
 
+
+// Actualiza la dirección del carro
 void CarController::updateCarDirection(const sf::Vector2f& direction) {
     float angle = std::atan2(direction.y, direction.x) * 180 / 3.14159f;
 
@@ -59,6 +67,7 @@ void CarController::updateCarDirection(const sf::Vector2f& direction) {
     carSprite.setRotation((std::abs(direction.x) > diagonalThreshold && std::abs(direction.y) > diagonalThreshold) ? angle : 0);
 }
 
+// Método de actualización que mueve el carro
 void CarController::update(float deltaTime, const Map& map) {
     if (!moving || currentNodeInPath >= path.size() - 1) return;
 
@@ -74,15 +83,41 @@ void CarController::update(float deltaTime, const Map& map) {
     updateCarDirection(normalizedDirection);
 
     progress += speed * deltaTime / distance;
+
     if (progress >= 1.0f) {
         currentNodeInPath++;
         progress = 0.0f;
-        if (currentNodeInPath >= path.size() - 1) {
+
+        // Verificar si debe detenerse en el siguiente nodo
+        if (shouldStopAtNextNode) {
             moving = false;
+            isMoving = false;
+            shouldStopAtNextNode = false;  // Reiniciar la bandera
+        }
+
+        if (currentNodeInPath >= path.size() - 1) {
+            moving = false; // Llama a stopMovement cuando el carro alcanza el destino
         }
     }
     else {
         carSprite.setPosition(startPos + direction * progress);
+    }
+}
+
+
+// Método para detener el movimiento del carro
+void CarController::stopMovement() {
+    isMoving = false;
+    uiManager.setCarroEnMovimiento(false);  // Notificar que el carro ha detenido el movimiento
+}
+
+// Método para cambiar la ruta mientras el carro está en movimiento
+void CarController::changeRoute(const std::vector<std::size_t>& newPath) {
+    if (isMoving) {
+        path = newPath;  // Actualiza la nueva ruta
+        currentNodeInPath = 0;  // Reinicia el recorrido desde el inicio de la nueva ruta
+        progress = 0.0f;
+        std::cout << "Ruta cambiada en tiempo real.\n";
     }
 }
 
@@ -99,4 +134,16 @@ void CarController::moveTowardsNextNode(sf::Vector2f start, sf::Vector2f end, fl
             moving = false;
         }
     }
+}
+
+// CarController.cpp
+void CarController::stopAtNextNode() {
+    shouldStopAtNextNode = true;  // Marcar que debe detenerse al llegar al próximo nodo
+}
+
+
+
+std::size_t CarController::getCurrentNode(const Map& map) {
+    // Retorna el nodo en el que se encuentra el carro actualmente
+    return path[currentNodeInPath];
 }

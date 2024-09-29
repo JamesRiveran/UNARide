@@ -1,58 +1,34 @@
 {
   "Version": 1,
-  "WorkspaceRootPath": "C:\\Proyectos\\UNARide\\",
+  "WorkspaceRootPath": "C:\\Users\\Raquel\\Desktop\\Semestre 2 2024\\Estructuras de Datos\\Proyecto#2\\UNARide\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{4F681FCF-21DE-4223-91E7-405B677422CD}|UNARide\\UNARide.vcxproj|C:\\Proyectos\\UNARide\\UNARide\\Main.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{4F681FCF-21DE-4223-91E7-405B677422CD}|UNARide\\UNARide.vcxproj|solutionrelative:UNARide\\Main.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{4F681FCF-21DE-4223-91E7-405B677422CD}|UNARide\\UNARide.vcxproj|C:\\Proyectos\\UNARide\\UNARide\\Map.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{4F681FCF-21DE-4223-91E7-405B677422CD}|UNARide\\UNARide.vcxproj|solutionrelative:UNARide\\Map.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{4F681FCF-21DE-4223-91E7-405B677422CD}|UNARide\\UNARide.vcxproj|C:\\Proyectos\\UNARide\\UNARide\\Map.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{4F681FCF-21DE-4223-91E7-405B677422CD}|UNARide\\UNARide.vcxproj|solutionrelative:UNARide\\Map.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{4F681FCF-21DE-4223-91E7-405B677422CD}|UNARide\\UNARide.vcxproj|C:\\Proyectos\\UNARide\\UNARide\\RouteManager.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{4F681FCF-21DE-4223-91E7-405B677422CD}|UNARide\\UNARide.vcxproj|solutionrelative:UNARide\\RouteManager.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{4F681FCF-21DE-4223-91E7-405B677422CD}|UNARide\\UNARide.vcxproj|C:\\Proyectos\\UNARide\\UNARide\\RouteManager.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "AbsoluteMoniker": "D:0:0:{4F681FCF-21DE-4223-91E7-405B677422CD}|UNARide\\UNARide.vcxproj|C:\\Users\\Raquel\\Desktop\\Semestre 2 2024\\Estructuras de Datos\\Proyecto#2\\UNARide\\UNARide\\RouteManager.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{4F681FCF-21DE-4223-91E7-405B677422CD}|UNARide\\UNARide.vcxproj|solutionrelative:UNARide\\RouteManager.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{4F681FCF-21DE-4223-91E7-405B677422CD}|UNARide\\UNARide.vcxproj|C:\\Proyectos\\UNARide\\UNARide\\Street.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{4F681FCF-21DE-4223-91E7-405B677422CD}|UNARide\\UNARide.vcxproj|solutionrelative:UNARide\\Street.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+      "AbsoluteMoniker": "D:0:0:{4F681FCF-21DE-4223-91E7-405B677422CD}|UNARide\\UNARide.vcxproj|C:\\Users\\Raquel\\Desktop\\Semestre 2 2024\\Estructuras de Datos\\Proyecto#2\\UNARide\\UNARide\\RouteManager.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{4F681FCF-21DE-4223-91E7-405B677422CD}|UNARide\\UNARide.vcxproj|solutionrelative:UNARide\\RouteManager.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{4F681FCF-21DE-4223-91E7-405B677422CD}|UNARide\\UNARide.vcxproj|C:\\Proyectos\\UNARide\\UNARide\\Street.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{4F681FCF-21DE-4223-91E7-405B677422CD}|UNARide\\UNARide.vcxproj|solutionrelative:UNARide\\Street.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{4F681FCF-21DE-4223-91E7-405B677422CD}|UNARide\\UNARide.vcxproj|C:\\Proyectos\\UNARide\\UNARide\\UIManager.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{4F681FCF-21DE-4223-91E7-405B677422CD}|UNARide\\UNARide.vcxproj|solutionrelative:UNARide\\UIManager.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{4F681FCF-21DE-4223-91E7-405B677422CD}|UNARide\\UNARide.vcxproj|C:\\Proyectos\\UNARide\\UNARide\\UIManager.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{4F681FCF-21DE-4223-91E7-405B677422CD}|UNARide\\UNARide.vcxproj|solutionrelative:UNARide\\UIManager.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{4F681FCF-21DE-4223-91E7-405B677422CD}|UNARide\\UNARide.vcxproj|C:\\Proyectos\\UNARide\\UNARide\\Node.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{4F681FCF-21DE-4223-91E7-405B677422CD}|UNARide\\UNARide.vcxproj|solutionrelative:UNARide\\Node.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{4F681FCF-21DE-4223-91E7-405B677422CD}|UNARide\\UNARide.vcxproj|C:\\Proyectos\\UNARide\\UNARide\\CarController.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{4F681FCF-21DE-4223-91E7-405B677422CD}|UNARide\\UNARide.vcxproj|solutionrelative:UNARide\\CarController.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{4F681FCF-21DE-4223-91E7-405B677422CD}|UNARide\\UNARide.vcxproj|C:\\Proyectos\\UNARide\\UNARide\\CarController.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "AbsoluteMoniker": "D:0:0:{4F681FCF-21DE-4223-91E7-405B677422CD}|UNARide\\UNARide.vcxproj|C:\\Users\\Raquel\\Desktop\\Semestre 2 2024\\Estructuras de Datos\\Proyecto#2\\UNARide\\UNARide\\CarController.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{4F681FCF-21DE-4223-91E7-405B677422CD}|UNARide\\UNARide.vcxproj|solutionrelative:UNARide\\CarController.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{4F681FCF-21DE-4223-91E7-405B677422CD}|UNARide\\UNARide.vcxproj|C:\\Proyectos\\UNARide\\UNARide\\Node.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{4F681FCF-21DE-4223-91E7-405B677422CD}|UNARide\\UNARide.vcxproj|solutionrelative:UNARide\\Node.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+      "AbsoluteMoniker": "D:0:0:{4F681FCF-21DE-4223-91E7-405B677422CD}|UNARide\\UNARide.vcxproj|C:\\Users\\Raquel\\Desktop\\Semestre 2 2024\\Estructuras de Datos\\Proyecto#2\\UNARide\\UNARide\\CarController.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{4F681FCF-21DE-4223-91E7-405B677422CD}|UNARide\\UNARide.vcxproj|solutionrelative:UNARide\\CarController.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{4F681FCF-21DE-4223-91E7-405B677422CD}|UNARide\\UNARide.vcxproj|C:\\Users\\Raquel\\Desktop\\Semestre 2 2024\\Estructuras de Datos\\Proyecto#2\\UNARide\\UNARide\\Map.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{4F681FCF-21DE-4223-91E7-405B677422CD}|UNARide\\UNARide.vcxproj|solutionrelative:UNARide\\Map.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{4F681FCF-21DE-4223-91E7-405B677422CD}|UNARide\\UNARide.vcxproj|C:\\Users\\Raquel\\Desktop\\Semestre 2 2024\\Estructuras de Datos\\Proyecto#2\\UNARide\\UNARide\\Map.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{4F681FCF-21DE-4223-91E7-405B677422CD}|UNARide\\UNARide.vcxproj|solutionrelative:UNARide\\Map.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{4F681FCF-21DE-4223-91E7-405B677422CD}|UNARide\\UNARide.vcxproj|C:\\Users\\Raquel\\Desktop\\Semestre 2 2024\\Estructuras de Datos\\Proyecto#2\\UNARide\\UNARide\\UIManager.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{4F681FCF-21DE-4223-91E7-405B677422CD}|UNARide\\UNARide.vcxproj|solutionrelative:UNARide\\UIManager.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     }
   ],
   "DocumentGroupContainers": [
@@ -62,174 +38,99 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 2,
+          "SelectedChildIndex": 1,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "RouteManager.cpp",
-              "DocumentMoniker": "C:\\Proyectos\\UNARide\\UNARide\\RouteManager.cpp",
-              "RelativeDocumentMoniker": "UNARide\\RouteManager.cpp",
-              "ToolTip": "C:\\Proyectos\\UNARide\\UNARide\\RouteManager.cpp",
-              "RelativeToolTip": "UNARide\\RouteManager.cpp",
-              "ViewState": "AgIAACYAAAAAAAAAAAAYwDQAAAAuAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2024-09-17T00:38:32.931Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 7,
-              "Title": "UIManager.cpp",
-              "DocumentMoniker": "C:\\Proyectos\\UNARide\\UNARide\\UIManager.cpp",
-              "RelativeDocumentMoniker": "UNARide\\UIManager.cpp",
-              "ToolTip": "C:\\Proyectos\\UNARide\\UNARide\\UIManager.cpp",
-              "RelativeToolTip": "UNARide\\UIManager.cpp",
-              "ViewState": "AgIAALEAAAAAAAAAAADwv7kAAAAfAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2024-09-17T00:38:20.823Z",
+              "DocumentIndex": 6,
+              "Title": "UIManager.h",
+              "DocumentMoniker": "C:\\Users\\Raquel\\Desktop\\Semestre 2 2024\\Estructuras de Datos\\Proyecto#2\\UNARide\\UNARide\\UIManager.h",
+              "RelativeDocumentMoniker": "UNARide\\UIManager.h",
+              "ToolTip": "C:\\Users\\Raquel\\Desktop\\Semestre 2 2024\\Estructuras de Datos\\Proyecto#2\\UNARide\\UNARide\\UIManager.h",
+              "RelativeToolTip": "UNARide\\UIManager.h",
+              "ViewState": "AgIAAAgAAAAAAAAAAAAqwBIAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2024-09-17T00:37:07.674Z",
+              "IsPinned": true,
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 0,
-              "Title": "Main.cpp",
-              "DocumentMoniker": "C:\\Proyectos\\UNARide\\UNARide\\Main.cpp",
-              "RelativeDocumentMoniker": "UNARide\\Main.cpp",
-              "ToolTip": "C:\\Proyectos\\UNARide\\UNARide\\Main.cpp",
-              "RelativeToolTip": "UNARide\\Main.cpp",
-              "ViewState": "AgIAACYAAAAAAAAAAAAowHgAAAAZAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2024-09-16T22:18:59.067Z",
+              "Title": "RouteManager.h",
+              "DocumentMoniker": "C:\\Users\\Raquel\\Desktop\\Semestre 2 2024\\Estructuras de Datos\\Proyecto#2\\UNARide\\UNARide\\RouteManager.h",
+              "RelativeDocumentMoniker": "UNARide\\RouteManager.h",
+              "ToolTip": "C:\\Users\\Raquel\\Desktop\\Semestre 2 2024\\Estructuras de Datos\\Proyecto#2\\UNARide\\UNARide\\RouteManager.h*",
+              "RelativeToolTip": "UNARide\\RouteManager.h*",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABEAAAA1AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2024-09-29T06:15:14.479Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 1,
-              "Title": "Map.cpp",
-              "DocumentMoniker": "C:\\Proyectos\\UNARide\\UNARide\\Map.cpp",
-              "RelativeDocumentMoniker": "UNARide\\Map.cpp",
-              "ToolTip": "C:\\Proyectos\\UNARide\\UNARide\\Map.cpp",
-              "RelativeToolTip": "UNARide\\Map.cpp",
-              "ViewState": "AgIAANcAAAAAAAAAAADwv90AAAAAAAAAAAAAAA==",
+              "Title": "RouteManager.cpp",
+              "DocumentMoniker": "C:\\Users\\Raquel\\Desktop\\Semestre 2 2024\\Estructuras de Datos\\Proyecto#2\\UNARide\\UNARide\\RouteManager.cpp",
+              "RelativeDocumentMoniker": "UNARide\\RouteManager.cpp",
+              "ToolTip": "C:\\Users\\Raquel\\Desktop\\Semestre 2 2024\\Estructuras de Datos\\Proyecto#2\\UNARide\\UNARide\\RouteManager.cpp*",
+              "RelativeToolTip": "UNARide\\RouteManager.cpp*",
+              "ViewState": "AgIAALUAAAAAAAAAAAAqwLwAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2024-09-16T22:19:51.371Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 6,
-              "Title": "Street.h",
-              "DocumentMoniker": "C:\\Proyectos\\UNARide\\UNARide\\Street.h",
-              "RelativeDocumentMoniker": "UNARide\\Street.h",
-              "ToolTip": "C:\\Proyectos\\UNARide\\UNARide\\Street.h",
-              "RelativeToolTip": "UNARide\\Street.h",
-              "ViewState": "AgIAAAMAAAAAAAAAAADwvwsAAAAkAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2024-09-16T22:20:16.515Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 5,
-              "Title": "Street.cpp",
-              "DocumentMoniker": "C:\\Proyectos\\UNARide\\UNARide\\Street.cpp",
-              "RelativeDocumentMoniker": "UNARide\\Street.cpp",
-              "ToolTip": "C:\\Proyectos\\UNARide\\UNARide\\Street.cpp",
-              "RelativeToolTip": "UNARide\\Street.cpp",
-              "ViewState": "AgIAABcAAAAAAAAAAADwvx0AAAARAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2024-09-16T22:20:12.33Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 9,
-              "Title": "Node.cpp",
-              "DocumentMoniker": "C:\\Proyectos\\UNARide\\UNARide\\Node.cpp",
-              "RelativeDocumentMoniker": "UNARide\\Node.cpp",
-              "ToolTip": "C:\\Proyectos\\UNARide\\UNARide\\Node.cpp",
-              "RelativeToolTip": "UNARide\\Node.cpp",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA8AAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2024-09-16T22:20:01.832Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 8,
-              "Title": "UIManager.h",
-              "DocumentMoniker": "C:\\Proyectos\\UNARide\\UNARide\\UIManager.h",
-              "RelativeDocumentMoniker": "UNARide\\UIManager.h",
-              "ToolTip": "C:\\Proyectos\\UNARide\\UNARide\\UIManager.h",
-              "RelativeToolTip": "UNARide\\UIManager.h",
-              "ViewState": "AgIAABsAAAAAAAAAAAAmwC8AAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2024-09-17T00:37:07.674Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 4,
-              "Title": "RouteManager.h",
-              "DocumentMoniker": "C:\\Proyectos\\UNARide\\UNARide\\RouteManager.h",
-              "RelativeDocumentMoniker": "UNARide\\RouteManager.h",
-              "ToolTip": "C:\\Proyectos\\UNARide\\UNARide\\RouteManager.h",
-              "RelativeToolTip": "UNARide\\RouteManager.h",
-              "ViewState": "AgIAAAoAAAAAAAAAAAAWwBcAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2024-09-17T00:37:24.224Z",
+              "WhenOpened": "2024-09-29T06:14:09.371Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 2,
-              "Title": "Map.h",
-              "DocumentMoniker": "C:\\Proyectos\\UNARide\\UNARide\\Map.h",
-              "RelativeDocumentMoniker": "UNARide\\Map.h",
-              "ToolTip": "C:\\Proyectos\\UNARide\\UNARide\\Map.h",
-              "RelativeToolTip": "UNARide\\Map.h",
-              "ViewState": "AgIAAAwAAAAAAAAAAAAAABYAAAAyAAAAAAAAAA==",
+              "Title": "CarController.h",
+              "DocumentMoniker": "C:\\Users\\Raquel\\Desktop\\Semestre 2 2024\\Estructuras de Datos\\Proyecto#2\\UNARide\\UNARide\\CarController.h",
+              "RelativeDocumentMoniker": "UNARide\\CarController.h",
+              "ToolTip": "C:\\Users\\Raquel\\Desktop\\Semestre 2 2024\\Estructuras de Datos\\Proyecto#2\\UNARide\\UNARide\\CarController.h",
+              "RelativeToolTip": "UNARide\\CarController.h",
+              "ViewState": "AgIAAAMAAAAAAAAAAAAAABcAAAAmAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2024-09-16T22:19:56.442Z",
+              "WhenOpened": "2024-09-17T00:37:53.174Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 10,
+              "DocumentIndex": 3,
               "Title": "CarController.cpp",
-              "DocumentMoniker": "C:\\Proyectos\\UNARide\\UNARide\\CarController.cpp",
+              "DocumentMoniker": "C:\\Users\\Raquel\\Desktop\\Semestre 2 2024\\Estructuras de Datos\\Proyecto#2\\UNARide\\UNARide\\CarController.cpp",
               "RelativeDocumentMoniker": "UNARide\\CarController.cpp",
-              "ToolTip": "C:\\Proyectos\\UNARide\\UNARide\\CarController.cpp",
+              "ToolTip": "C:\\Users\\Raquel\\Desktop\\Semestre 2 2024\\Estructuras de Datos\\Proyecto#2\\UNARide\\UNARide\\CarController.cpp",
               "RelativeToolTip": "UNARide\\CarController.cpp",
-              "ViewState": "AgIAAFIAAAAAAAAAAAAmwGYAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAAYAAAAAAAAAAAAAAAwAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
               "WhenOpened": "2024-09-17T00:38:47.155Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 12,
-              "Title": "Node.h",
-              "DocumentMoniker": "C:\\Proyectos\\UNARide\\UNARide\\Node.h",
-              "RelativeDocumentMoniker": "UNARide\\Node.h",
-              "ToolTip": "C:\\Proyectos\\UNARide\\UNARide\\Node.h",
-              "RelativeToolTip": "UNARide\\Node.h",
-              "ViewState": "AgIAAAIAAAAAAAAAAAAcwBMAAAAAAAAAAAAAAA==",
+              "DocumentIndex": 5,
+              "Title": "Map.h",
+              "DocumentMoniker": "C:\\Users\\Raquel\\Desktop\\Semestre 2 2024\\Estructuras de Datos\\Proyecto#2\\UNARide\\UNARide\\Map.h",
+              "RelativeDocumentMoniker": "UNARide\\Map.h",
+              "ToolTip": "C:\\Users\\Raquel\\Desktop\\Semestre 2 2024\\Estructuras de Datos\\Proyecto#2\\UNARide\\UNARide\\Map.h",
+              "RelativeToolTip": "UNARide\\Map.h",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABIAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2024-09-16T22:20:07.546Z"
+              "WhenOpened": "2024-09-16T22:19:56.442Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 11,
-              "Title": "CarController.h",
-              "DocumentMoniker": "C:\\Proyectos\\UNARide\\UNARide\\CarController.h",
-              "RelativeDocumentMoniker": "UNARide\\CarController.h",
-              "ToolTip": "C:\\Proyectos\\UNARide\\UNARide\\CarController.h",
-              "RelativeToolTip": "UNARide\\CarController.h",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAB8AAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2024-09-17T00:37:53.174Z"
+              "DocumentIndex": 4,
+              "Title": "Map.cpp",
+              "DocumentMoniker": "C:\\Users\\Raquel\\Desktop\\Semestre 2 2024\\Estructuras de Datos\\Proyecto#2\\UNARide\\UNARide\\Map.cpp",
+              "RelativeDocumentMoniker": "UNARide\\Map.cpp",
+              "ToolTip": "C:\\Users\\Raquel\\Desktop\\Semestre 2 2024\\Estructuras de Datos\\Proyecto#2\\UNARide\\UNARide\\Map.cpp",
+              "RelativeToolTip": "UNARide\\Map.cpp",
+              "ViewState": "AgIAAKwAAAAAAAAAAAAqwLsAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2024-09-16T22:19:51.371Z",
+              "EditorCaption": ""
             }
           ]
         }

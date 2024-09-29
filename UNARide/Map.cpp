@@ -184,7 +184,7 @@ void Map::draw(sf::RenderWindow& window) {
     }
 }
 
-void Map::drawStreet(sf::RenderWindow& window, std::size_t startNode, std::size_t endNode) const {
+void Map::drawStreet(sf::RenderWindow& window, std::size_t startNode, std::size_t endNode, sf::Color color) const {
     if (startNode >= nodes.size() || endNode >= nodes.size()) {
         return;
     }
@@ -204,13 +204,14 @@ void Map::drawStreet(sf::RenderWindow& window, std::size_t startNode, std::size_
     line[2].position = p2 - offset;
     line[3].position = p1 - offset;
 
-    line[0].color = sf::Color::Black;
-    line[1].color = sf::Color::Black;
-    line[2].color = sf::Color::Black;
-    line[3].color = sf::Color::Black;
+    line[0].color = color;
+    line[1].color = color;
+    line[2].color = color;
+    line[3].color = color;
 
     window.draw(line);
 }
+
 
 const std::vector<Node>& Map::getNodes() const {
     return nodes;
