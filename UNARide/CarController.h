@@ -11,7 +11,7 @@ public:
     CarController(sf::Sprite& carSprite, float speed, sf::Texture& upTexture, sf::Texture& downTexture,
         sf::Texture& leftTexture, sf::Texture& rightTexture, UIManager& uiManager);
 
-    void startMovement(const std::vector<std::size_t>& path, const Map& map, bool isNewRoute); // Manejar nuevas rutas
+    void startMovement(const std::vector<std::size_t>& path, const Map& map, bool isNewRoute); 
     void update(float deltaTime, const Map& map);
     void stopMovement();
     void changeRoute(const std::vector<std::size_t>& newPath);
@@ -19,24 +19,24 @@ public:
     std::size_t getCurrentNode(const Map& map);
    
 private:
+    UIManager& uiManager;
     void moveTowardsNextNode(sf::Vector2f start, sf::Vector2f end, float deltaTime);
     void updateCarDirection(const sf::Vector2f& direction);
     bool shouldStopAtNextNode = false;
-    sf::Sprite& carSprite;
-    std::vector<std::size_t> path;           // Ruta actual
-    std::vector<std::size_t> originalPath;   // Ruta original
-    std::size_t currentNodeInPath;
     float speed;
     bool moving;
     float progress;
-   // Nueva bandera
-
+    bool isMoving;
+    sf::Sprite& carSprite;
+    std::vector<std::size_t> path;          
+    std::vector<std::size_t> originalPath; 
+    std::size_t currentNodeInPath;
     sf::Texture& upTexture;
     sf::Texture& downTexture;
     sf::Texture& leftTexture;
     sf::Texture& rightTexture;
-    UIManager& uiManager;
-    bool isMoving;
+    
+  
 };
 
 #endif

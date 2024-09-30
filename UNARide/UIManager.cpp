@@ -1,6 +1,6 @@
 ﻿#include "UIManager.h"
 #include <sstream>
-
+#include <iostream>
 UIManager::UIManager(sf::RenderWindow& window, sf::Font& font) {
     clearButton.setSize(sf::Vector2f(100.f, 40.f));
     clearButton.setFillColor(sf::Color::Black);
@@ -72,7 +72,6 @@ UIManager::UIManager(sf::RenderWindow& window, sf::Font& font) {
     totalCostText.setFillColor(sf::Color::Black);
     totalCostText.setPosition(20.f, window.getSize().y - 40.f);
 
-    // Inicializar el botón "Cambiar ruta"
     changeRouteButton.setSize(sf::Vector2f(100.f, 40.f));
     changeRouteButton.setFillColor(sf::Color::Black);
     changeRouteButton.setOutlineColor(sf::Color::White);
@@ -124,7 +123,6 @@ void UIManager::resizeUI(sf::RenderWindow& window) {
     trafficComboBox.setPosition(20.f, 100.f);
     selectedTrafficText.setPosition(trafficComboBox.getPosition().x + 10.f, trafficComboBox.getPosition().y + 5.f);
 
-    // Posicionar el botón "Cambiar ruta"
     changeRouteButton.setPosition(window.getSize().x - 120.f, 140.f);
     centerTextInButton(changeRouteButtonText, changeRouteButton);
 }
@@ -147,8 +145,14 @@ void UIManager::drawUI(sf::RenderWindow& window) {
     window.draw(trafficComboBox);
     window.draw(selectedTrafficText);
 
-    // Dibujar el botón "Cambiar ruta" solo si el carro está en movimiento
-    if (carroEnMovimiento) {  // Necesitarás agregar la variable carroEnMovimiento
+    if (carroEnMovimiento) {
+        window.draw(changeRouteButton);
+        window.draw(changeRouteButtonText);
+    }
+}
+
+void UIManager:: isCarMoving(sf::RenderWindow& window,bool carroEnMovimiento) {
+    if (carroEnMovimiento) {
         window.draw(changeRouteButton);
         window.draw(changeRouteButtonText);
     }
@@ -211,4 +215,8 @@ void UIManager::setTotalCost(float totalCost) {
 }
 void UIManager::setCarroEnMovimiento(bool enMovimiento) {
     carroEnMovimiento = enMovimiento;
+}
+
+bool UIManager::isDijkstraSelected() const {
+    return dijkstraCheckBox.getFillColor() == sf::Color::Black;
 }

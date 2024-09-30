@@ -16,7 +16,8 @@ public:
     void resetAlgorithmSelected();
     int getTrafficMultiplier() const;
     void setCarroEnMovimiento(bool enMovimiento);
-
+    bool isDijkstraSelected() const;
+    void isCarMoving(sf::RenderWindow& window,bool carroEnMovimiento);
 
     sf::RectangleShape clearButton;
     sf::RectangleShape startButton;
@@ -32,7 +33,6 @@ public:
     sf::RectangleShape trafficComboBox;
     sf::Text selectedTrafficText;
 
-    // Nuevo botón para cambiar ruta
     sf::RectangleShape changeRouteButton;
     sf::Text changeRouteButtonText;
 
