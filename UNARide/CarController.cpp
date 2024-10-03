@@ -3,25 +3,31 @@
 #include <iostream>
 
 CarController::CarController(sf::Sprite& carSprite, float speed, sf::Texture& upTexture, sf::Texture& downTexture,
-    sf::Texture& leftTexture, sf::Texture& rightTexture, UIManager& uiManager)
+    sf::Texture& leftTexture, sf::Texture& rightTexture, UIManager& uiManager, RouteManager& routeManager) // Añadido routeManager
     : carSprite(carSprite), speed(speed), upTexture(upTexture), downTexture(downTexture),
     leftTexture(leftTexture), rightTexture(rightTexture), currentNodeInPath(0), moving(false), progress(0.0f),
-    uiManager(uiManager), isMoving(false) {}
+    uiManager(uiManager), routeManager(routeManager), isMoving(false) {} // Guardamos la referencia a routeManager
+
 
 
 void CarController::startMovement(const std::vector<std::size_t>& path, const Map& map, bool isNewRoute) {
     if (!path.empty()) {
         this->path = path;
-        currentNodeInPath = 0; 
+        currentNodeInPath = 0;
 
-        currentNodeInPath = isNewRoute ? currentNodeInPath : 0; 
         carSprite.setPosition(map.getNodes()[path[currentNodeInPath]].getPosition());
         moving = true;
         progress = 0.0f;
         isMoving = true;
         uiManager.setCarroEnMovimiento(true);
+
+        if (isNewRoute && !routeManager.hasChangedRoute) {
+            routeManager.hasChangedRoute = true;
+            routeManager.nodesSinceFirstChange.clear(); // Iniciar nuevo registro de nodos
+        }
     }
 }
+
 
 void CarController::updateCarDirection(const sf::Vector2f& direction) {
     float angle = std::atan2(direction.y, direction.x) * 180 / 3.14159f;
@@ -65,7 +71,6 @@ void CarController::updateCarDirection(const sf::Vector2f& direction) {
 
     carSprite.setRotation((std::abs(direction.x) > diagonalThreshold && std::abs(direction.y) > diagonalThreshold) ? angle : 0);
 }
-
 void CarController::update(float deltaTime, const Map& map) {
     if (!moving || currentNodeInPath >= path.size() - 1) {
         moving = false;
@@ -78,7 +83,9 @@ void CarController::update(float deltaTime, const Map& map) {
     std::size_t nextNode = path[currentNodeInPath + 1];
     sf::Vector2f startPos = map.getNodes()[currentNode].getPosition();
     sf::Vector2f endPos = map.getNodes()[nextNode].getPosition();
-
+    if (routeManager.hasChangedRoute) {
+        routeManager.nodesSinceFirstChange.push_back(currentNode);
+    }
     sf::Vector2f direction = endPos - startPos;
     float distance = std::hypot(direction.x, direction.y);
     sf::Vector2f normalizedDirection = direction / distance;

@@ -44,7 +44,7 @@ int main() {
 
     UIManager uiManager(window, font);
     RouteManager routeManager(map);
-    CarController carController(carSprite, 100.f, carTextureUp, carTextureDown, carTextureLeft, carTextureRight, uiManager);
+    CarController carController(carSprite, 100.f, carTextureUp, carTextureDown, carTextureLeft, carTextureRight, uiManager, routeManager); // Pasar routeManager
 
     bool useDijkstra = true, startMovement = false, routeCalculated = false, algorithmSelected = false, carVisible = false;
     bool showWeights = false;
@@ -80,11 +80,13 @@ int main() {
                        
                         std::size_t currentCarNode = carController.getCurrentNode(map);
 
-                        
+                    
                         bool useDijkstra = uiManager.isDijkstraSelected();
                         auto floydWarshallResult = map.floydWarshall();   
                        
-                      
+                        routeManager.setTotalWeight(0.0f); 
+                        uiManager.setTotalWeight(0.0f);    
+                        uiManager.setTotalCost(0.0f); 
                         routeManager.calculateNewRoute(newDestination, currentCarNode, useDijkstra, floydWarshallResult);
                         routeManager.setTotalWeight(routeManager.calculateTotalWeight(currentCarNode));
 
@@ -96,9 +98,9 @@ int main() {
 
                         carController.startMovement(routeManager.getNewPath(), map, true);
                         isChangingRoute = false;
+
                     }
                 }
-
 
                 if (uiManager.startButton.getGlobalBounds().contains(mousePos) && routeCalculated && algorithmSelected &&
                     routeManager.isStartNodeSelected() && routeManager.isEndNodeSelected()) {
@@ -117,12 +119,17 @@ int main() {
 
                 if (uiManager.clearButton.getGlobalBounds().contains(mousePos)) {
                     std::cout << "Botón 'Limpiar' presionado." << std::endl;
-                    routeManager.resetRoute();  
+
+                    // Reinicia todas las variables relacionadas con la ruta
+                    routeManager.resetRoute();
                     startMovement = false;
                     routeCalculated = false;
                     carVisible = false;
                     showWeights = false;
                     algorithmSelected = false;
+                    isChangingRoute = false;  // Reinicia el cambio de ruta
+
+                    // Reinicia los valores mostrados en la UI
                     uiManager.resetAlgorithmSelected();
                     uiManager.setTotalWeight(0.0f);
                     uiManager.setTotalCost(0.0f);
@@ -202,14 +209,11 @@ int main() {
 
         if (routeCalculated) {
             routeManager.drawRoute(window);  
-            routeManager.drawNewRoute(window);  
+            routeManager.drawNewRoute(window);
             routeManager.setTotalWeight(routeManager.calculateTotalWeight());
 
             float totalWeight = routeManager.calculateTotalWeight();  
             float totalCost = routeManager.calculateTotalCost();  
-
-          //  uiManager.setTotalWeight(totalWeight);
-           //uiManager.setTotalCost(totalCost);
         }
         uiManager.drawUI(window);
 

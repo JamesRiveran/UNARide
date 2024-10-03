@@ -15,25 +15,27 @@ public:
     float calculateTotalWeight() const;  
     float calculateTotalWeight(std::size_t currentCarNode) const;
     float calculateTotalCost() const;
-    float calculateWeightFromCurrentToEnd(std::size_t currentCarNode) const;
-    float calculateWeightFromStartToCurrent(std::size_t currentCarNode) const;
     void updateCostPerKm();
-    void calculateNewRoute(std::size_t newDestination, std::size_t currentCarNode, bool useDijkstra, const std::pair<std::vector<std::vector<float>>, std::vector<std::vector<int>>>& floydWarshallResult);
     void drawRoute(sf::RenderWindow& window);
-    void drawNewRoute(sf::RenderWindow& window);
-    void setEndNode(std::size_t newEndNode);
     void setTotalWeight(float weight);
     float getTotalWeight() const;
     const std::vector<std::size_t>& getPath() const;
-    const std::vector<std::size_t>& getNewPath() const;
     bool isStartNodeSelected() const;
     bool isEndNodeSelected() const;
     std::vector<std::size_t> calculateRouteFloydWarshall(
-        const std::pair<std::vector<std::vector<float>>, std::vector<std::vector<int>>>& floydWarshallResult,
-        std::size_t newDestination);
+    const std::pair<std::vector<std::vector<float>>, std::vector<std::vector<int>>>& floydWarshallResult,std::size_t newDestination);
     std::size_t getStartNode() const;
     std::size_t getEndNode() const;
     std::size_t findClosestNode(const sf::Vector2f& mousePos);
+
+    //calculate new route
+    float calculateWeightFromCurrentToEnd(std::size_t currentCarNode) const;
+    void calculateNewRoute(std::size_t newDestination, std::size_t currentCarNode, bool useDijkstra, const std::pair<std::vector<std::vector<float>>, std::vector<std::vector<int>>>& floydWarshallResult);
+    void drawNewRoute(sf::RenderWindow& window);
+    void setEndNode(std::size_t newEndNode);
+    const std::vector<std::size_t>& getNewPath() const;
+    std::vector<std::size_t> nodesSinceFirstChange;
+    bool hasChangedRoute = false;
 
 private:
     float costPerKm;
@@ -43,6 +45,7 @@ private:
     bool routeCalculated;
     bool newPathCalculated;
     bool isNewRoute;
+   
     Map& map;
 
     std::vector<std::size_t> originalPath;
