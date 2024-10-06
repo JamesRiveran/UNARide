@@ -10,17 +10,28 @@ public:
 
     float getWeight() const;
     void setWeight(float newWeight);
-
+    
     const std::array<sf::Vertex, 2>& getLine() const;
     bool isBidirectional() const;
     std::size_t getNode1() const;
     std::size_t getNode2() const;
+     bool isClosed;
+    
     sf::Vector2f getStartPosition() const;
     sf::Vector2f getEndPosition() const;
 
+    void closeStreet();
+        
+    bool isStreetClosed() const {
+        return isClosed;
+    }
+
 private:
+   
+
     std::size_t node1, node2;
     bool bidirectional;
+   
     float weight;
     std::array<sf::Vertex, 2> line;
 };

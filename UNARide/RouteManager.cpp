@@ -236,7 +236,15 @@ void RouteManager::calculateNewRoute(std::size_t newDestination, std::size_t cur
     std::cout << "Nuevo peso total de la ruta: " << totalWeight << " km" << std::endl;
     std::cout << "Nuevo costo total del viaje: " << totalCost << " colones" << std::endl;
 }
-
+bool RouteManager::areNodesConnected(std::size_t node1, std::size_t node2) {
+    for (const auto& street : map.getStreets()) {
+        if ((street.getNode1() == node1 && street.getNode2() == node2) ||
+            (street.getNode1() == node2 && street.getNode2() == node1)) {
+            return true;  // Los nodos están conectados
+        }
+    }
+    return false;  // Los nodos no están conectados
+}
 void RouteManager::drawNewRoute(sf::RenderWindow& window) {
     if (newPathCalculated && !newPath.empty()) {
         for (std::size_t i = 0; i < newPath.size() - 1; ++i) {

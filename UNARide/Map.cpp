@@ -135,7 +135,8 @@ std::vector<std::size_t> Map::dijkstra(std::size_t start, std::size_t goal) {
         float minDist = std::numeric_limits<float>::infinity();
 
         for (std::size_t j = 0; j < nodes.size(); ++j) {
-            if (!visited[j] && distances[j] < minDist) {
+            
+            if (!visited[j] && distances[j] < minDist){
                 current = j;
                 minDist = distances[j];
             }
@@ -152,7 +153,7 @@ std::vector<std::size_t> Map::dijkstra(std::size_t start, std::size_t goal) {
                 std::size_t neighbor = (current == street.getNode1()) ? street.getNode2() : street.getNode1();
                 float distance = street.getWeight();
 
-                if (distances[neighbor] > distances[current] + distance) {
+                if (distances[neighbor] > distances[current] + distance&& !street.isStreetClosed()) {
                     distances[neighbor] = distances[current] + distance;
                     predecessors[neighbor] = current;
                 }
@@ -173,6 +174,15 @@ std::vector<std::size_t> Map::dijkstra(std::size_t start, std::size_t goal) {
     return path;
 }
 
+const Street* Map::getStreetBetweenNodes(std::size_t node1, std::size_t node2) const {
+    for (const auto& street : streets) {
+        if ((street.getNode1() == node1 && street.getNode2() == node2) ||
+            (street.getNode1() == node2 && street.getNode2() == node1)) {
+            return &street; 
+        }
+    }
+    return nullptr; 
+}
 
 
 void Map::draw(sf::RenderWindow& window) {

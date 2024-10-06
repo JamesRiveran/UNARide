@@ -27,6 +27,7 @@ public:
     std::size_t getStartNode() const;
     std::size_t getEndNode() const;
     std::size_t findClosestNode(const sf::Vector2f& mousePos);
+    bool areNodesConnected(std::size_t node1, std::size_t node2);
 
     //calculate new route
     float calculateWeightFromCurrentToEnd(std::size_t currentCarNode) const;
