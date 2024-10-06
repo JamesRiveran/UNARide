@@ -4,7 +4,10 @@
 #include <algorithm>
 
 RouteManager::RouteManager(Map& map, float costPerKm)
-    : map(map), startNodeSelected(false), endNodeSelected(false), routeCalculated(false), costPerKm(costPerKm), startNode(0), endNode(0) {}
+    : map(map), startNodeSelected(false), endNodeSelected(false), routeCalculated(false),
+    costPerKm(costPerKm), startNode(0), endNode(0), isNewRoute(false), newPathCalculated(false),
+    hasChangedRoute(false), nodesSinceFirstChange() // Inicialización de nodesSinceFirstChange
+{}
 
 
 void printPredecessorMatrix(const std::vector<std::vector<int>>& pred) {
@@ -39,7 +42,7 @@ void RouteManager::selectNode(sf::Vector2f mousePos) {
 void RouteManager::calculateRoute(bool useDijkstra, const std::pair<std::vector<std::vector<float>>, std::vector<std::vector<int>>>& floydWarshallResult) {
     if (startNodeSelected && endNodeSelected) {
         if (useDijkstra) {
-            path = map.dijkstra(startNode, endNode);  
+            path = map.dijkstra(startNode, endNode);
         }
         else {
             const auto& dist = floydWarshallResult.first;
@@ -49,8 +52,6 @@ void RouteManager::calculateRoute(bool useDijkstra, const std::pair<std::vector<
                 std::cerr << "No se puede encontrar un camino válido." << std::endl;
                 return;
             }
-
-            //printPredecessorMatrix(pred); //Print matrix predecessors
 
             path.clear();
             std::size_t current = endNode;
@@ -62,38 +63,50 @@ void RouteManager::calculateRoute(bool useDijkstra, const std::pair<std::vector<
             std::reverse(path.begin(), path.end());
         }
 
-        routeCalculated = true;  
+        routeCalculated = true;
         std::cout << "Ruta calculada entre nodos " << startNode << " y " << endNode << std::endl;
     }
 }
-
-
 
 void RouteManager::drawRoute(sf::RenderWindow& window) {
     if (routeCalculated) {
         for (std::size_t i = 0; i < path.size() - 1; ++i) {
             std::size_t currentNode = path[i];
             std::size_t nextNode = path[i + 1];
-            map.drawStreet(window, currentNode, nextNode);
+            map.drawStreet(window, currentNode, nextNode, sf::Color::Black);
         }
     }
 }
+
 
 void RouteManager::resetRoute() {
     startNodeSelected = false;
     endNodeSelected = false;
     routeCalculated = false;
+    newPathCalculated = false;
     path.clear();
+    newPath.clear();
+    nodesSinceFirstChange.clear();  
+    hasChangedRoute = false;        
+    totalWeight = 0.0f;             
     std::cout << "Ruta reiniciada." << std::endl;
 }
 
 float RouteManager::calculateTotalWeight() const {
+    return calculateTotalWeight(std::size_t(-1));  
+}
+
+float RouteManager::calculateTotalWeight(std::size_t currentCarNode) const {
     float totalWeight = 0.0f;
 
     if (path.size() > 1) {
         for (std::size_t i = 0; i < path.size() - 1; ++i) {
             std::size_t currentNode = path[i];
             std::size_t nextNode = path[i + 1];
+
+            if (currentNode == currentCarNode) {
+                break; 
+            }
 
             for (const auto& street : map.getStreets()) {
                 if ((street.getNode1() == currentNode && street.getNode2() == nextNode) ||
@@ -104,8 +117,24 @@ float RouteManager::calculateTotalWeight() const {
             }
         }
     }
+    if (newPath.size() > 1) {
+        for (std::size_t i = 0; i < newPath.size() - 1; ++i) {
+            std::size_t currentNode = newPath[i];
+            std::size_t nextNode = newPath[i + 1];
+
+            for (const auto& street : map.getStreets()) {
+                if ((street.getNode1() == currentNode && street.getNode2() == nextNode) ||
+                    (street.isBidirectional() && street.getNode1() == nextNode && street.getNode2() == currentNode)) {
+                    totalWeight += street.getWeight();
+                    break;
+                }
+            }
+        }
+    }
+
     return totalWeight;
 }
+
 
 void RouteManager::updateCostPerKm() {
     std::time_t currentTime = std::time(nullptr);
@@ -115,23 +144,20 @@ void RouteManager::updateCostPerKm() {
     int hour = localTime.tm_hour;
 
     if (hour >= 6 && hour < 12) {
-        costPerKm = 125.0f; 
+        costPerKm = 125.0f;
     }
     else if (hour >= 12 && hour < 18) {
-        costPerKm = 150.0f; 
+        costPerKm = 150.0f;
     }
     else {
-        costPerKm = 200.0f; 
+        costPerKm = 200.0f;
     }
 }
-
 
 float RouteManager::calculateTotalCost() const {
     const_cast<RouteManager*>(this)->updateCostPerKm();
-    return calculateTotalWeight() * costPerKm;
+    return getTotalWeight() * costPerKm;  
 }
-
-
 
 std::size_t RouteManager::findClosestNode(const sf::Vector2f& mousePos) {
     float minDistance = 10.0f;
@@ -148,6 +174,145 @@ std::size_t RouteManager::findClosestNode(const sf::Vector2f& mousePos) {
     return closestNode;
 }
 
+std::vector<std::size_t> RouteManager::calculateRouteFloydWarshall(
+    const std::pair<std::vector<std::vector<float>>, std::vector<std::vector<int>>>& floydWarshallResult,
+    std::size_t newDestination) {
+
+    const auto& dist = floydWarshallResult.first;
+    const auto& pred = floydWarshallResult.second;
+    std::vector<std::size_t> recalculatedPath;
+
+    if (pred[startNode][newDestination] == -1) {
+        std::cerr << "No se puede encontrar un camino válido hacia el nuevo destino." << std::endl;
+        return recalculatedPath;
+    }
+
+    std::size_t current = newDestination;
+    while (current != startNode) {
+        recalculatedPath.push_back(current);
+        current = pred[startNode][current];
+    }
+    recalculatedPath.push_back(startNode);
+    std::reverse(recalculatedPath.begin(), recalculatedPath.end());
+
+    std::cout << "Nueva ruta calculada hacia el nuevo destino: " << newDestination << std::endl;
+    return recalculatedPath;
+}
+
+//calculate new route ***********************************************************************************
+void RouteManager::setEndNode(std::size_t newEndNode) {
+    endNode = newEndNode;
+    endNodeSelected = true;
+    std::cout << "Nuevo nodo final actualizado: " << endNode << std::endl;
+}
+
+void RouteManager::calculateNewRoute(std::size_t newDestination, std::size_t currentCarNode, bool useDijkstra, const std::pair<std::vector<std::vector<float>>, std::vector<std::vector<int>>>& floydWarshallResult) {
+    newPath.clear();
+
+    if (useDijkstra) {
+        newPath = map.dijkstra(currentCarNode, newDestination);
+    }
+    else {
+        const auto& pred = floydWarshallResult.second;
+
+        if (pred[currentCarNode][newDestination] == -1) {
+            std::cerr << "No se puede encontrar un camino válido con Floyd-Warshall." << std::endl;
+            return;
+        }
+
+        std::size_t current = newDestination;
+        while (current != currentCarNode) {
+            newPath.push_back(current);
+            current = pred[currentCarNode][current];
+        }
+        newPath.push_back(currentCarNode);
+        std::reverse(newPath.begin(), newPath.end());
+    }
+
+    newPathCalculated = true;
+    float totalWeight = calculateTotalWeight(); 
+    float totalCost = calculateTotalCost(); 
+
+    std::cout << "Nuevo peso total de la ruta: " << totalWeight << " km" << std::endl;
+    std::cout << "Nuevo costo total del viaje: " << totalCost << " colones" << std::endl;
+}
+bool RouteManager::areNodesConnected(std::size_t node1, std::size_t node2) {
+    for (const auto& street : map.getStreets()) {
+        if ((street.getNode1() == node1 && street.getNode2() == node2) ||
+            (street.getNode1() == node2 && street.getNode2() == node1)) {
+            return true;  // Los nodos están conectados
+        }
+    }
+    return false;  // Los nodos no están conectados
+}
+void RouteManager::drawNewRoute(sf::RenderWindow& window) {
+    if (newPathCalculated && !newPath.empty()) {
+        for (std::size_t i = 0; i < newPath.size() - 1; ++i) {
+            std::size_t currentNode = newPath[i];
+            std::size_t nextNode = newPath[i + 1];
+            if (currentNode < map.getNodes().size() && nextNode < map.getNodes().size()) {
+                map.drawStreet(window, currentNode, nextNode, sf::Color(186, 85, 211));
+
+
+            }
+            else {
+                std::cerr << "Error: Nodo fuera de rango. No se puede dibujar la calle." << std::endl;
+            }
+        }
+
+        if (hasChangedRoute && nodesSinceFirstChange.size() > 1) {
+            for (std::size_t i = 0; i < nodesSinceFirstChange.size() - 1; ++i) {
+                std::size_t currentNode = nodesSinceFirstChange[i];
+                std::size_t nextNode = nodesSinceFirstChange[i + 1];
+                if (currentNode < map.getNodes().size() && nextNode < map.getNodes().size()) {
+                    map.drawStreet(window, currentNode, nextNode, sf::Color(186, 85, 211)); 
+
+                }
+                else {
+                    std::cerr << "Error: Nodo fuera de rango. No se puede dibujar la calle." << std::endl;
+                }
+            }
+        }
+    }
+}
+
+float RouteManager::calculateWeightFromCurrentToEnd(std::size_t currentCarNode) const {
+    float weightToRemove = 0.0f;
+
+    bool startCounting = false;
+    if (path.size() > 1) {
+        for (std::size_t i = 0; i < path.size() - 1; ++i) {
+            std::size_t currentNode = path[i];
+            std::size_t nextNode = path[i + 1];
+
+            if (currentNode == currentCarNode) {
+                startCounting = true;
+            }
+
+            if (startCounting) {
+                for (const auto& street : map.getStreets()) {
+                    if ((street.getNode1() == currentNode && street.getNode2() == nextNode) ||
+                        (street.isBidirectional() && street.getNode1() == nextNode && street.getNode2() == currentNode)) {
+                        weightToRemove += street.getWeight();
+                        break;
+                    }
+                }
+            }
+        }
+    }
+
+    return weightToRemove;
+}
+
+//set and get ******************************************************************************************
+std::size_t RouteManager::getStartNode() const {
+    return startNode;
+}
+
+std::size_t RouteManager::getEndNode() const {
+    return endNode;
+}
+
 const std::vector<std::size_t>& RouteManager::getPath() const {
     return path;
 }
@@ -160,10 +325,13 @@ bool RouteManager::isEndNodeSelected() const {
     return endNodeSelected;
 }
 
-std::size_t RouteManager::getStartNode() const {
-    return startNode;
+const std::vector<std::size_t>& RouteManager::getNewPath() const {
+    return newPath;
+}
+void RouteManager::setTotalWeight(float weight) {
+    totalWeight = weight;
 }
 
-std::size_t RouteManager::getEndNode() const {
-    return endNode;
+float RouteManager::getTotalWeight() const {
+    return totalWeight;
 }

@@ -1,6 +1,6 @@
 ﻿#include "UIManager.h"
 #include <sstream>
-
+#include <iostream>
 UIManager::UIManager(sf::RenderWindow& window, sf::Font& font) {
     clearButton.setSize(sf::Vector2f(100.f, 40.f));
     clearButton.setFillColor(sf::Color::Black);
@@ -11,6 +11,15 @@ UIManager::UIManager(sf::RenderWindow& window, sf::Font& font) {
     startButton.setFillColor(sf::Color::Black);
     startButton.setOutlineColor(sf::Color::White);
     startButton.setOutlineThickness(2.f);
+    assignAccidentButton.setSize(sf::Vector2f(150.f, 40.f));
+    assignAccidentButton.setFillColor(sf::Color::Black);
+    assignAccidentButton.setOutlineColor(sf::Color::White);
+    assignAccidentButton.setOutlineThickness(2.f);
+
+    assignAccidentButtonText.setFont(font);
+    assignAccidentButtonText.setString("Asignar Accidente");
+    assignAccidentButtonText.setCharacterSize(18);
+    assignAccidentButtonText.setFillColor(sf::Color::White);
 
     dijkstraCheckBox.setSize(sf::Vector2f(20.f, 20.f));
     dijkstraCheckBox.setFillColor(sf::Color::White);
@@ -31,6 +40,8 @@ UIManager::UIManager(sf::RenderWindow& window, sf::Font& font) {
     startButtonText.setString("Iniciar");
     startButtonText.setCharacterSize(18);
     startButtonText.setFillColor(sf::Color::White);
+
+    
 
     dijkstraText.setFont(font);
     dijkstraText.setString("Dijkstra");
@@ -65,13 +76,24 @@ UIManager::UIManager(sf::RenderWindow& window, sf::Font& font) {
     totalWeightText.setFont(font);
     totalWeightText.setCharacterSize(18);
     totalWeightText.setFillColor(sf::Color::Black);
-    totalWeightText.setPosition(20.f, window.getSize().y - 80.f); 
+    totalWeightText.setPosition(20.f, window.getSize().y - 80.f);
 
     totalCostText.setFont(font);
     totalCostText.setCharacterSize(18);
     totalCostText.setFillColor(sf::Color::Black);
-    totalCostText.setPosition(20.f, window.getSize().y - 40.f); 
-    initializeComboBox(font); 
+    totalCostText.setPosition(20.f, window.getSize().y - 40.f);
+
+    changeRouteButton.setSize(sf::Vector2f(100.f, 40.f));
+    changeRouteButton.setFillColor(sf::Color::Black);
+    changeRouteButton.setOutlineColor(sf::Color::White);
+    changeRouteButton.setOutlineThickness(2.f);
+
+    changeRouteButtonText.setFont(font);
+    changeRouteButtonText.setString("Cambiar ruta");
+    changeRouteButtonText.setCharacterSize(18);
+    changeRouteButtonText.setFillColor(sf::Color::White);
+
+    initializeComboBox(font);
     resizeUI(window);
 }
 
@@ -97,11 +119,15 @@ void UIManager::resizeUI(sf::RenderWindow& window) {
     centerTextInButton(clearButtonText, clearButton);
     centerTextInButton(startButtonText, startButton);
 
-    toggleWeightsButton.setPosition(window.getSize().x - 120.f, window.getSize().y - 60.f); 
-    centerTextInButton(toggleWeightsButtonText, toggleWeightsButton); 
+    toggleWeightsButton.setPosition(window.getSize().x - 120.f, window.getSize().y - 60.f);
+    centerTextInButton(toggleWeightsButtonText, toggleWeightsButton);
 
     toggleStreetsButton.setPosition(window.getSize().x - 120.f, window.getSize().y - 120.f);
     centerTextInButton(toggleStreetsButtonText, toggleStreetsButton);
+
+    assignAccidentButton.setPosition(window.getSize().x - 150.f, 200.f);
+    centerTextInButton(assignAccidentButtonText, assignAccidentButton);
+
 
     dijkstraText.setPosition(50.f, 20.f);
     floydText.setPosition(50.f, 60.f);
@@ -111,6 +137,9 @@ void UIManager::resizeUI(sf::RenderWindow& window) {
 
     trafficComboBox.setPosition(20.f, 100.f);
     selectedTrafficText.setPosition(trafficComboBox.getPosition().x + 10.f, trafficComboBox.getPosition().y + 5.f);
+
+    changeRouteButton.setPosition(window.getSize().x - 120.f, 140.f);
+    centerTextInButton(changeRouteButtonText, changeRouteButton);
 }
 
 void UIManager::drawUI(sf::RenderWindow& window) {
@@ -130,12 +159,27 @@ void UIManager::drawUI(sf::RenderWindow& window) {
     window.draw(totalCostText);
     window.draw(trafficComboBox);
     window.draw(selectedTrafficText);
+    window.draw(assignAccidentButton);
+    window.draw(assignAccidentButtonText);
+
+
+    if (carroEnMovimiento) {
+        window.draw(changeRouteButton);
+        window.draw(changeRouteButtonText);
+    }
+}
+
+void UIManager:: isCarMoving(sf::RenderWindow& window,bool carroEnMovimiento) {
+    if (carroEnMovimiento) {
+        window.draw(changeRouteButton);
+        window.draw(changeRouteButtonText);
+    }
 }
 
 int UIManager::getTrafficMultiplier() const {
     switch (selectedTrafficIndex) {
-    case 0: return 1; 
-    case 1: return 2; 
+    case 0: return 1;
+    case 1: return 2;
     case 2: return 3;
     default: return 1;
     }
@@ -143,8 +187,8 @@ int UIManager::getTrafficMultiplier() const {
 
 void UIManager::setAlgorithmSelected(bool isDijkstra) {
     if (isDijkstra) {
-        dijkstraCheckBox.setFillColor(sf::Color::Black); 
-        floydCheckBox.setFillColor(sf::Color::White); 
+        dijkstraCheckBox.setFillColor(sf::Color::Black);
+        floydCheckBox.setFillColor(sf::Color::White);
     }
     else {
         floydCheckBox.setFillColor(sf::Color::Black);
@@ -156,7 +200,6 @@ void UIManager::resetAlgorithmSelected() {
     dijkstraCheckBox.setFillColor(sf::Color::White);
     floydCheckBox.setFillColor(sf::Color::White);
 }
-
 
 void UIManager::centerTextInButton(sf::Text& text, const sf::RectangleShape& button) {
     sf::FloatRect textRect = text.getLocalBounds();
@@ -188,5 +231,10 @@ void UIManager::setTotalCost(float totalCost) {
         totalCostText.setString(oss.str());
     }
 }
+void UIManager::setCarroEnMovimiento(bool enMovimiento) {
+    carroEnMovimiento = enMovimiento;
+}
 
-
+bool UIManager::isDijkstraSelected() const {
+    return dijkstraCheckBox.getFillColor() == sf::Color::Black;
+}

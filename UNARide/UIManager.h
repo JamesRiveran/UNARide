@@ -6,6 +6,7 @@
 
 class UIManager {
 public:
+   
     UIManager(sf::RenderWindow& window, sf::Font& font);
     void resizeUI(sf::RenderWindow& window);
     void drawUI(sf::RenderWindow& window);
@@ -14,9 +15,14 @@ public:
     void setTotalCost(float totalCost);
     void resetAlgorithmSelected();
     int getTrafficMultiplier() const;
+    void setCarroEnMovimiento(bool enMovimiento);
+    bool isDijkstraSelected() const;
+    void isCarMoving(sf::RenderWindow& window,bool carroEnMovimiento);
 
     sf::RectangleShape clearButton;
     sf::RectangleShape startButton;
+    sf::RectangleShape assignAccidentButton;
+    sf::Text assignAccidentButtonText;
     sf::RectangleShape dijkstraCheckBox;
     sf::RectangleShape floydCheckBox;
 
@@ -29,6 +35,9 @@ public:
     sf::RectangleShape trafficComboBox;
     sf::Text selectedTrafficText;
 
+    sf::RectangleShape changeRouteButton;
+    sf::Text changeRouteButtonText;
+
     std::vector<std::string> trafficOptions;
     int selectedTrafficIndex = 0;
 
@@ -39,7 +48,7 @@ private:
     sf::Text floydText;
     sf::Text totalWeightText;
     sf::Text totalCostText;
-
+    bool carroEnMovimiento;
     void centerTextInButton(sf::Text& text, const sf::RectangleShape& button);
     void initializeComboBox(sf::Font& font);
 };
