@@ -13,6 +13,10 @@ int main() {
         std::cerr << "Error loading map texture." << std::endl;
         return 1;
     }
+    std::size_t node1 = std::numeric_limits<std::size_t>::max();
+    std::size_t node2 = std::numeric_limits<std::size_t>::max();
+    bool awaitingNodeSelection = false;
+    int nodesSelected = 0;
 
     sf::Sprite mapSprite(mapTexture);
     mapSprite.setScale(
@@ -64,6 +68,7 @@ int main() {
             if (event.type == sf::Event::Resized) {
                 uiManager.resizeUI(window);
             }
+            
 
             if (event.type == sf::Event::MouseButtonPressed) {
                 sf::Vector2f mousePos = window.mapPixelToCoords(sf::Mouse::getPosition(window));
@@ -72,6 +77,38 @@ int main() {
                     std::cout << "Botón 'Cambiar ruta' presionado. El carro se detendrá en el siguiente nodo más cercano." << std::endl;
                     carController.stopAtNextNode(); 
                     isChangingRoute = true;
+                }
+                if (uiManager.assignAccidentButton.getGlobalBounds().contains(window.mapPixelToCoords(sf::Mouse::getPosition(window)))) {
+                    awaitingNodeSelection = true;
+                    nodesSelected = 0;
+                }
+
+                if (awaitingNodeSelection) {
+                    std::size_t selectedNode = routeManager.findClosestNode(window.mapPixelToCoords(sf::Mouse::getPosition(window)));
+                    if (selectedNode != std::numeric_limits<std::size_t>::max()) {
+                        if (nodesSelected == 0) {
+                            node1 = selectedNode;
+                            nodesSelected++;
+                        }
+                        else if (nodesSelected == 1) {
+                            if (routeManager.areNodesConnected(node1, selectedNode)) {
+                                node2 = selectedNode;
+                                awaitingNodeSelection = false;
+
+                               
+                                for (auto& street : map.getStreets()) {
+                                    if ((street.getNode1() == node1 && street.getNode2() == node2) ||
+                                        (street.getNode1() == node2 && street.getNode2() == node1)) {
+                                        street.closeStreet();
+                                        std::cout << "Calle cerrada entre los nodos " << node1 << " y " << node2 << std::endl;
+                                    }
+                                }
+                            }
+                            else {
+                                std::cout << "El segundo nodo no es adyacente al primero." << std::endl;
+                            }
+                        }
+                    }
                 }
                 if (isChangingRoute) {
                     std::size_t newDestination = routeManager.findClosestNode(mousePos);

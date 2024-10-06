@@ -11,6 +11,15 @@ UIManager::UIManager(sf::RenderWindow& window, sf::Font& font) {
     startButton.setFillColor(sf::Color::Black);
     startButton.setOutlineColor(sf::Color::White);
     startButton.setOutlineThickness(2.f);
+    assignAccidentButton.setSize(sf::Vector2f(150.f, 40.f));
+    assignAccidentButton.setFillColor(sf::Color::Black);
+    assignAccidentButton.setOutlineColor(sf::Color::White);
+    assignAccidentButton.setOutlineThickness(2.f);
+
+    assignAccidentButtonText.setFont(font);
+    assignAccidentButtonText.setString("Asignar Accidente");
+    assignAccidentButtonText.setCharacterSize(18);
+    assignAccidentButtonText.setFillColor(sf::Color::White);
 
     dijkstraCheckBox.setSize(sf::Vector2f(20.f, 20.f));
     dijkstraCheckBox.setFillColor(sf::Color::White);
@@ -31,6 +40,8 @@ UIManager::UIManager(sf::RenderWindow& window, sf::Font& font) {
     startButtonText.setString("Iniciar");
     startButtonText.setCharacterSize(18);
     startButtonText.setFillColor(sf::Color::White);
+
+    
 
     dijkstraText.setFont(font);
     dijkstraText.setString("Dijkstra");
@@ -114,6 +125,10 @@ void UIManager::resizeUI(sf::RenderWindow& window) {
     toggleStreetsButton.setPosition(window.getSize().x - 120.f, window.getSize().y - 120.f);
     centerTextInButton(toggleStreetsButtonText, toggleStreetsButton);
 
+    assignAccidentButton.setPosition(window.getSize().x - 150.f, 200.f);
+    centerTextInButton(assignAccidentButtonText, assignAccidentButton);
+
+
     dijkstraText.setPosition(50.f, 20.f);
     floydText.setPosition(50.f, 60.f);
 
@@ -144,6 +159,9 @@ void UIManager::drawUI(sf::RenderWindow& window) {
     window.draw(totalCostText);
     window.draw(trafficComboBox);
     window.draw(selectedTrafficText);
+    window.draw(assignAccidentButton);
+    window.draw(assignAccidentButtonText);
+
 
     if (carroEnMovimiento) {
         window.draw(changeRouteButton);
