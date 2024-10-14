@@ -17,7 +17,7 @@ UIManager::UIManager(sf::RenderWindow& window, sf::Font& font) {
     assignAccidentButton.setOutlineThickness(2.f);
 
     assignAccidentButtonText.setFont(font);
-    assignAccidentButtonText.setString("Asignar Accidente");
+    assignAccidentButtonText.setString("Accidente");
     assignAccidentButtonText.setCharacterSize(18);
     assignAccidentButtonText.setFillColor(sf::Color::White);
 
@@ -93,6 +93,16 @@ UIManager::UIManager(sf::RenderWindow& window, sf::Font& font) {
     changeRouteButtonText.setCharacterSize(18);
     changeRouteButtonText.setFillColor(sf::Color::White);
 
+    coseviButton.setSize(sf::Vector2f(100.f, 40.f));
+    coseviButton.setFillColor(sf::Color::Black);
+    coseviButton.setOutlineColor(sf::Color::White);
+    coseviButton.setOutlineThickness(2.f);
+
+    coseviButtonText.setFont(font);
+    coseviButtonText.setString("COSEVI");
+    coseviButtonText.setCharacterSize(18);
+    coseviButtonText.setFillColor(sf::Color::White);
+
     initializeComboBox(font);
     resizeUI(window);
 }
@@ -113,11 +123,27 @@ void UIManager::initializeComboBox(sf::Font& font) {
 void UIManager::resizeUI(sf::RenderWindow& window) {
     clearButton.setPosition(window.getSize().x - 120.f, 20.f);
     startButton.setPosition(window.getSize().x - 120.f, 80.f);
-    dijkstraCheckBox.setPosition(20.f, 20.f);
-    floydCheckBox.setPosition(20.f, 60.f);
 
     centerTextInButton(clearButtonText, clearButton);
     centerTextInButton(startButtonText, startButton);
+
+    dijkstraCheckBox.setPosition(20.f, 20.f);
+    floydCheckBox.setPosition(20.f, 60.f);
+
+    dijkstraText.setPosition(50.f, 20.f);
+    floydText.setPosition(50.f, 60.f);
+
+    trafficComboBox.setPosition(20.f, 120.f);
+    selectedTrafficText.setPosition(trafficComboBox.getPosition().x + 10.f, trafficComboBox.getPosition().y + 5.f);
+
+    assignAccidentButton.setSize(sf::Vector2f(100.f, 40.f));
+    coseviButton.setSize(sf::Vector2f(100.f, 40.f));
+
+    assignAccidentButton.setPosition(20.f, 180.f);
+    centerTextInButton(assignAccidentButtonText, assignAccidentButton);
+
+    coseviButton.setPosition(20.f, 240.f);
+    centerTextInButton(coseviButtonText, coseviButton);
 
     toggleWeightsButton.setPosition(window.getSize().x - 120.f, window.getSize().y - 60.f);
     centerTextInButton(toggleWeightsButtonText, toggleWeightsButton);
@@ -125,22 +151,13 @@ void UIManager::resizeUI(sf::RenderWindow& window) {
     toggleStreetsButton.setPosition(window.getSize().x - 120.f, window.getSize().y - 120.f);
     centerTextInButton(toggleStreetsButtonText, toggleStreetsButton);
 
-    assignAccidentButton.setPosition(window.getSize().x - 150.f, 200.f);
-    centerTextInButton(assignAccidentButtonText, assignAccidentButton);
-
-
-    dijkstraText.setPosition(50.f, 20.f);
-    floydText.setPosition(50.f, 60.f);
-
     totalWeightText.setPosition(20.f, window.getSize().y - 80.f);
     totalCostText.setPosition(20.f, window.getSize().y - 40.f);
-
-    trafficComboBox.setPosition(20.f, 100.f);
-    selectedTrafficText.setPosition(trafficComboBox.getPosition().x + 10.f, trafficComboBox.getPosition().y + 5.f);
 
     changeRouteButton.setPosition(window.getSize().x - 120.f, 140.f);
     centerTextInButton(changeRouteButtonText, changeRouteButton);
 }
+
 
 void UIManager::drawUI(sf::RenderWindow& window) {
     window.draw(clearButton);
@@ -161,7 +178,8 @@ void UIManager::drawUI(sf::RenderWindow& window) {
     window.draw(selectedTrafficText);
     window.draw(assignAccidentButton);
     window.draw(assignAccidentButtonText);
-
+    window.draw(coseviButton);        
+    window.draw(coseviButtonText);
 
     if (carroEnMovimiento) {
         window.draw(changeRouteButton);

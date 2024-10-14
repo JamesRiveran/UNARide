@@ -25,6 +25,8 @@ public:
     sf::Text assignAccidentButtonText;
     sf::RectangleShape dijkstraCheckBox;
     sf::RectangleShape floydCheckBox;
+    sf::RectangleShape coseviButton;
+    sf::Text coseviButtonText;
 
     sf::RectangleShape toggleWeightsButton;
     sf::Text toggleWeightsButtonText;
