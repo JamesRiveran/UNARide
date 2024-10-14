@@ -3,10 +3,10 @@
 #include <iostream>
 
 CarController::CarController(sf::Sprite& carSprite, float speed, sf::Texture& upTexture, sf::Texture& downTexture,
-    sf::Texture& leftTexture, sf::Texture& rightTexture, UIManager& uiManager, RouteManager& routeManager) // Añadido routeManager
+    sf::Texture& leftTexture, sf::Texture& rightTexture, UIManager& uiManager, RouteManager& routeManager) 
     : carSprite(carSprite), speed(speed), upTexture(upTexture), downTexture(downTexture),
     leftTexture(leftTexture), rightTexture(rightTexture), currentNodeInPath(0), moving(false), progress(0.0f),
-    uiManager(uiManager), routeManager(routeManager), isMoving(false) {} // Guardamos la referencia a routeManager
+    uiManager(uiManager), routeManager(routeManager), isMoving(false) {} 
 
 
 
@@ -23,7 +23,7 @@ void CarController::startMovement(const std::vector<std::size_t>& path, const Ma
 
         if (isNewRoute && !routeManager.hasChangedRoute) {
             routeManager.hasChangedRoute = true;
-            routeManager.nodesSinceFirstChange.clear(); // Iniciar nuevo registro de nodos
+            routeManager.nodesSinceFirstChange.clear(); 
         }
     }
 }
@@ -142,6 +142,10 @@ void CarController::moveTowardsNextNode(sf::Vector2f start, sf::Vector2f end, fl
             moving = false;
         }
     }
+}
+
+bool CarController::isStopped() const {
+    return !isMoving;
 }
 
 void CarController::stopAtNextNode() {

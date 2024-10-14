@@ -18,6 +18,8 @@ public:
     void changeRoute(const std::vector<std::size_t>& newPath);
     void stopAtNextNode();
     std::size_t getCurrentNode(const Map& map);
+    bool isStopped() const;
+
    
 private:
     UIManager& uiManager;
