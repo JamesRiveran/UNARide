@@ -4,6 +4,7 @@
 #include "CarController.h"
 #include "UIManager.h"
 #include <iostream>
+#include <limits>
 
 int main() {
     sf::RenderWindow window(sf::VideoMode(800, 600), "UNARide", sf::Style::Titlebar | sf::Style::Close);
@@ -54,7 +55,7 @@ int main() {
     bool useDijkstra = true, startMovement = false, routeCalculated = false, algorithmSelected = false, carVisible = false;
     bool showWeights = false;
     bool showStreets = true;
-    bool applyingTrafficChanges = false; 
+    bool applyingTrafficChanges = false;
     bool isChangingRoute = false;
     sf::Clock gameClock;
 
@@ -85,30 +86,34 @@ int main() {
                     selectingTrafficNodes = true;
                     trafficStartNode = std::size_t(-1);
                     trafficEndNode = std::size_t(-1);
-                    carController.stopAtNextNode(); 
+                    carController.stopAtNextNode();
                     applyingTrafficChanges = true;
                 }
 
-                if (applyingTrafficChanges && carController.isStopped()) { 
-                    std::size_t currentCarNode = carController.getCurrentNode(map);
+                if (applyingTrafficChanges && carController.isStopped()) {
+                    if (routeManager.isStartNodeSelected() && carController.hasValidRoute()) {
+                        std::size_t currentCarNode = carController.getCurrentNode(map);
+                        std::size_t newDestination = routeManager.getEndNode();
 
-                    std::size_t newDestination = routeManager.getEndNode(); 
+                        if (trafficStartNode != std::size_t(-1) && trafficEndNode != std::size_t(-1)) {
+                            Street* selectedStreet = const_cast<Street*>(map.getStreetBetweenNodes(trafficStartNode, trafficEndNode));
+                            if (selectedStreet) {
+                                int trafficMultiplier = uiManager.getTrafficMultiplier();
+                                float newWeight = selectedStreet->getWeight() * trafficMultiplier;
+                                selectedStreet->setWeight(newWeight);
 
-                    if (trafficStartNode != std::size_t(-1) && trafficEndNode != std::size_t(-1)) {
-                        Street* selectedStreet = const_cast<Street*>(map.getStreetBetweenNodes(trafficStartNode, trafficEndNode));
-                        if (selectedStreet) {
-                            int trafficMultiplier = uiManager.getTrafficMultiplier();
-                            float newWeight = selectedStreet->getWeight() * trafficMultiplier;
-                            selectedStreet->setWeight(newWeight);
+                                std::cout << "Nuevo peso de la calle entre los nodos " << trafficStartNode
+                                    << " y " << trafficEndNode << ": " << newWeight << std::endl;
 
-                            std::cout << "Nuevo peso de la calle entre los nodos " << trafficStartNode
-                                << " y " << trafficEndNode << ": " << newWeight << std::endl;
+                                routeManager.calculateNewRoute(newDestination, currentCarNode, useDijkstra, floydWarshallResult);
 
-                            routeManager.calculateNewRoute(newDestination, currentCarNode, useDijkstra, floydWarshallResult);
-
-                            carController.startMovement(routeManager.getNewPath(), map, true);
-                            applyingTrafficChanges = false; 
+                                carController.startMovement(routeManager.getNewPath(), map, true);
+                                applyingTrafficChanges = false;
+                            }
                         }
+                    }
+                    else {
+                        std::cerr << "Error: no se ha seleccionado una ruta válida." << std::endl;
                     }
                 }
 
@@ -149,11 +154,6 @@ int main() {
                     isChangingRoute = true;
                 }
 
-                if (uiManager.assignAccidentButton.getGlobalBounds().contains(mousePos)) {
-                    awaitingNodeSelection = true;
-                    nodesSelected = 0;
-                }
-
                 if (awaitingNodeSelection) {
                     std::size_t selectedNode = routeManager.findClosestNode(mousePos);
                     if (selectedNode != std::numeric_limits<std::size_t>::max()) {
@@ -186,24 +186,29 @@ int main() {
                     if (newDestination != std::size_t(-1)) {
                         std::cout << "Nuevo destino seleccionado: " << newDestination << std::endl;
 
-                        std::size_t currentCarNode = carController.getCurrentNode(map);
+                        if (routeManager.isStartNodeSelected() && carController.hasValidRoute()) {
+                            std::size_t currentCarNode = carController.getCurrentNode(map);
 
-                        bool useDijkstra = uiManager.isDijkstraSelected();
-                        floydWarshallResult = map.floydWarshall();
+                            bool useDijkstra = uiManager.isDijkstraSelected();
+                            floydWarshallResult = map.floydWarshall();
 
-                        routeManager.setTotalWeight(0.0f);
-                        uiManager.setTotalWeight(0.0f);
-                        uiManager.setTotalCost(0.0f);
-                        routeManager.calculateNewRoute(newDestination, currentCarNode, useDijkstra, floydWarshallResult);
+                            routeManager.setTotalWeight(0.0f);
+                            uiManager.setTotalWeight(0.0f);
+                            uiManager.setTotalCost(0.0f);
+                            routeManager.calculateNewRoute(newDestination, currentCarNode, useDijkstra, floydWarshallResult);
 
-                        float totalWeight = routeManager.calculateTotalWeight(currentCarNode);
-                        float totalCost = routeManager.calculateTotalCost();
+                            float totalWeight = routeManager.calculateTotalWeight(currentCarNode);
+                            float totalCost = routeManager.calculateTotalCost();
 
-                        uiManager.setTotalWeight(totalWeight);
-                        uiManager.setTotalCost(totalCost);
+                            uiManager.setTotalWeight(totalWeight);
+                            uiManager.setTotalCost(totalCost);
 
-                        carController.startMovement(routeManager.getNewPath(), map, true);
-                        isChangingRoute = false;
+                            carController.startMovement(routeManager.getNewPath(), map, true);
+                            isChangingRoute = false;
+                        }
+                        else {
+                            std::cerr << "Error: no se ha seleccionado una ruta válida." << std::endl;
+                        }
                     }
                 }
 
@@ -214,7 +219,6 @@ int main() {
                     carController.startMovement(routeManager.getPath(), map, false);
                     startMovement = true;
                     carVisible = true;
-                    routeManager.setTotalWeight(routeManager.calculateTotalWeight());
                     float totalWeight = routeManager.calculateTotalWeight();
                     float totalCost = routeManager.calculateTotalCost();
                     uiManager.setTotalWeight(totalWeight);
@@ -230,6 +234,9 @@ int main() {
                     showWeights = false;
                     algorithmSelected = false;
                     isChangingRoute = false;
+                    showStreets = false;
+                    uiManager.selectedTrafficIndex = 0;
+                    uiManager.selectedTrafficText.setString(uiManager.trafficOptions[uiManager.selectedTrafficIndex]);
 
                     uiManager.resetAlgorithmSelected();
                     uiManager.setTotalWeight(0.0f);

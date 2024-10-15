@@ -12,7 +12,7 @@ public:
     CarController(sf::Sprite& carSprite, float speed, sf::Texture& upTexture, sf::Texture& downTexture,
         sf::Texture& leftTexture, sf::Texture& rightTexture, UIManager& uiManager, RouteManager& routeManager);
 
-    void startMovement(const std::vector<std::size_t>& path, const Map& map, bool isNewRoute); 
+    void startMovement(const std::vector<std::size_t>& path, const Map& map, bool isNewRoute);
     void update(float deltaTime, const Map& map);
     void stopMovement();
     void changeRoute(const std::vector<std::size_t>& newPath);
@@ -20,7 +20,10 @@ public:
     std::size_t getCurrentNode(const Map& map);
     bool isStopped() const;
 
-   
+    bool hasValidRoute() const {
+        return !path.empty();  
+    }
+
 private:
     UIManager& uiManager;
     RouteManager& routeManager;
@@ -32,15 +35,13 @@ private:
     float progress;
     bool isMoving;
     sf::Sprite& carSprite;
-    std::vector<std::size_t> path;          
-    std::vector<std::size_t> originalPath; 
+    std::vector<std::size_t> path;
+    std::vector<std::size_t> originalPath;
     std::size_t currentNodeInPath;
     sf::Texture& upTexture;
     sf::Texture& downTexture;
     sf::Texture& leftTexture;
     sf::Texture& rightTexture;
-    
-  
 };
 
 #endif
