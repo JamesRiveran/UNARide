@@ -28,8 +28,13 @@ public:
     std::size_t getEndNode() const;
     std::size_t findClosestNode(const sf::Vector2f& mousePos);
     bool areNodesConnected(std::size_t node1, std::size_t node2);
+    std::vector<std::pair<std::vector<std::size_t>, sf::Color>> previousRoutes;
 
-    //calculate new route
+    std::vector<sf::Color> routeColors = {
+        sf::Color::Red, sf::Color::Green, sf::Color::Blue, sf::Color::Yellow, sf::Color::Magenta
+    };
+    int currentColorIndex = 0;  
+
     float calculateWeightFromCurrentToEnd(std::size_t currentCarNode) const;
     void calculateNewRoute(std::size_t newDestination, std::size_t currentCarNode, bool useDijkstra, const std::pair<std::vector<std::vector<float>>, std::vector<std::vector<int>>>& floydWarshallResult);
     void drawNewRoute(sf::RenderWindow& window);

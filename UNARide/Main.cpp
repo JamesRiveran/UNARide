@@ -106,7 +106,10 @@ int main() {
                                     << " y " << trafficEndNode << ": " << newWeight << std::endl;
 
                                 routeManager.calculateNewRoute(newDestination, currentCarNode, useDijkstra, floydWarshallResult);
-
+                                float totalWeight = routeManager.calculateTotalWeight(currentCarNode);  
+                                float totalCost = routeManager.calculateTotalCost(); 
+                                uiManager.setTotalWeight(totalWeight);  
+                                uiManager.setTotalCost(totalCost);
                                 carController.startMovement(routeManager.getNewPath(), map, true);
                                 applyingTrafficChanges = false;
                             }
@@ -230,7 +233,7 @@ int main() {
                     routeManager.resetRoute();
                     startMovement = false;
                     routeCalculated = false;
-                    carVisible = false;
+                    carVisible = false; 
                     showWeights = false;
                     algorithmSelected = false;
                     isChangingRoute = false;

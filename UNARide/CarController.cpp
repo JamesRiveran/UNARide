@@ -75,7 +75,7 @@ void CarController::update(float deltaTime, const Map& map) {
     if (!moving || currentNodeInPath >= path.size() - 1) {
         moving = false;
         isMoving = false;
-        uiManager.setCarroEnMovimiento(false); 
+        uiManager.setCarroEnMovimiento(false);
         return;
     }
 
@@ -83,9 +83,11 @@ void CarController::update(float deltaTime, const Map& map) {
     std::size_t nextNode = path[currentNodeInPath + 1];
     sf::Vector2f startPos = map.getNodes()[currentNode].getPosition();
     sf::Vector2f endPos = map.getNodes()[nextNode].getPosition();
-    if (routeManager.hasChangedRoute) {
-        routeManager.nodesSinceFirstChange.push_back(currentNode);
+
+    if (nodesTraversed.empty() || nodesTraversed.back() != currentNode) {
+        nodesTraversed.push_back(currentNode);
     }
+
     sf::Vector2f direction = endPos - startPos;
     float distance = std::hypot(direction.x, direction.y);
     sf::Vector2f normalizedDirection = direction / distance;
@@ -102,18 +104,19 @@ void CarController::update(float deltaTime, const Map& map) {
             moving = false;
             isMoving = false;
             shouldStopAtNextNode = false;
-            uiManager.setCarroEnMovimiento(false);  
+            uiManager.setCarroEnMovimiento(false);
         }
 
         if (currentNodeInPath >= path.size() - 1) {
             moving = false;
-            uiManager.setCarroEnMovimiento(false);  
+            uiManager.setCarroEnMovimiento(false);
         }
     }
     else {
         carSprite.setPosition(startPos + direction * progress);
     }
 }
+
 
 void CarController::stopMovement() {
     isMoving = false;

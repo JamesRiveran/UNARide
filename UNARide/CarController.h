@@ -19,7 +19,7 @@ public:
     void stopAtNextNode();
     std::size_t getCurrentNode(const Map& map);
     bool isStopped() const;
-
+    const std::vector<std::size_t>& getNodesTraversed() const { return nodesTraversed; } 
     bool hasValidRoute() const {
         return !path.empty();  
     }
@@ -37,6 +37,7 @@ private:
     sf::Sprite& carSprite;
     std::vector<std::size_t> path;
     std::vector<std::size_t> originalPath;
+    std::vector<std::size_t> nodesTraversed; 
     std::size_t currentNodeInPath;
     sf::Texture& upTexture;
     sf::Texture& downTexture;
