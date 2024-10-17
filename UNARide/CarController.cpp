@@ -9,8 +9,7 @@ CarController::CarController(sf::Sprite& carSprite, float speed, sf::Texture& up
     uiManager(uiManager), routeManager(routeManager), isMoving(false) {} 
 
 
-
-void CarController::startMovement(const std::vector<std::size_t>& path, const Map& map, bool isNewRoute) {
+void CarController::startMovement(const std::vector<std::size_t>& path, const Map& map, bool isNewRoute, bool isNewTrip) {
     if (!path.empty()) {
         this->path = path;
         currentNodeInPath = 0;
@@ -21,12 +20,20 @@ void CarController::startMovement(const std::vector<std::size_t>& path, const Ma
         isMoving = true;
         uiManager.setCarroEnMovimiento(true);
 
+        // Si es un nuevo viaje, limpiar la lista de nodos desde el primer cambio
+        if (isNewTrip) {
+            routeManager.hasChangedRoute = true;
+           // routeManager.nodesSinceFirstChange.clear();
+        }
+
+        // Si es una nueva ruta (cambio de ruta en medio del viaje), reinicia el registro de nodos recorridos
         if (isNewRoute && !routeManager.hasChangedRoute) {
             routeManager.hasChangedRoute = true;
-            routeManager.nodesSinceFirstChange.clear(); 
+            routeManager.nodesSinceFirstChange.clear();
         }
     }
 }
+
 
 
 void CarController::updateCarDirection(const sf::Vector2f& direction) {
@@ -76,6 +83,11 @@ void CarController::update(float deltaTime, const Map& map) {
         moving = false;
         isMoving = false;
         uiManager.setCarroEnMovimiento(false);
+
+        // Mostrar botón para nuevo viaje si llega al final de la ruta
+        if (currentNodeInPath >= path.size() - 1) {
+            uiManager.showNewTripButton = true;
+        }
         return;
     }
 
@@ -84,8 +96,11 @@ void CarController::update(float deltaTime, const Map& map) {
     sf::Vector2f startPos = map.getNodes()[currentNode].getPosition();
     sf::Vector2f endPos = map.getNodes()[nextNode].getPosition();
 
-    if (nodesTraversed.empty() || nodesTraversed.back() != currentNode) {
-        nodesTraversed.push_back(currentNode);
+    // Registrar el nodo actual si se ha cambiado la ruta
+    if (routeManager.hasChangedRoute) {
+        if (routeManager.nodesSinceFirstChange.empty() || routeManager.nodesSinceFirstChange.back() != currentNode) {
+            routeManager.nodesSinceFirstChange.push_back(currentNode); // Añadir nodo al registro
+        }
     }
 
     sf::Vector2f direction = endPos - startPos;
@@ -100,6 +115,7 @@ void CarController::update(float deltaTime, const Map& map) {
         currentNodeInPath++;
         progress = 0.0f;
 
+        // Si el carro debe detenerse en el siguiente nodo, detener el movimiento
         if (shouldStopAtNextNode) {
             moving = false;
             isMoving = false;
@@ -107,15 +123,19 @@ void CarController::update(float deltaTime, const Map& map) {
             uiManager.setCarroEnMovimiento(false);
         }
 
+        // Si ha llegado al final de la ruta, detener el movimiento
         if (currentNodeInPath >= path.size() - 1) {
             moving = false;
             uiManager.setCarroEnMovimiento(false);
+            uiManager.showNewTripButton = true;
         }
+        
     }
     else {
         carSprite.setPosition(startPos + direction * progress);
     }
 }
+
 
 
 void CarController::stopMovement() {
@@ -145,6 +165,10 @@ void CarController::moveTowardsNextNode(sf::Vector2f start, sf::Vector2f end, fl
             moving = false;
         }
     }
+}
+bool CarController::isAtDestination() const {
+    // Verifica si el carro está en el último nodo del camino
+    return currentNodeInPath >= path.size() - 1;
 }
 
 bool CarController::isStopped() const {

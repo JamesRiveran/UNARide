@@ -18,7 +18,17 @@ int main() {
     std::size_t node1 = std::numeric_limits<std::size_t>::max();
     std::size_t node2 = std::numeric_limits<std::size_t>::max();
     bool awaitingNodeSelection = false;
+    bool isSelectingNewTrip = false;  // Nueva bandera para "Nuevo Viaje"
+    bool selectingNewDestination = false;  // Nueva bandera para "Nuevo Viaje"
+    bool carVisible = false;  // Bandera que indica si se está seleccionando el destino del "Nuevo Viaje"
+    bool readyToStartNewTrip = false;
+    bool newTrip = false;
+    bool newRoute = false;
+    bool deleteNewTrip = false;
     int nodesSelected = 0;
+
+    std::size_t currentCarNode = std::size_t(-1);
+    std::size_t newDestination = std::size_t(-1);
 
     sf::Sprite mapSprite(mapTexture);
     mapSprite.setScale(
@@ -52,7 +62,7 @@ int main() {
     RouteManager routeManager(map);
     CarController carController(carSprite, 100.f, carTextureUp, carTextureDown, carTextureLeft, carTextureRight, uiManager, routeManager);
 
-    bool useDijkstra = true, startMovement = false, routeCalculated = false, algorithmSelected = false, carVisible = false;
+    bool useDijkstra = true, startMovement = false, routeCalculated = false, algorithmSelected = false;
     bool showWeights = false;
     bool showStreets = true;
     bool applyingTrafficChanges = false;
@@ -106,11 +116,11 @@ int main() {
                                     << " y " << trafficEndNode << ": " << newWeight << std::endl;
 
                                 routeManager.calculateNewRoute(newDestination, currentCarNode, useDijkstra, floydWarshallResult);
-                                float totalWeight = routeManager.calculateTotalWeight(currentCarNode);  
-                                float totalCost = routeManager.calculateTotalCost(); 
-                                uiManager.setTotalWeight(totalWeight);  
+                                float totalWeight = routeManager.calculateTotalWeight(currentCarNode);
+                                float totalCost = routeManager.calculateTotalCost();
+                                uiManager.setTotalWeight(totalWeight);
                                 uiManager.setTotalCost(totalCost);
-                                carController.startMovement(routeManager.getNewPath(), map, true);
+                                carController.startMovement(routeManager.getNewPath(), map, true, false);
                                 applyingTrafficChanges = false;
                             }
                         }
@@ -185,6 +195,56 @@ int main() {
                 }
 
                 if (isChangingRoute) {
+                    // Justo después de cambiar la ruta
+                    std::size_t newDestination = routeManager.findClosestNode(mousePos);
+                    if (newDestination != std::size_t(-1)) {
+                        std::size_t currentCarNode = carController.getCurrentNode(map);
+
+                        bool useDijkstra = uiManager.isDijkstraSelected();
+                        auto floydWarshallResult = map.floydWarshall();
+
+                        routeManager.setTotalWeight(0.0f);
+                        uiManager.setTotalWeight(0.0f);
+                        uiManager.setTotalCost(0.0f);
+                        routeManager.calculateNewRoute(newDestination, currentCarNode, useDijkstra, floydWarshallResult);
+
+                        // Depuración para verificar nodos en la nueva ruta
+                        const auto& newRouteNodes = routeManager.getNewPath();
+                        std::cout << "Nodos de la nueva ruta: ";
+                        for (auto node : newRouteNodes) {
+                            std::cout << node << " ";
+                        }
+                        std::cout << std::endl;
+
+                        float totalWeight = routeManager.calculateTotalWeight(currentCarNode);
+                        float totalCost = routeManager.calculateTotalCost();
+
+                        uiManager.setTotalWeight(totalWeight);
+                        uiManager.setTotalCost(totalCost);
+
+                        carController.startMovement(newRouteNodes, map, true, false);
+                        isChangingRoute = false;
+                        newRoute = true;
+                    }
+                }
+
+                
+                if (uiManager.newTripButton.getGlobalBounds().contains(mousePos)) {
+                    if (deleteNewTrip) {
+                        routeManager.clearNewTrips();
+                    }
+                    std::cout << "Botón 'Nuevo Viaje' presionado. Selecciona un nuevo destino." << std::endl;
+                    isSelectingNewTrip = true;  
+                    selectingNewDestination = true;
+                    readyToStartNewTrip = false;
+                    uiManager.setShowStartButton(true);
+                    newRoute = true;
+                    deleteNewTrip = true;
+                    uiManager.showNewTripButton = false;
+
+                }
+
+                if (isSelectingNewTrip) {
                     std::size_t newDestination = routeManager.findClosestNode(mousePos);
                     if (newDestination != std::size_t(-1)) {
                         std::cout << "Nuevo destino seleccionado: " << newDestination << std::endl;
@@ -198,16 +258,16 @@ int main() {
                             routeManager.setTotalWeight(0.0f);
                             uiManager.setTotalWeight(0.0f);
                             uiManager.setTotalCost(0.0f);
-                            routeManager.calculateNewRoute(newDestination, currentCarNode, useDijkstra, floydWarshallResult);
+                            routeManager.calculateNewTrip(newDestination, currentCarNode, useDijkstra, floydWarshallResult);
 
                             float totalWeight = routeManager.calculateTotalWeight(currentCarNode);
                             float totalCost = routeManager.calculateTotalCost();
 
                             uiManager.setTotalWeight(totalWeight);
                             uiManager.setTotalCost(totalCost);
-
-                            carController.startMovement(routeManager.getNewPath(), map, true);
-                            isChangingRoute = false;
+                            
+                            isSelectingNewTrip = false;
+                            newTrip = true;
                         }
                         else {
                             std::cerr << "Error: no se ha seleccionado una ruta válida." << std::endl;
@@ -215,29 +275,39 @@ int main() {
                     }
                 }
 
-                if (uiManager.startButton.getGlobalBounds().contains(mousePos) && routeCalculated && algorithmSelected &&
-                    routeManager.isStartNodeSelected() && routeManager.isEndNodeSelected()) {
-
-                    std::cout << "Botón 'Iniciar' presionado." << std::endl;
-                    carController.startMovement(routeManager.getPath(), map, false);
+                if (uiManager.startButton.getGlobalBounds().contains(mousePos)) {
+                    uiManager.showNewTripButton = false;
+                    std::cout << "Comienza el primer viaje." << std::endl;
+                    if (newTrip) {
+                        carController.startMovement(routeManager.getNewPath(), map, false, true);
+                    }
+                    else {
+                        carController.startMovement(routeManager.getPath(), map, false, false);
+                    }
                     startMovement = true;
                     carVisible = true;
+                    uiManager.setShowStartButton(false);
+
                     float totalWeight = routeManager.calculateTotalWeight();
                     float totalCost = routeManager.calculateTotalCost();
+                    newTrip = false;
                     uiManager.setTotalWeight(totalWeight);
                     uiManager.setTotalCost(totalCost);
                 }
+
 
                 if (uiManager.clearButton.getGlobalBounds().contains(mousePos)) {
                     std::cout << "Botón 'Limpiar' presionado." << std::endl;
                     routeManager.resetRoute();
                     startMovement = false;
                     routeCalculated = false;
-                    carVisible = false; 
+                    carVisible = false;
                     showWeights = false;
                     algorithmSelected = false;
                     isChangingRoute = false;
-                    showStreets = false;
+                    showStreets = true;
+                    uiManager.showNewTripButton = false;
+                    uiManager.setShowStartButton(true);
                     uiManager.selectedTrafficIndex = 0;
                     uiManager.selectedTrafficText.setString(uiManager.trafficOptions[uiManager.selectedTrafficIndex]);
 
@@ -284,6 +354,8 @@ int main() {
                     routeManager.calculateRoute(useDijkstra, floydWarshallResult);
                     routeCalculated = true;
                 }
+
+
             }
         }
 
@@ -302,12 +374,16 @@ int main() {
         if (showWeights) {
             map.drawWeights(window, font);
         }
+        routeManager.drawNewRoute(window);
+        routeManager.drawNewTrips(window);
+        routeManager.drawRoute(window);
 
-        if (routeCalculated) {
-            routeManager.drawRoute(window);
-            routeManager.drawNewRoute(window);
-        }
+        routeManager.drawNewTrips(window);
 
+            float totalWeight = routeManager.calculateTotalWeight();
+            routeManager.setTotalWeight(totalWeight);
+            float totalCost = routeManager.calculateTotalCost();
+        
         uiManager.drawUI(window);
 
         if (carVisible) {

@@ -6,7 +6,6 @@
 
 class UIManager {
 public:
-   
     UIManager(sf::RenderWindow& window, sf::Font& font);
     void resizeUI(sf::RenderWindow& window);
     void drawUI(sf::RenderWindow& window);
@@ -17,7 +16,7 @@ public:
     int getTrafficMultiplier() const;
     void setCarroEnMovimiento(bool enMovimiento);
     bool isDijkstraSelected() const;
-    void isCarMoving(sf::RenderWindow& window,bool carroEnMovimiento);
+    void isCarMoving(sf::RenderWindow& window, bool carroEnMovimiento);
 
     sf::RectangleShape clearButton;
     sf::RectangleShape startButton;
@@ -40,9 +39,16 @@ public:
     sf::RectangleShape changeRouteButton;
     sf::Text changeRouteButtonText;
 
+    sf::RectangleShape newTripButton; // Botón para nuevo viaje
+    sf::Text newTripButtonText;       // Texto del botón nuevo viaje
+    bool showStartButton;
     std::vector<std::string> trafficOptions;
     int selectedTrafficIndex = 0;
-
+    bool showNewTripButton;
+    void setShowStartButton(bool value);
+    bool isShowStartButton() const;
+    void setShowNewTrip(bool value);
+    bool isShowNewTrip() const;
 private:
     sf::Text clearButtonText;
     sf::Text startButtonText;
