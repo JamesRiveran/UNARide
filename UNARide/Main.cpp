@@ -222,10 +222,6 @@ int main() {
                     carController.startMovement(routeManager.getPath(), map, false);
                     startMovement = true;
                     carVisible = true;
-                    float totalWeight = routeManager.calculateTotalWeight();
-                    float totalCost = routeManager.calculateTotalCost();
-                    uiManager.setTotalWeight(totalWeight);
-                    uiManager.setTotalCost(totalCost);
                 }
 
                 if (uiManager.clearButton.getGlobalBounds().contains(mousePos)) {

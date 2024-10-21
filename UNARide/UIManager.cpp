@@ -185,6 +185,10 @@ void UIManager::drawUI(sf::RenderWindow& window) {
         window.draw(changeRouteButton);
         window.draw(changeRouteButtonText);
     }
+    if (!carroEnMovimiento) {
+        window.draw(totalWeightText);
+        window.draw(totalCostText);
+    }
 }
 
 void UIManager:: isCarMoving(sf::RenderWindow& window,bool carroEnMovimiento) {

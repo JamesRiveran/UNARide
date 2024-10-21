@@ -8,8 +8,6 @@ CarController::CarController(sf::Sprite& carSprite, float speed, sf::Texture& up
     leftTexture(leftTexture), rightTexture(rightTexture), currentNodeInPath(0), moving(false), progress(0.0f),
     uiManager(uiManager), routeManager(routeManager), isMoving(false) {} 
 
-
-
 void CarController::startMovement(const std::vector<std::size_t>& path, const Map& map, bool isNewRoute) {
     if (!path.empty()) {
         this->path = path;
@@ -27,7 +25,6 @@ void CarController::startMovement(const std::vector<std::size_t>& path, const Ma
         }
     }
 }
-
 
 void CarController::updateCarDirection(const sf::Vector2f& direction) {
     float angle = std::atan2(direction.y, direction.x) * 180 / 3.14159f;
@@ -71,11 +68,21 @@ void CarController::updateCarDirection(const sf::Vector2f& direction) {
 
     carSprite.setRotation((std::abs(direction.x) > diagonalThreshold && std::abs(direction.y) > diagonalThreshold) ? angle : 0);
 }
+
 void CarController::update(float deltaTime, const Map& map) {
     if (!moving || currentNodeInPath >= path.size() - 1) {
-        moving = false;
-        isMoving = false;
-        uiManager.setCarroEnMovimiento(false);
+        if (moving) {
+            float totalWeight = routeManager.calculateTotalWeight();
+            float totalCost = routeManager.calculateTotalCost();
+            uiManager.setTotalWeight(totalWeight);
+            uiManager.setTotalCost(totalCost);
+
+            moving = false;
+            isMoving = false;
+            uiManager.setCarroEnMovimiento(false);
+
+            return;
+        }
         return;
     }
 
@@ -108,15 +115,13 @@ void CarController::update(float deltaTime, const Map& map) {
         }
 
         if (currentNodeInPath >= path.size() - 1) {
-            moving = false;
-            uiManager.setCarroEnMovimiento(false);
+            return;
         }
     }
     else {
         carSprite.setPosition(startPos + direction * progress);
     }
 }
-
 
 void CarController::stopMovement() {
     isMoving = false;
