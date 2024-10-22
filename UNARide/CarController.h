@@ -12,16 +12,18 @@ public:
     CarController(sf::Sprite& carSprite, float speed, sf::Texture& upTexture, sf::Texture& downTexture,
         sf::Texture& leftTexture, sf::Texture& rightTexture, UIManager& uiManager, RouteManager& routeManager);
 
-    void startMovement(const std::vector<std::size_t>& path, const Map& map, bool isNewRoute);
+    void startMovement(const std::vector<std::size_t>& path, const Map& map, bool isNewRoute, bool isNewTrip);
     void update(float deltaTime, const Map& map);
     void stopMovement();
     void changeRoute(const std::vector<std::size_t>& newPath);
     void stopAtNextNode();
     std::size_t getCurrentNode(const Map& map);
+    size_t findClosestNode(const sf::Vector2f& position, const std::vector<std::size_t>& path, const Map& map);
     bool isStopped() const;
     const std::vector<std::size_t>& getNodesTraversed() const { return nodesTraversed; }
     bool hasValidRoute() const { return !path.empty(); }
     float getPreviousAccumulatedWeight() const { return previousAccumulatedWeight; } 
+    bool isAtDestination() const;
 
 private:
     UIManager& uiManager;

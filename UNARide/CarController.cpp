@@ -13,8 +13,7 @@ CarController::CarController(sf::Sprite& carSprite, float speed, sf::Texture& up
 }
 
 
-
-void CarController::startMovement(const std::vector<std::size_t>& path, const Map& map, bool isNewRoute) {
+void CarController::startMovement(const std::vector<std::size_t>& path, const Map& map, bool isNewRoute, bool isNewTrip) {
     if (!path.empty()) {
         this->path = path;
         currentNodeInPath = 0;
@@ -28,6 +27,7 @@ void CarController::startMovement(const std::vector<std::size_t>& path, const Ma
         if (isNewRoute) {
             previousAccumulatedWeight = accumulatedWeight;
             accumulatedWeight = 0.0f; 
+            routeManager.hasChangedRoute = true;
         }
 
         shouldCalculateTotals = false;
@@ -115,6 +115,12 @@ void CarController::update(float deltaTime, const Map& map) {
     sf::Vector2f startPos = map.getNodes()[currentNode].getPosition();
     sf::Vector2f endPos = map.getNodes()[nextNode].getPosition();
 
+    if (routeManager.hasChangedRoute) {
+        if (routeManager.nodesSinceFirstChange.empty() || routeManager.nodesSinceFirstChange.back() != currentNode) {
+            routeManager.nodesSinceFirstChange.push_back(currentNode);
+        }
+    }
+
     sf::Vector2f direction = endPos - startPos;
     float distance = std::hypot(direction.x, direction.y);
     sf::Vector2f normalizedDirection = direction / distance;
@@ -164,7 +170,10 @@ void CarController::update(float deltaTime, const Map& map) {
             std::cout << "Llegada al destino final. Peso total acumulado: "
                 << previousAccumulatedWeight + accumulatedWeight
                 << " km. Total a pagar: " << totalCost << " colones." << std::endl;
+
+            uiManager.showNewTripButton = true;
         }
+        
     }
     else {
         carSprite.setPosition(startPos + direction * progress);
@@ -204,6 +213,10 @@ void CarController::moveTowardsNextNode(sf::Vector2f start, sf::Vector2f end, fl
             moving = false;
         }
     }
+}
+bool CarController::isAtDestination() const {
+    // Verifica si el carro está en el último nodo del camino
+    return currentNodeInPath >= path.size() - 1;
 }
 
 bool CarController::isStopped() const {
