@@ -155,6 +155,8 @@ int main() {
                     std::cout << "Botón 'Cambiar ruta' presionado. El carro se detendrá en el siguiente nodo más cercano." << std::endl;
                     carController.stopAtNextNode();
                     isChangingRoute = true;
+                    uiManager.setTotalWeight(0.0f);
+                    uiManager.setTotalCost(0.0f);
                 }
 
                 if (awaitingNodeSelection) {

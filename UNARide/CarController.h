@@ -43,6 +43,8 @@ private:
     sf::Texture& downTexture;
     sf::Texture& leftTexture;
     sf::Texture& rightTexture;
+    bool finalDestinationReached;
+    bool shouldCalculateTotals;
 };
 
 #endif
