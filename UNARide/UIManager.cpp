@@ -1,7 +1,8 @@
 ﻿#include "UIManager.h"
 #include <sstream>
 #include <iostream>
-UIManager::UIManager(sf::RenderWindow& window, sf::Font& font) {
+
+UIManager::UIManager(sf::RenderWindow& window, sf::Font& font) : showNewTripButton(false), showStartButton(true) {
     clearButton.setSize(sf::Vector2f(100.f, 40.f));
     clearButton.setFillColor(sf::Color::Black);
     clearButton.setOutlineColor(sf::Color::White);
@@ -11,13 +12,14 @@ UIManager::UIManager(sf::RenderWindow& window, sf::Font& font) {
     startButton.setFillColor(sf::Color::Black);
     startButton.setOutlineColor(sf::Color::White);
     startButton.setOutlineThickness(2.f);
+
     assignAccidentButton.setSize(sf::Vector2f(150.f, 40.f));
     assignAccidentButton.setFillColor(sf::Color::Black);
     assignAccidentButton.setOutlineColor(sf::Color::White);
     assignAccidentButton.setOutlineThickness(2.f);
 
     assignAccidentButtonText.setFont(font);
-    assignAccidentButtonText.setString("Asignar Accidente");
+    assignAccidentButtonText.setString("Accidente");
     assignAccidentButtonText.setCharacterSize(18);
     assignAccidentButtonText.setFillColor(sf::Color::White);
 
@@ -40,8 +42,6 @@ UIManager::UIManager(sf::RenderWindow& window, sf::Font& font) {
     startButtonText.setString("Iniciar");
     startButtonText.setCharacterSize(18);
     startButtonText.setFillColor(sf::Color::White);
-
-    
 
     dijkstraText.setFont(font);
     dijkstraText.setString("Dijkstra");
@@ -93,6 +93,29 @@ UIManager::UIManager(sf::RenderWindow& window, sf::Font& font) {
     changeRouteButtonText.setCharacterSize(18);
     changeRouteButtonText.setFillColor(sf::Color::White);
 
+    coseviButton.setSize(sf::Vector2f(100.f, 40.f));
+    coseviButton.setFillColor(sf::Color::Black);
+    coseviButton.setOutlineColor(sf::Color::White);
+    coseviButton.setOutlineThickness(2.f);
+
+    coseviButtonText.setFont(font);
+    coseviButtonText.setString("COSEVI");
+    coseviButtonText.setCharacterSize(18);
+    coseviButtonText.setFillColor(sf::Color::White);
+
+    newTripButton.setSize(sf::Vector2f(150.f, 40.f));
+    newTripButton.setFillColor(sf::Color::Black);
+    newTripButton.setOutlineColor(sf::Color::White);
+    newTripButton.setOutlineThickness(2.f);
+
+    newTripButtonText.setFont(font);
+    newTripButtonText.setString("Nuevo Viaje");
+    newTripButtonText.setCharacterSize(18);
+    newTripButtonText.setFillColor(sf::Color::White);
+
+    newTripButton.setPosition(10.f, 300.f); // Posición original de "Nuevo Viaje"
+    centerTextInButton(newTripButtonText, newTripButton);
+
     initializeComboBox(font);
     resizeUI(window);
 }
@@ -111,42 +134,39 @@ void UIManager::initializeComboBox(sf::Font& font) {
 }
 
 void UIManager::resizeUI(sf::RenderWindow& window) {
-    clearButton.setPosition(window.getSize().x - 120.f, 20.f);
-    startButton.setPosition(window.getSize().x - 120.f, 80.f);
+    clearButton.setPosition(20.f, 300.f);
+    centerTextInButton(clearButtonText, clearButton);
+    startButton.setPosition(window.getSize().x - 120.f, 20.f);
+    centerTextInButton(startButtonText, startButton);
+    changeRouteButton.setPosition(window.getSize().x - 120.f, 80.f);
+    centerTextInButton(changeRouteButtonText, changeRouteButton);
+    newTripButton.setPosition(window.getSize().x - 120.f, 140.f);
+    centerTextInButton(newTripButtonText, newTripButton);
     dijkstraCheckBox.setPosition(20.f, 20.f);
     floydCheckBox.setPosition(20.f, 60.f);
-
-    centerTextInButton(clearButtonText, clearButton);
-    centerTextInButton(startButtonText, startButton);
-
-    toggleWeightsButton.setPosition(window.getSize().x - 120.f, window.getSize().y - 60.f);
-    centerTextInButton(toggleWeightsButtonText, toggleWeightsButton);
-
-    toggleStreetsButton.setPosition(window.getSize().x - 120.f, window.getSize().y - 120.f);
-    centerTextInButton(toggleStreetsButtonText, toggleStreetsButton);
-
-    assignAccidentButton.setPosition(window.getSize().x - 150.f, 200.f);
-    centerTextInButton(assignAccidentButtonText, assignAccidentButton);
-
-
     dijkstraText.setPosition(50.f, 20.f);
     floydText.setPosition(50.f, 60.f);
-
+    trafficComboBox.setPosition(20.f, 120.f);
+    selectedTrafficText.setPosition(trafficComboBox.getPosition().x + 10.f, trafficComboBox.getPosition().y + 5.f);
+    assignAccidentButton.setPosition(20.f, 180.f);
+    centerTextInButton(assignAccidentButtonText, assignAccidentButton);
+    coseviButton.setPosition(20.f, 240.f);
+    centerTextInButton(coseviButtonText, coseviButton);
+    toggleWeightsButton.setPosition(window.getSize().x - 120.f, window.getSize().y - 60.f);
+    centerTextInButton(toggleWeightsButtonText, toggleWeightsButton);
+    toggleStreetsButton.setPosition(window.getSize().x - 120.f, window.getSize().y - 120.f);
+    centerTextInButton(toggleStreetsButtonText, toggleStreetsButton);
     totalWeightText.setPosition(20.f, window.getSize().y - 80.f);
     totalCostText.setPosition(20.f, window.getSize().y - 40.f);
-
-    trafficComboBox.setPosition(20.f, 100.f);
-    selectedTrafficText.setPosition(trafficComboBox.getPosition().x + 10.f, trafficComboBox.getPosition().y + 5.f);
-
-    changeRouteButton.setPosition(window.getSize().x - 120.f, 140.f);
-    centerTextInButton(changeRouteButtonText, changeRouteButton);
 }
 
 void UIManager::drawUI(sf::RenderWindow& window) {
+    if (showStartButton) {
+        window.draw(startButton);
+        window.draw(startButtonText);
+    }
     window.draw(clearButton);
     window.draw(clearButtonText);
-    window.draw(startButton);
-    window.draw(startButtonText);
     window.draw(dijkstraCheckBox);
     window.draw(floydCheckBox);
     window.draw(dijkstraText);
@@ -155,21 +175,28 @@ void UIManager::drawUI(sf::RenderWindow& window) {
     window.draw(toggleWeightsButtonText);
     window.draw(toggleStreetsButton);
     window.draw(toggleStreetsButtonText);
-    window.draw(totalWeightText);
-    window.draw(totalCostText);
     window.draw(trafficComboBox);
     window.draw(selectedTrafficText);
     window.draw(assignAccidentButton);
     window.draw(assignAccidentButtonText);
-
+    window.draw(coseviButton);
+    window.draw(coseviButtonText);
 
     if (carroEnMovimiento) {
         window.draw(changeRouteButton);
         window.draw(changeRouteButtonText);
     }
+    if (!carroEnMovimiento) {
+        window.draw(totalWeightText);
+        window.draw(totalCostText);
+    }
+    if (showNewTripButton) {
+        window.draw(newTripButton);
+        window.draw(newTripButtonText);
+    }
 }
 
-void UIManager:: isCarMoving(sf::RenderWindow& window,bool carroEnMovimiento) {
+void UIManager::isCarMoving(sf::RenderWindow& window, bool carroEnMovimiento) {
     if (carroEnMovimiento) {
         window.draw(changeRouteButton);
         window.draw(changeRouteButtonText);
@@ -231,10 +258,27 @@ void UIManager::setTotalCost(float totalCost) {
         totalCostText.setString(oss.str());
     }
 }
+
 void UIManager::setCarroEnMovimiento(bool enMovimiento) {
     carroEnMovimiento = enMovimiento;
 }
 
 bool UIManager::isDijkstraSelected() const {
     return dijkstraCheckBox.getFillColor() == sf::Color::Black;
+}
+
+void UIManager::setShowStartButton(bool value) {
+    showStartButton = value;
+}
+
+bool UIManager::isShowStartButton() const {
+    return showStartButton;
+}
+
+void UIManager::setShowNewTrip(bool value) {
+    showNewTripButton = value;
+}
+
+bool UIManager::isShowNewTrip() const {
+    return showNewTripButton;
 }
