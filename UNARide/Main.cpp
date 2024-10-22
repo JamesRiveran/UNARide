@@ -105,8 +105,9 @@ int main() {
                                 std::cout << "Nuevo peso de la calle entre los nodos " << trafficStartNode
                                     << " y " << trafficEndNode << ": " << newWeight << std::endl;
 
-                                routeManager.calculateNewRoute(newDestination, currentCarNode, useDijkstra, floydWarshallResult);
-                                float totalWeight = routeManager.calculateTotalWeight(currentCarNode);  
+                                float previousAccumulatedWeight = carController.getPreviousAccumulatedWeight();
+                                routeManager.calculateNewRoute(newDestination, currentCarNode, useDijkstra, floydWarshallResult, previousAccumulatedWeight);
+                                float totalWeight = routeManager.calculateTotalWeight(currentCarNode, previousAccumulatedWeight);
                                 float totalCost = routeManager.calculateTotalCost(); 
                                 uiManager.setTotalWeight(totalWeight);  
                                 uiManager.setTotalCost(totalCost);
@@ -155,6 +156,8 @@ int main() {
                     std::cout << "Botón 'Cambiar ruta' presionado. El carro se detendrá en el siguiente nodo más cercano." << std::endl;
                     carController.stopAtNextNode();
                     isChangingRoute = true;
+                    uiManager.setTotalWeight(0.0f);
+                    uiManager.setTotalCost(0.0f);
                 }
 
                 if (awaitingNodeSelection) {
@@ -192,15 +195,13 @@ int main() {
                         if (routeManager.isStartNodeSelected() && carController.hasValidRoute()) {
                             std::size_t currentCarNode = carController.getCurrentNode(map);
 
+
                             bool useDijkstra = uiManager.isDijkstraSelected();
                             floydWarshallResult = map.floydWarshall();
 
-                            routeManager.setTotalWeight(0.0f);
-                            uiManager.setTotalWeight(0.0f);
-                            uiManager.setTotalCost(0.0f);
-                            routeManager.calculateNewRoute(newDestination, currentCarNode, useDijkstra, floydWarshallResult);
-
-                            float totalWeight = routeManager.calculateTotalWeight(currentCarNode);
+                            float previousAccumulatedWeight = carController.getPreviousAccumulatedWeight();
+                            routeManager.calculateNewRoute(newDestination, currentCarNode, useDijkstra, floydWarshallResult, previousAccumulatedWeight);
+                            float totalWeight = routeManager.calculateTotalWeight(currentCarNode, previousAccumulatedWeight); 
                             float totalCost = routeManager.calculateTotalCost();
 
                             uiManager.setTotalWeight(totalWeight);
@@ -222,10 +223,6 @@ int main() {
                     carController.startMovement(routeManager.getPath(), map, false);
                     startMovement = true;
                     carVisible = true;
-                    float totalWeight = routeManager.calculateTotalWeight();
-                    float totalCost = routeManager.calculateTotalCost();
-                    uiManager.setTotalWeight(totalWeight);
-                    uiManager.setTotalCost(totalCost);
                 }
 
                 if (uiManager.clearButton.getGlobalBounds().contains(mousePos)) {

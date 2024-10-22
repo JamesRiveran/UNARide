@@ -172,18 +172,21 @@ void UIManager::drawUI(sf::RenderWindow& window) {
     window.draw(toggleWeightsButtonText);
     window.draw(toggleStreetsButton);
     window.draw(toggleStreetsButtonText);
-    window.draw(totalWeightText);
-    window.draw(totalCostText);
     window.draw(trafficComboBox);
     window.draw(selectedTrafficText);
     window.draw(assignAccidentButton);
     window.draw(assignAccidentButtonText);
-    window.draw(coseviButton);        
+    window.draw(coseviButton);
     window.draw(coseviButtonText);
 
     if (carroEnMovimiento) {
         window.draw(changeRouteButton);
         window.draw(changeRouteButtonText);
+    }
+
+    if (!carroEnMovimiento) {
+        window.draw(totalWeightText);
+        window.draw(totalCostText);
     }
 }
 
