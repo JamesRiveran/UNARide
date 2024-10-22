@@ -18,9 +18,9 @@ int main() {
     std::size_t node1 = std::numeric_limits<std::size_t>::max();
     std::size_t node2 = std::numeric_limits<std::size_t>::max();
     bool awaitingNodeSelection = false;
-    bool isSelectingNewTrip = false;  // Nueva bandera para "Nuevo Viaje"
-    bool selectingNewDestination = false;  // Nueva bandera para "Nuevo Viaje"
-    bool carVisible = false;  // Bandera que indica si se está seleccionando el destino del "Nuevo Viaje"
+    bool isSelectingNewTrip = false;  
+    bool selectingNewDestination = false;  
+    bool carVisible = false;  
     bool readyToStartNewTrip = false;
     bool newTrip = false;
     bool newRoute = false;
@@ -199,7 +199,6 @@ int main() {
                 }
 
                 if (isChangingRoute) {
-                    // Justo después de cambiar la ruta
                     std::size_t newDestination = routeManager.findClosestNode(mousePos);
                     if (newDestination != std::size_t(-1)) {
                         std::size_t currentCarNode = carController.getCurrentNode(map);
@@ -213,7 +212,6 @@ int main() {
                         float previousAccumulatedWeight = carController.getPreviousAccumulatedWeight();
                         routeManager.calculateNewRoute(newDestination, currentCarNode, useDijkstra, floydWarshallResult, previousAccumulatedWeight);
 
-                        // Depuración para verificar nodos en la nueva ruta
                         const auto& newRouteNodes = routeManager.getNewPath();
                         std::cout << "Nodos de la nueva ruta: ";
                         for (auto node : newRouteNodes) {

@@ -113,7 +113,7 @@ UIManager::UIManager(sf::RenderWindow& window, sf::Font& font) : showNewTripButt
     newTripButtonText.setCharacterSize(18);
     newTripButtonText.setFillColor(sf::Color::White);
 
-    newTripButton.setPosition(10.f, 300.f); // Posición original de "Nuevo Viaje"
+    newTripButton.setPosition(10.f, 300.f); 
     centerTextInButton(newTripButtonText, newTripButton);
 
     initializeComboBox(font);

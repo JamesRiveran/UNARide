@@ -96,14 +96,15 @@ void CarController::update(float deltaTime, const Map& map) {
 
             if (finalDestinationReached) {
                 float totalWeight = previousAccumulatedWeight + accumulatedWeight;
-                float totalCost = totalWeight * routeManager.getCostPerKm();
-
-                std::cout << "Llegada al destino final. Peso total acumulado (incluyendo rutas anteriores): "
-                    << totalWeight << " km. Total a pagar: " << totalCost << " colones." << std::endl;
-
-                uiManager.setTotalWeight(totalWeight);
-                uiManager.setTotalCost(totalCost);
+                if (totalWeight > 0) {
+                    float totalCost = totalWeight * routeManager.getCostPerKm();
+                    uiManager.setTotalWeight(totalWeight);
+                    uiManager.setTotalCost(totalCost);
+                    std::cout << "Llegada al destino final. Peso total acumulado (incluyendo rutas anteriores): "
+                        << totalWeight << " km. Total a pagar: " << totalCost << " colones." << std::endl;
+                }
             }
+
 
             return;
         }
@@ -215,7 +216,6 @@ void CarController::moveTowardsNextNode(sf::Vector2f start, sf::Vector2f end, fl
     }
 }
 bool CarController::isAtDestination() const {
-    // Verifica si el carro está en el último nodo del camino
     return currentNodeInPath >= path.size() - 1;
 }
 

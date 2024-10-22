@@ -69,14 +69,13 @@ void RouteManager::resetRoute() {
     newPathCalculated = false;
     hasChangedRoute = false;
 
-    // Limpiar todos los datos de rutas
-    path.clear();            // Ruta anterior
-    newPath.clear();          // Nueva ruta (si hubo cambio de ruta)
-    previousRoutes.clear();   // Limpiar todas las rutas anteriores
-    newTrips.clear();         // Limpiar todos los nuevos viajes
+    path.clear();           
+    newPath.clear();        
+    previousRoutes.clear(); 
+    newTrips.clear();         
 
-    nodesSinceFirstChange.clear();  // Limpiar nodos desde el primer cambio de ruta
-    totalWeight = 0.0f;       // Reiniciar peso total
+    nodesSinceFirstChange.clear();
+    totalWeight = 0.0f;       
 
     std::cout << "Ruta y estado reiniciados." << std::endl;
 }
@@ -89,7 +88,7 @@ float RouteManager::calculateTotalWeightUnique() const {
 }
 
 float RouteManager::calculateTotalWeight(std::size_t currentCarNode) const { 
-    return calculateTotalWeight(currentCarNode, 0.0f); // Valor por defecto para el segundo argumento.
+    return calculateTotalWeight(currentCarNode, 0.0f);
 } 
 
 float RouteManager::calculateTotalWeight(std::size_t currentCarNode, float previousAccumulatedWeight) const {
@@ -177,7 +176,6 @@ void RouteManager::updateCostPerKm() {
 float RouteManager::calculateTotalCost() const {
     float totalWeight = getTotalWeight();  
     if (totalWeight == 0.0f) {
-        std::cerr << "Error: el peso total es 0, no se puede calcular el costo correctamente." << std::endl;
         return 0.0f;
     }
 
@@ -296,22 +294,20 @@ bool RouteManager::areNodesConnected(std::size_t node1, std::size_t node2) {
 }
 void RouteManager::drawNewRoute(sf::RenderWindow& window) {
     if (newPathCalculated && !newPath.empty()) {
-        // Dibuja la nueva ruta de color morado
         for (std::size_t i = 0; i < newPath.size() - 1; ++i) {
             std::size_t currentNode = newPath[i];
             std::size_t nextNode = newPath[i + 1];
             if (currentNode < map.getNodes().size() && nextNode < map.getNodes().size()) {
-                map.drawStreet(window, currentNode, nextNode, sf::Color(186, 85, 211)); // Color morado
+                map.drawStreet(window, currentNode, nextNode, sf::Color(186, 85, 211));
             }
         }
 
-        // Dibuja los nodos recorridos de la ruta anterior también de color morado
         if (hasChangedRoute && nodesSinceFirstChange.size() > 1) {
             for (std::size_t i = 0; i < nodesSinceFirstChange.size() - 1; ++i) {
                 std::size_t currentNode = nodesSinceFirstChange[i];
                 std::size_t nextNode = nodesSinceFirstChange[i + 1];
                 if (currentNode < map.getNodes().size() && nextNode < map.getNodes().size()) {
-                    map.drawStreet(window, currentNode, nextNode, sf::Color(186, 85, 211)); // Morado para los nodos recorridos
+                    map.drawStreet(window, currentNode, nextNode, sf::Color(186, 85, 211));
                 }
             }
         }
@@ -355,7 +351,7 @@ void RouteManager::drawNewTrips(sf::RenderWindow& window) {
         for (std::size_t i = 0; i < newTripPath.size() - 1; ++i) {
             std::size_t currentNode = newTripPath[i];
             std::size_t nextNode = newTripPath[i + 1];
-            map.drawStreet(window, currentNode, nextNode, sf::Color::Blue);  // Siempre dibujar nuevo viaje en azul
+            map.drawStreet(window, currentNode, nextNode, sf::Color::Blue);
         }
     }
 }
@@ -364,7 +360,6 @@ void RouteManager::drawNewTrips(sf::RenderWindow& window) {
 
 void RouteManager::calculateNewTrip(std::size_t newDestination, std::size_t currentCarNode, bool useDijkstra, const std::pair<std::vector<std::vector<float>>, std::vector<std::vector<int>>>& floydWarshallResult) {
     if (!path.empty()) {
-        // Guardar la ruta anterior con su color
         previousRoutes.push_back({ path, routeColors[currentColorIndex] });
         currentColorIndex = (currentColorIndex + 1) % routeColors.size();
     }
@@ -393,8 +388,7 @@ void RouteManager::calculateNewTrip(std::size_t newDestination, std::size_t curr
 
     newPathCalculated = true;
 
-    // Asegurarnos de que la nueva ruta (nuevo viaje) siempre se dibuje en azul
-    newTrips.push_back({ newPath, sf::Color::Blue }); // Azul para los nuevos viajes
+    newTrips.push_back({ newPath, sf::Color::Blue });
 
     float totalWeight = calculateTotalWeight(currentCarNode);
     setTotalWeight(totalWeight);
