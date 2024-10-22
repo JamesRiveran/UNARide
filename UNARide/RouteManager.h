@@ -12,8 +12,7 @@ public:
     void selectNode(sf::Vector2f mousePos);
     void calculateRoute(bool useDijkstra, const std::pair<std::vector<std::vector<float>>, std::vector<std::vector<int>>>& floydWarshallResult);
     void resetRoute();
-    float calculateTotalWeight() const;  
-    float calculateTotalWeight(std::size_t currentCarNode) const;
+    float calculateTotalWeight(std::size_t currentCarNode, float previousAccumulatedWeight) const;
     float calculateTotalCost() const;
     void updateCostPerKm();
     void drawRoute(sf::RenderWindow& window);
@@ -36,12 +35,15 @@ public:
     int currentColorIndex = 0;  
 
     float calculateWeightFromCurrentToEnd(std::size_t currentCarNode) const;
-    void calculateNewRoute(std::size_t newDestination, std::size_t currentCarNode, bool useDijkstra, const std::pair<std::vector<std::vector<float>>, std::vector<std::vector<int>>>& floydWarshallResult);
+    void calculateNewRoute(std::size_t newDestination, std::size_t currentCarNode, bool useDijkstra,
+        const std::pair<std::vector<std::vector<float>>, std::vector<std::vector<int>>>& floydWarshallResult,
+        float previousAccumulatedWeight);
     void drawNewRoute(sf::RenderWindow& window);
     void setEndNode(std::size_t newEndNode);
     const std::vector<std::size_t>& getNewPath() const;
     std::vector<std::size_t> nodesSinceFirstChange;
     bool hasChangedRoute = false;
+    float getCostPerKm() const;
 
 private:
     float costPerKm;

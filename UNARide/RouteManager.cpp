@@ -6,8 +6,10 @@
 RouteManager::RouteManager(Map& map, float costPerKm)
     : map(map), startNodeSelected(false), endNodeSelected(false), routeCalculated(false),
     costPerKm(costPerKm), startNode(0), endNode(0), isNewRoute(false), newPathCalculated(false),
-    hasChangedRoute(false), nodesSinceFirstChange()
-{}
+    hasChangedRoute(false), nodesSinceFirstChange(), totalWeight(0.0f)  
+{
+}
+
 
 
 void printPredecessorMatrix(const std::vector<std::vector<int>>& pred) {
@@ -75,13 +77,9 @@ void RouteManager::resetRoute() {
     std::cout << "Ruta reiniciada." << std::endl;
 }
 
-float RouteManager::calculateTotalWeight() const {
-    return calculateTotalWeight(std::size_t(-1));  
-}
-
-float RouteManager::calculateTotalWeight(std::size_t currentCarNode) const {
-    float totalWeight = 0.0f;
-    bool startCounting = true; 
+float RouteManager::calculateTotalWeight(std::size_t currentCarNode, float previousAccumulatedWeight) const {
+    float totalWeight = previousAccumulatedWeight;  
+    bool startCounting = false;
 
     if (path.size() > 1) {
         for (std::size_t i = 0; i < path.size() - 1; ++i) {
@@ -89,8 +87,7 @@ float RouteManager::calculateTotalWeight(std::size_t currentCarNode) const {
             std::size_t nextNode = path[i + 1];
 
             if (currentNode == currentCarNode) {
-                startCounting = false; 
-                break;
+                startCounting = true;
             }
 
             if (startCounting) {
@@ -125,7 +122,7 @@ float RouteManager::calculateTotalWeight(std::size_t currentCarNode) const {
                 if ((street.getNode1() == currentNode && street.getNode2() == nextNode) ||
                     (street.isBidirectional() && street.getNode1() == nextNode && street.getNode2() == currentNode)) {
 
-                    totalWeight += street.getWeight();  
+                    totalWeight += street.getWeight();
                     streetFound = true;
                     std::cout << "Añadiendo peso de la calle en la nueva ruta entre " << currentNode
                         << " y " << nextNode << ": " << street.getWeight() << " km" << std::endl;
@@ -139,7 +136,7 @@ float RouteManager::calculateTotalWeight(std::size_t currentCarNode) const {
         }
     }
 
-    const_cast<RouteManager*>(this)->totalWeight = totalWeight; 
+    const_cast<RouteManager*>(this)->totalWeight = totalWeight;
     return totalWeight;
 }
 
@@ -233,10 +230,13 @@ void RouteManager::setEndNode(std::size_t newEndNode) {
     std::cout << "Nuevo nodo final actualizado: " << endNode << std::endl;
 }
 
-void RouteManager::calculateNewRoute(std::size_t newDestination, std::size_t currentCarNode, bool useDijkstra, const std::pair<std::vector<std::vector<float>>, std::vector<std::vector<int>>>& floydWarshallResult) {
+void RouteManager::calculateNewRoute(std::size_t newDestination, std::size_t currentCarNode, bool useDijkstra,
+    const std::pair<std::vector<std::vector<float>>, std::vector<std::vector<int>>>& floydWarshallResult,
+    float previousAccumulatedWeight) {
+
     if (!path.empty()) {
         previousRoutes.push_back({ path, routeColors[currentColorIndex] });
-        currentColorIndex = (currentColorIndex + 1) % routeColors.size();  
+        currentColorIndex = (currentColorIndex + 1) % routeColors.size();
     }
 
     newPath.clear();
@@ -263,13 +263,14 @@ void RouteManager::calculateNewRoute(std::size_t newDestination, std::size_t cur
 
     newPathCalculated = true;
 
-    float totalWeight = calculateTotalWeight(currentCarNode);
+    float totalWeight = calculateTotalWeight(currentCarNode, previousAccumulatedWeight);
     setTotalWeight(totalWeight);
     float totalCost = calculateTotalCost();
 
     std::cout << "Nuevo peso total de la ruta: " << totalWeight << " km" << std::endl;
     std::cout << "Nuevo costo total del viaje: " << totalCost << " colones" << std::endl;
 }
+
 
 
 bool RouteManager::areNodesConnected(std::size_t node1, std::size_t node2) {
@@ -366,6 +367,11 @@ const std::vector<std::size_t>& RouteManager::getNewPath() const {
 void RouteManager::setTotalWeight(float weight) {
     totalWeight = weight;
 }
+
+float RouteManager::getCostPerKm() const {
+    return costPerKm;
+}
+
 
 float RouteManager::getTotalWeight() const {
     return totalWeight;

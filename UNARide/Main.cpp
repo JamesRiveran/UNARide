@@ -105,8 +105,9 @@ int main() {
                                 std::cout << "Nuevo peso de la calle entre los nodos " << trafficStartNode
                                     << " y " << trafficEndNode << ": " << newWeight << std::endl;
 
-                                routeManager.calculateNewRoute(newDestination, currentCarNode, useDijkstra, floydWarshallResult);
-                                float totalWeight = routeManager.calculateTotalWeight(currentCarNode);  
+                                float previousAccumulatedWeight = carController.getPreviousAccumulatedWeight();
+                                routeManager.calculateNewRoute(newDestination, currentCarNode, useDijkstra, floydWarshallResult, previousAccumulatedWeight);
+                                float totalWeight = routeManager.calculateTotalWeight(currentCarNode, previousAccumulatedWeight);
                                 float totalCost = routeManager.calculateTotalCost(); 
                                 uiManager.setTotalWeight(totalWeight);  
                                 uiManager.setTotalCost(totalCost);
@@ -194,15 +195,13 @@ int main() {
                         if (routeManager.isStartNodeSelected() && carController.hasValidRoute()) {
                             std::size_t currentCarNode = carController.getCurrentNode(map);
 
+
                             bool useDijkstra = uiManager.isDijkstraSelected();
                             floydWarshallResult = map.floydWarshall();
 
-                            routeManager.setTotalWeight(0.0f);
-                            uiManager.setTotalWeight(0.0f);
-                            uiManager.setTotalCost(0.0f);
-                            routeManager.calculateNewRoute(newDestination, currentCarNode, useDijkstra, floydWarshallResult);
-
-                            float totalWeight = routeManager.calculateTotalWeight(currentCarNode);
+                            float previousAccumulatedWeight = carController.getPreviousAccumulatedWeight();
+                            routeManager.calculateNewRoute(newDestination, currentCarNode, useDijkstra, floydWarshallResult, previousAccumulatedWeight);
+                            float totalWeight = routeManager.calculateTotalWeight(currentCarNode, previousAccumulatedWeight); 
                             float totalCost = routeManager.calculateTotalCost();
 
                             uiManager.setTotalWeight(totalWeight);

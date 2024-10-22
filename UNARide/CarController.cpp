@@ -7,7 +7,12 @@ CarController::CarController(sf::Sprite& carSprite, float speed, sf::Texture& up
     : carSprite(carSprite), speed(speed), upTexture(upTexture), downTexture(downTexture),
     leftTexture(leftTexture), rightTexture(rightTexture), currentNodeInPath(0), moving(false), progress(0.0f),
     uiManager(uiManager), routeManager(routeManager), isMoving(false), shouldStopAtNextNode(false),
-    finalDestinationReached(false), shouldCalculateTotals(false) {}
+    finalDestinationReached(false), shouldCalculateTotals(false), accumulatedWeight(0.0f),
+    previousAccumulatedWeight(0.0f) 
+{
+}
+
+
 
 void CarController::startMovement(const std::vector<std::size_t>& path, const Map& map, bool isNewRoute) {
     if (!path.empty()) {
@@ -20,8 +25,15 @@ void CarController::startMovement(const std::vector<std::size_t>& path, const Ma
         isMoving = true;
         uiManager.setCarroEnMovimiento(true);
 
+        if (isNewRoute) {
+            previousAccumulatedWeight = accumulatedWeight;
+            accumulatedWeight = 0.0f; 
+        }
+
         shouldCalculateTotals = false;
         finalDestinationReached = false;
+
+        std::cout << "Movimiento iniciado. Peso acumulado reiniciado a " << accumulatedWeight << " km." << std::endl;
 
         if (isNewRoute && !routeManager.hasChangedRoute) {
             routeManager.hasChangedRoute = true;
@@ -29,7 +41,6 @@ void CarController::startMovement(const std::vector<std::size_t>& path, const Ma
         }
     }
 }
-
 
 void CarController::updateCarDirection(const sf::Vector2f& direction) {
     float angle = std::atan2(direction.y, direction.x) * 180 / 3.14159f;
@@ -84,8 +95,12 @@ void CarController::update(float deltaTime, const Map& map) {
             finalDestinationReached = true;
 
             if (finalDestinationReached) {
-                float totalWeight = routeManager.calculateTotalWeight();
-                float totalCost = routeManager.calculateTotalCost();
+                float totalWeight = previousAccumulatedWeight + accumulatedWeight;
+                float totalCost = totalWeight * routeManager.getCostPerKm();
+
+                std::cout << "Llegada al destino final. Peso total acumulado (incluyendo rutas anteriores): "
+                    << totalWeight << " km. Total a pagar: " << totalCost << " colones." << std::endl;
+
                 uiManager.setTotalWeight(totalWeight);
                 uiManager.setTotalCost(totalCost);
             }
@@ -112,6 +127,23 @@ void CarController::update(float deltaTime, const Map& map) {
         currentNodeInPath++;
         progress = 0.0f;
 
+        std::size_t currentNode = path[currentNodeInPath - 1];
+        std::size_t nextNode = path[currentNodeInPath];
+
+        std::cout << "Intentando obtener calle entre nodo " << currentNode << " y nodo " << nextNode << "." << std::endl;
+        const Street* street = map.getStreetBetweenNodes(currentNode, nextNode);
+
+        if (street) {
+            accumulatedWeight += street->getWeight();  
+            std::cout << "Calle encontrada entre nodo " << currentNode << " y nodo " << nextNode
+                << ". Peso de la calle: " << street->getWeight() << " km. Peso acumulado actual: "
+                << accumulatedWeight << " km." << std::endl;
+        }
+        else {
+            std::cerr << "Error: No se encontró una calle entre nodo " << currentNode
+                << " y nodo " << nextNode << "." << std::endl;
+        }
+
         if (shouldStopAtNextNode) {
             moving = false;
             isMoving = false;
@@ -125,13 +157,13 @@ void CarController::update(float deltaTime, const Map& map) {
             isMoving = false;
             uiManager.setCarroEnMovimiento(false);
 
-            finalDestinationReached = true;
-            shouldCalculateTotals = true;
-
-            float totalWeight = routeManager.calculateTotalWeight();
-            float totalCost = routeManager.calculateTotalCost();
-            uiManager.setTotalWeight(totalWeight);
+            float totalCost = (previousAccumulatedWeight + accumulatedWeight) * routeManager.getCostPerKm();
+            uiManager.setTotalWeight(previousAccumulatedWeight + accumulatedWeight);  
             uiManager.setTotalCost(totalCost);
+
+            std::cout << "Llegada al destino final. Peso total acumulado: "
+                << previousAccumulatedWeight + accumulatedWeight
+                << " km. Total a pagar: " << totalCost << " colones." << std::endl;
         }
     }
     else {
@@ -146,16 +178,17 @@ void CarController::stopMovement() {
 
 void CarController::changeRoute(const std::vector<std::size_t>& newPath) {
     if (isMoving) {
+        std::cout << "Ruta cambiada. Peso acumulado hasta el momento: " << accumulatedWeight << " km." << std::endl;
+
         path = newPath;
         currentNodeInPath = 0;
         progress = 0.0f;
 
         shouldCalculateTotals = false;
         finalDestinationReached = false;
-
-        std::cout << "Ruta cambiada en tiempo real.\n";
     }
 }
+
 
 
 void CarController::moveTowardsNextNode(sf::Vector2f start, sf::Vector2f end, float deltaTime) {
