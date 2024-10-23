@@ -237,7 +237,7 @@ int main() {
                         routeManager.clearNewTrips();
                     }
                     std::cout << "Botón 'Nuevo Viaje' presionado. Selecciona un nuevo destino." << std::endl;
-                    isSelectingNewTrip = true;  
+                    isSelectingNewTrip = true;
                     selectingNewDestination = true;
                     readyToStartNewTrip = false;
                     uiManager.setShowStartButton(true);
@@ -255,19 +255,20 @@ int main() {
                         if (routeManager.isStartNodeSelected() && carController.hasValidRoute()) {
                             std::size_t currentCarNode = carController.getCurrentNode(map);
 
-
                             bool useDijkstra = uiManager.isDijkstraSelected();
                             floydWarshallResult = map.floydWarshall();
 
-                            float previousAccumulatedWeight = carController.getPreviousAccumulatedWeight();
-                            routeManager.calculateNewRoute(newDestination, currentCarNode, useDijkstra, floydWarshallResult, previousAccumulatedWeight);
-                            float totalWeight = routeManager.calculateTotalWeight(currentCarNode, previousAccumulatedWeight); 
+                            routeManager.setTotalWeight(0.0f);
+                            uiManager.setTotalWeight(0.0f);
+                            uiManager.setTotalCost(0.0f);
+                            routeManager.calculateNewTrip(newDestination, currentCarNode, useDijkstra, floydWarshallResult);
 
+                            float totalWeight = routeManager.calculateTotalWeight(currentCarNode);
                             float totalCost = routeManager.calculateTotalCost();
 
                             uiManager.setTotalWeight(totalWeight);
                             uiManager.setTotalCost(totalCost);
-                            
+
                             isSelectingNewTrip = false;
                             newTrip = true;
                         }
@@ -276,6 +277,7 @@ int main() {
                         }
                     }
                 }
+
 
                 if (uiManager.startButton.getGlobalBounds().contains(mousePos)) {
                     uiManager.showNewTripButton = false;
@@ -377,9 +379,12 @@ int main() {
         if (showWeights) {
             map.drawWeights(window, font);
         }
-        routeManager.drawNewRoute(window);
-        routeManager.drawNewTrips(window);
+
+       // routeManager.drawNewTrips(window);
+
         routeManager.drawRoute(window);
+
+        routeManager.drawNewRoute(window);
 
         routeManager.drawNewTrips(window);
 
