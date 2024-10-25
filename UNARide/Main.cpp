@@ -18,6 +18,8 @@ int main() {
     std::size_t node1 = std::numeric_limits<std::size_t>::max();
     std::size_t node2 = std::numeric_limits<std::size_t>::max();
     bool awaitingNodeSelection = false;
+    bool awaitingStreetClose = false;
+    bool awaitingStreetOpen = false;
     bool isSelectingNewTrip = false;  
     bool selectingNewDestination = false;  
     bool carVisible = false;  
@@ -99,6 +101,80 @@ int main() {
                     carController.stopAtNextNode();
                     applyingTrafficChanges = true;
                 }
+                if (uiManager.assignAccidentButton.getGlobalBounds().contains(window.mapPixelToCoords(sf::Mouse::getPosition(window)))||
+                    uiManager.coseviButton.getGlobalBounds().contains(window.mapPixelToCoords(sf::Mouse::getPosition(window)))) {
+                    awaitingStreetClose = true;
+                    nodesSelected = 0;
+                }
+
+                if (awaitingStreetClose) {
+                    std::size_t selectedNode = routeManager.findClosestNode(window.mapPixelToCoords(sf::Mouse::getPosition(window)));
+                    if (selectedNode != std::numeric_limits<std::size_t>::max()) {
+                        if (nodesSelected == 0) {
+                            node1 = selectedNode;
+                            nodesSelected++;
+                        }
+                        else if (nodesSelected == 1) {
+                            if (routeManager.areNodesConnected(node1, selectedNode)) {
+                                node2 = selectedNode;
+                                awaitingStreetClose = false;
+
+                                for (auto& street : map.getStreets()) {
+                                    if ((street.getNode1() == node1 && street.getNode2() == node2) ||
+                                        (street.getNode1() == node2 && street.getNode2() == node1)) {
+                                        bool closeFromNode1ToNode2 = true;
+
+                                        if (closeFromNode1ToNode2) {
+                                            street.closeStreetDirection(node1, node2);
+                                        }
+                                        else {
+                                            street.closeStreetDirection(node2, node1);
+                                        }
+
+                                        std::cout << "Calle cerrada entre los nodos " << node1 << " y " << node2 << " en la dirección seleccionada." << std::endl;
+                                    }
+                                }
+                                nodesSelected = 0;
+                            }
+                            else {
+                                std::cout << "El segundo nodo no es adyacente al primero." << std::endl;
+                            }
+                        }
+                    }
+                }
+                if (uiManager.openStreetButton.getGlobalBounds().contains(window.mapPixelToCoords(sf::Mouse::getPosition(window)))) {
+                    awaitingStreetOpen = true;
+                    nodesSelected = 0;
+                }
+
+                if (awaitingStreetOpen) {
+                    std::size_t selectedNode = routeManager.findClosestNode(window.mapPixelToCoords(sf::Mouse::getPosition(window)));
+                    if (selectedNode != std::numeric_limits<std::size_t>::max()) {
+                        if (nodesSelected == 0) {
+                            node1 = selectedNode;
+                            nodesSelected++;
+                        }
+                        else if (nodesSelected == 1) {
+                            if (routeManager.areNodesConnected(node1, selectedNode)) {
+                                node2 = selectedNode;
+                                awaitingStreetOpen = false;
+
+                                for (auto& street : map.getStreets()) {
+                                    if ((street.getNode1() == node1 && street.getNode2() == node2) ||
+                                        (street.getNode1() == node2 && street.getNode2() == node1)) {
+                                        street.openStreetDirection(node1,node2);
+                                    }
+                                }
+                                nodesSelected = 0;
+                            }
+                            else {
+                                std::cout << "El segundo nodo no es adyacente al primero." << std::endl;
+                            }
+                        }
+                    }
+                }
+
+
 
                 if (applyingTrafficChanges && carController.isStopped()) {
                     if (routeManager.isStartNodeSelected() && carController.hasValidRoute()) {
@@ -379,7 +455,7 @@ int main() {
         if (showWeights) {
             map.drawWeights(window, font);
         }
-
+        
        // routeManager.drawNewTrips(window);
 
         routeManager.drawRoute(window);
@@ -387,6 +463,8 @@ int main() {
         routeManager.drawNewRoute(window);
 
         routeManager.drawNewTrips(window);
+
+        routeManager.drawClosedStreets(window);
 
             float totalWeight = routeManager.calculateTotalWeightUnique();
             routeManager.setTotalWeight(totalWeight);

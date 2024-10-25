@@ -357,6 +357,18 @@ void RouteManager::drawNewTrips(sf::RenderWindow& window) {
 }
 
 
+void RouteManager::drawClosedStreets(sf::RenderWindow& window) {
+    for (const auto& street : map.getStreets()) {
+        if (street.isClosedDirection(street.getNode1(), street.getNode2())) {
+            map.drawStreet(window, street.getNode1(), street.getNode2(), sf::Color::Yellow);  // Dibuja de node1 a node2 en amarillo
+        }
+        if (street.isClosedDirection(street.getNode2(), street.getNode1())) {
+            map.drawStreet(window, street.getNode2(), street.getNode1(), sf::Color::Yellow);  // Dibuja de node2 a node1 en amarillo
+        }
+    }
+}
+
+
 
 void RouteManager::calculateNewTrip(std::size_t newDestination, std::size_t currentCarNode, bool useDijkstra, const std::pair<std::vector<std::vector<float>>, std::vector<std::vector<int>>>& floydWarshallResult) {
     if (!path.empty()) {

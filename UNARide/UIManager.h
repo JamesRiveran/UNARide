@@ -21,7 +21,9 @@ public:
     sf::RectangleShape clearButton;
     sf::RectangleShape startButton;
     sf::RectangleShape assignAccidentButton;
+    sf::RectangleShape openStreetButton;
     sf::Text assignAccidentButtonText;
+    sf::Text openStreetText;
     sf::RectangleShape dijkstraCheckBox;
     sf::RectangleShape floydCheckBox;
     sf::RectangleShape coseviButton;

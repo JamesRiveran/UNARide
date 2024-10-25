@@ -23,6 +23,16 @@ UIManager::UIManager(sf::RenderWindow& window, sf::Font& font) : showNewTripButt
     assignAccidentButtonText.setCharacterSize(18);
     assignAccidentButtonText.setFillColor(sf::Color::White);
 
+    openStreetButton.setSize(sf::Vector2f(150.f, 40.f));
+    openStreetButton.setFillColor(sf::Color::Black);
+    openStreetButton.setOutlineColor(sf::Color::White);
+    openStreetButton.setOutlineThickness(2.f);
+
+    openStreetText.setFont(font);
+    openStreetText.setString("Abrir calle");
+    openStreetText.setCharacterSize(18);
+    openStreetText.setFillColor(sf::Color::White);
+
     dijkstraCheckBox.setSize(sf::Vector2f(20.f, 20.f));
     dijkstraCheckBox.setFillColor(sf::Color::White);
     dijkstraCheckBox.setOutlineColor(sf::Color::Black);
@@ -149,6 +159,8 @@ void UIManager::resizeUI(sf::RenderWindow& window) {
     trafficComboBox.setPosition(20.f, 120.f);
     selectedTrafficText.setPosition(trafficComboBox.getPosition().x + 10.f, trafficComboBox.getPosition().y + 5.f);
     assignAccidentButton.setPosition(20.f, 180.f);
+    openStreetButton.setPosition(20.f, 400.f);
+    centerTextInButton(openStreetText, openStreetButton);
     centerTextInButton(assignAccidentButtonText, assignAccidentButton);
     coseviButton.setPosition(20.f, 240.f);
     centerTextInButton(coseviButtonText, coseviButton);
@@ -179,6 +191,8 @@ void UIManager::drawUI(sf::RenderWindow& window) {
     window.draw(selectedTrafficText);
     window.draw(assignAccidentButton);
     window.draw(assignAccidentButtonText);
+    window.draw(openStreetButton);
+    window.draw(openStreetText);
     window.draw(coseviButton);
     window.draw(coseviButtonText);
 

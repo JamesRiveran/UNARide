@@ -44,6 +44,7 @@ public:
     void calculateNewTrip(std::size_t newDestination, std::size_t currentCarNode, bool useDijkstra, const std::pair<std::vector<std::vector<float>>, std::vector<std::vector<int>>>& floydWarshallResult);
     void drawNewRoute(sf::RenderWindow& window);
     void setEndNode(std::size_t newEndNode);
+    void drawClosedStreets(sf::RenderWindow& window);
     const std::vector<std::size_t>& getNewPath() const;
     std::vector<std::size_t> nodesSinceFirstChange;
     bool hasChangedRoute = false;
