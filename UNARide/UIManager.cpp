@@ -2,7 +2,7 @@
 #include <sstream>
 #include <iostream>
 
-UIManager::UIManager(sf::RenderWindow& window, sf::Font& font) : showNewTripButton(false), showStartButton(true) {
+UIManager::UIManager(sf::RenderWindow& window, sf::Font& font) : showNewTripButton(false), showStartButton(true), isTripStopped(false) {
     clearButton.setSize(sf::Vector2f(100.f, 40.f));
     clearButton.setFillColor(sf::Color::Black);
     clearButton.setOutlineColor(sf::Color::White);
@@ -126,6 +126,31 @@ UIManager::UIManager(sf::RenderWindow& window, sf::Font& font) : showNewTripButt
     newTripButton.setPosition(10.f, 300.f); 
     centerTextInButton(newTripButtonText, newTripButton);
 
+    stopTripButton.setSize(sf::Vector2f(150.f, 40.f));
+    stopTripButton.setFillColor(sf::Color::Black);
+    stopTripButton.setOutlineColor(sf::Color::White);
+    stopTripButton.setOutlineThickness(2.f);
+
+    stopTripButtonText.setFont(font);
+    stopTripButtonText.setString("Detener viaje");
+    stopTripButtonText.setCharacterSize(18);
+    stopTripButtonText.setFillColor(sf::Color::White);
+
+    continueTripButton.setSize(sf::Vector2f(150.f, 40.f));
+    continueTripButton.setFillColor(sf::Color::Black);
+    continueTripButton.setOutlineColor(sf::Color::White);
+    continueTripButton.setOutlineThickness(2.f);
+
+    continueTripButtonText.setFont(font);
+    continueTripButtonText.setString("Continuar viaje");
+    continueTripButtonText.setCharacterSize(18);
+    continueTripButtonText.setFillColor(sf::Color::White);
+
+    stopTripButton.setPosition(window.getSize().x - 150.f, 180.f);
+    continueTripButton.setPosition(window.getSize().x - 150.f, 240.f);
+    centerTextInButton(stopTripButtonText, stopTripButton);
+    centerTextInButton(continueTripButtonText, continueTripButton);
+
     initializeComboBox(font);
     resizeUI(window);
 }
@@ -196,10 +221,16 @@ void UIManager::drawUI(sf::RenderWindow& window) {
     window.draw(coseviButton);
     window.draw(coseviButtonText);
 
-    if (carroEnMovimiento) {
-        window.draw(changeRouteButton);
-        window.draw(changeRouteButtonText);
+    if (carroEnMovimiento && !isTripStopped) {
+        window.draw(stopTripButton);
+        window.draw(stopTripButtonText);
     }
+
+    if (isTripStopped) {
+        window.draw(continueTripButton);
+        window.draw(continueTripButtonText);
+    }
+
     if (!carroEnMovimiento) {
         window.draw(totalWeightText);
         window.draw(totalCostText);

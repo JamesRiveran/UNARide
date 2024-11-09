@@ -16,7 +16,6 @@ public:
     void update(float deltaTime, const Map& map);
     void stopMovement();
     void changeRoute(const std::vector<std::size_t>& newPath);
-    void stopAtNextNode();
     std::size_t getCurrentNode(const Map& map);
     size_t findClosestNode(const sf::Vector2f& position, const std::vector<std::size_t>& path, const Map& map);
     bool isStopped() const;
@@ -24,8 +23,17 @@ public:
     bool hasValidRoute() const { return !path.empty(); }
     float getPreviousAccumulatedWeight() const { return previousAccumulatedWeight; } 
     bool isAtDestination() const;
-
+    void stopAtNextNode();
+    void continueMovement(bool useDijkstra, const std::pair<std::vector<std::vector<float>>, std::vector<std::vector<int>>>& floydWarshallResult);
+    void actualizarInicio(RouteManager& routeManager); // Nuevo método para actualizar el nodo de inicio
+    std::size_t getCurrentNode() const; // Nuevo método para obtener el nodo actual
+    void setPath(const std::vector<std::size_t>& newPath); // Nuevo método para actualizar la ruta del coche
+    std::vector<std::size_t> nodosRecorridos; // Lista de nodos recorridos
+    const std::vector<std::size_t>& getTraversedNodes() const {
+        return traversedNodes;
+    }
 private:
+    std::vector<std::size_t> traversedNodes;  // Declara aquí los nodos recorridos
     UIManager& uiManager;
     RouteManager& routeManager;
     void moveTowardsNextNode(sf::Vector2f start, sf::Vector2f end, float deltaTime);
@@ -48,5 +56,7 @@ private:
     bool shouldCalculateTotals;
     float accumulatedWeight;
     float previousAccumulatedWeight; 
+    bool useDijkstra;
+    std::pair<std::vector<std::vector<float>>, std::vector<std::vector<int>>> floydWarshallResult;
 };
 #endif

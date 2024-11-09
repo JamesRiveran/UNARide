@@ -208,9 +208,8 @@ std::size_t RouteManager::findClosestNode(const sf::Vector2f& mousePos) {
 void RouteManager::calculateRoute(bool useDijkstra, const std::pair<std::vector<std::vector<float>>, std::vector<std::vector<int>>>& floydWarshallResult) {
     if (startNodeSelected && endNodeSelected) {
         if (useDijkstra) {
-            path = map.dijkstra(startNode, endNode);
-        }
-        else {
+            path = map.dijkstra(startNode, endNode); // Calcula la ruta desde el nodo de inicio actualizado
+        } else {
             const auto& pred = floydWarshallResult.second;
             if (pred[startNode][endNode] == -1) {
                 std::cerr << "No se puede encontrar un camino válido." << std::endl;
@@ -227,7 +226,7 @@ void RouteManager::calculateRoute(bool useDijkstra, const std::pair<std::vector<
             std::reverse(path.begin(), path.end());
         }
 
-        std::cout << "Ruta calculada: ";
+        std::cout << "Ruta calculada desde el nodo actual: ";
         for (auto node : path) {
             std::cout << node << " ";
         }
@@ -444,3 +443,20 @@ float RouteManager::getCostPerKm() const {
 float RouteManager::getTotalWeight() const {
     return totalWeight;
 }
+
+void RouteManager::setStartNode(std::size_t newStartNode) {
+    startNode = newStartNode;
+    startNodeSelected = true; // Confirma que el nodo de inicio está seleccionado
+    std::cout << "Nodo de inicio actualizado a: " << startNode << std::endl;
+}
+
+void RouteManager::drawTraversedPath(sf::RenderWindow& window, const std::vector<std::size_t>& traversedNodes) {
+    if (traversedNodes.size() > 1) {
+        for (std::size_t i = 0; i < traversedNodes.size() - 1; ++i) {
+            std::size_t currentNode = traversedNodes[i];
+            std::size_t nextNode = traversedNodes[i + 1];
+            map.drawStreet(window, currentNode, nextNode, sf::Color::Cyan);
+        }
+    }
+}
+

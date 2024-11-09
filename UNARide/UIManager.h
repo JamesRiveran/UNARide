@@ -41,6 +41,12 @@ public:
     sf::RectangleShape changeRouteButton;
     sf::Text changeRouteButtonText;
 
+    sf::RectangleShape stopTripButton;
+    sf::Text stopTripButtonText;
+    sf::RectangleShape continueTripButton;
+    sf::Text continueTripButtonText;
+    bool isTripStopped;
+
     sf::RectangleShape newTripButton; // Botón para nuevo viaje
     sf::Text newTripButtonText;       // Texto del botón nuevo viaje
     bool showStartButton;

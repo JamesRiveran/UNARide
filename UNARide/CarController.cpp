@@ -12,13 +12,18 @@ CarController::CarController(sf::Sprite& carSprite, float speed, sf::Texture& up
 {
 }
 
+void CarController::startMovement(const std::vector<std::size_t>& newRoute, const Map& map, bool isNewRoute, bool isNewTrip) {
+    if (!newRoute.empty()) {
+        if (isNewTrip) {
+            // Solo reinicia `currentNodeInPath` si es un viaje nuevo
+            currentNodeInPath = 0;
+        }
 
-void CarController::startMovement(const std::vector<std::size_t>& path, const Map& map, bool isNewRoute, bool isNewTrip) {
-    if (!path.empty()) {
-        this->path = path;
-        currentNodeInPath = 0;
+        path = newRoute;
+        if (currentNodeInPath < path.size()) {
+            carSprite.setPosition(map.getNodes()[path[currentNodeInPath]].getPosition());
+        }
 
-        carSprite.setPosition(map.getNodes()[path[currentNodeInPath]].getPosition());
         moving = true;
         progress = 0.0f;
         isMoving = true;
@@ -26,21 +31,19 @@ void CarController::startMovement(const std::vector<std::size_t>& path, const Ma
 
         if (isNewRoute) {
             previousAccumulatedWeight = accumulatedWeight;
-            accumulatedWeight = 0.0f; 
+            accumulatedWeight = 0.0f;
             routeManager.hasChangedRoute = true;
         }
 
         shouldCalculateTotals = false;
         finalDestinationReached = false;
 
-        std::cout << "Movimiento iniciado. Peso acumulado reiniciado a " << accumulatedWeight << " km." << std::endl;
-
-        if (isNewRoute && !routeManager.hasChangedRoute) {
-            routeManager.hasChangedRoute = true;
-            routeManager.nodesSinceFirstChange.clear();
-        }
+        std::cout << "Movimiento iniciado desde el nodo actual. Peso acumulado reiniciado a " << accumulatedWeight << " km." << std::endl;
     }
 }
+
+
+
 
 void CarController::updateCarDirection(const sf::Vector2f& direction) {
     float angle = std::atan2(direction.y, direction.x) * 180 / 3.14159f;
@@ -91,7 +94,6 @@ void CarController::update(float deltaTime, const Map& map) {
             moving = false;
             isMoving = false;
             uiManager.setCarroEnMovimiento(false);
-
             finalDestinationReached = true;
 
             if (finalDestinationReached) {
@@ -104,8 +106,6 @@ void CarController::update(float deltaTime, const Map& map) {
                         << totalWeight << " km. Total a pagar: " << totalCost << " colones." << std::endl;
                 }
             }
-
-
             return;
         }
         return;
@@ -131,17 +131,20 @@ void CarController::update(float deltaTime, const Map& map) {
     progress += speed * deltaTime / distance;
 
     if (progress >= 1.0f) {
+        // Almacenar el nodo actual en `traversedNodes` antes de avanzar al siguiente
+        traversedNodes.push_back(currentNode);
+
         currentNodeInPath++;
         progress = 0.0f;
 
-        std::size_t currentNode = path[currentNodeInPath - 1];
-        std::size_t nextNode = path[currentNodeInPath];
+        actualizarInicio(routeManager);
 
+        // Código para manejar el peso acumulado
         std::cout << "Intentando obtener calle entre nodo " << currentNode << " y nodo " << nextNode << "." << std::endl;
         const Street* street = map.getStreetBetweenNodes(currentNode, nextNode);
 
         if (street) {
-            accumulatedWeight += street->getWeight();  
+            accumulatedWeight += street->getWeight();
             std::cout << "Calle encontrada entre nodo " << currentNode << " y nodo " << nextNode
                 << ". Peso de la calle: " << street->getWeight() << " km. Peso acumulado actual: "
                 << accumulatedWeight << " km." << std::endl;
@@ -151,11 +154,13 @@ void CarController::update(float deltaTime, const Map& map) {
                 << " y nodo " << nextNode << "." << std::endl;
         }
 
-        if (shouldStopAtNextNode) {
+        // Detener el carro en el siguiente nodo si `shouldStopAtNextNode` es verdadero
+        if (shouldStopAtNextNode && moving) {
             moving = false;
             isMoving = false;
             shouldStopAtNextNode = false;
             uiManager.setCarroEnMovimiento(false);
+            std::cout << "El carro se detiene en el siguiente nodo." << std::endl;
             return;
         }
 
@@ -165,7 +170,7 @@ void CarController::update(float deltaTime, const Map& map) {
             uiManager.setCarroEnMovimiento(false);
 
             float totalCost = (previousAccumulatedWeight + accumulatedWeight) * routeManager.getCostPerKm();
-            uiManager.setTotalWeight(previousAccumulatedWeight + accumulatedWeight);  
+            uiManager.setTotalWeight(previousAccumulatedWeight + accumulatedWeight);
             uiManager.setTotalCost(totalCost);
 
             std::cout << "Llegada al destino final. Peso total acumulado: "
@@ -174,12 +179,13 @@ void CarController::update(float deltaTime, const Map& map) {
 
             uiManager.showNewTripButton = true;
         }
-        
+
     }
     else {
         carSprite.setPosition(startPos + direction * progress);
     }
 }
+
 
 void CarController::stopMovement() {
     isMoving = false;
@@ -187,9 +193,10 @@ void CarController::stopMovement() {
 }
 
 void CarController::changeRoute(const std::vector<std::size_t>& newPath) {
-    if (isMoving) {
+    if (isMoving && !newPath.empty()) {
         std::cout << "Ruta cambiada. Peso acumulado hasta el momento: " << accumulatedWeight << " km." << std::endl;
 
+        // No se borra `traversedNodes`, solo se cambia la ruta.
         path = newPath;
         currentNodeInPath = 0;
         progress = 0.0f;
@@ -198,7 +205,6 @@ void CarController::changeRoute(const std::vector<std::size_t>& newPath) {
         finalDestinationReached = false;
     }
 }
-
 
 
 void CarController::moveTowardsNextNode(sf::Vector2f start, sf::Vector2f end, float deltaTime) {
@@ -223,10 +229,45 @@ bool CarController::isStopped() const {
     return !isMoving;
 }
 
-void CarController::stopAtNextNode() {
-    shouldStopAtNextNode = true; 
-}
-
 std::size_t CarController::getCurrentNode(const Map& map) {
     return path[currentNodeInPath];
 }
+
+void CarController::stopAtNextNode() {
+    shouldStopAtNextNode = true;  // Señaliza detener en el siguiente nodo
+    std::cout << "Carro se detendrá en el siguiente nodo." << std::endl;
+}
+
+void CarController::actualizarInicio(RouteManager& routeManager) {
+    std::size_t nodoActual = getCurrentNode();
+    routeManager.setStartNode(nodoActual); // Actualiza el nodo de inicio en el gestor de rutas
+}
+std::size_t CarController::getCurrentNode() const {
+    return path[currentNodeInPath];
+}
+
+void CarController::continueMovement(bool useDijkstra, const std::pair<std::vector<std::vector<float>>, std::vector<std::vector<int>>>& floydWarshallResult) {
+    if (!isMoving && !path.empty()) {
+        // Asegura que el nodo de inicio es el nodo actual, no el nodo de inicio original
+        routeManager.setStartNode(getCurrentNode());
+
+        routeManager.calculateRoute(useDijkstra, floydWarshallResult);
+
+        // Establece la nueva ruta calculada
+        setPath(routeManager.getPath());
+
+        // Configura para continuar el movimiento
+        isMoving = true;
+        moving = true;
+        shouldStopAtNextNode = false; // Asegura que la señal de detención esté desactivada
+        uiManager.setCarroEnMovimiento(true);
+        std::cout << "El carro continúa su viaje desde el nodo actual." << std::endl;
+    }
+}
+
+void CarController::setPath(const std::vector<std::size_t>& newPath) {
+    path = newPath;
+    currentNodeInPath = 0; // Reinicia el progreso en la nueva ruta
+    progress = 0.0f;       // Restablece el progreso del coche
+}
+

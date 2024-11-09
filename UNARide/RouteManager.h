@@ -50,6 +50,10 @@ public:
     bool hasChangedRoute = false;
     float getCostPerKm() const;
     void clearNewTrips();
+    void setStartNode(std::size_t newStartNode);
+    void drawTraversedPath(sf::RenderWindow& window, const std::vector<std::size_t>& traversedNodes);
+
+
 private:
     float costPerKm;
     float totalWeight;
@@ -66,6 +70,7 @@ private:
     std::vector<std::size_t> path;
     std::size_t startNode;
     std::size_t endNode;
+
 
 };
 

@@ -142,10 +142,33 @@ int main() {
                         }
                     }
                 }
+
                 if (uiManager.openStreetButton.getGlobalBounds().contains(window.mapPixelToCoords(sf::Mouse::getPosition(window)))) {
                     awaitingStreetOpen = true;
                     nodesSelected = 0;
                 }
+
+                if (uiManager.stopTripButton.getGlobalBounds().contains(mousePos) && !uiManager.isTripStopped) {
+                    carController.stopAtNextNode();
+                    carController.actualizarInicio(routeManager); // Asegura que el nodo de inicio esté actualizado
+                    uiManager.isTripStopped = true;
+                    std::cout << "Botón 'Detener viaje' presionado." << std::endl;
+                }
+
+                if (uiManager.continueTripButton.getGlobalBounds().contains(mousePos) && uiManager.isTripStopped) {
+                    // Recalcula la ruta desde el nodo actual del coche hasta el destino, evitando la calle cerrada
+                    routeManager.calculateRoute(uiManager.isDijkstraSelected(), floydWarshallResult);
+
+                    // Actualiza el path del coche para que siga la nueva ruta calculada
+                    carController.setPath(routeManager.getPath());
+
+                    // Continúa el movimiento del coche
+                    carController.continueMovement(useDijkstra, floydWarshallResult);
+
+                    uiManager.isTripStopped = false;
+                    std::cout << "Botón 'Continuar viaje' presionado. Recalculando ruta desde el nodo actual." << std::endl;
+                }
+
 
                 if (awaitingStreetOpen) {
                     std::size_t selectedNode = routeManager.findClosestNode(window.mapPixelToCoords(sf::Mouse::getPosition(window)));
@@ -447,7 +470,7 @@ int main() {
 
         window.clear();
         window.draw(mapSprite);
-
+        routeManager.drawTraversedPath(window, carController.getTraversedNodes());
         if (showStreets) {
             map.draw(window);
         }
