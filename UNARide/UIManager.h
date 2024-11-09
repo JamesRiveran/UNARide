@@ -47,8 +47,8 @@ public:
     sf::Text continueTripButtonText;
     bool isTripStopped;
 
-    sf::RectangleShape newTripButton; // Botón para nuevo viaje
-    sf::Text newTripButtonText;       // Texto del botón nuevo viaje
+    sf::RectangleShape newTripButton; 
+    sf::Text newTripButtonText;      
     bool showStartButton;
     std::vector<std::string> trafficOptions;
     int selectedTrafficIndex = 0;
@@ -57,6 +57,12 @@ public:
     bool isShowStartButton() const;
     void setShowNewTrip(bool value);
     bool isShowNewTrip() const;
+    bool showAlgorithmOptions = true;   
+    bool showStartOption = false;      
+    bool showRouteOptions = false;
+    void toggleAlgorithmOptions(bool visible);
+    void toggleStartOption(bool visible);
+    void toggleRouteOptions(bool visible);
 private:
     sf::Text clearButtonText;
     sf::Text startButtonText;

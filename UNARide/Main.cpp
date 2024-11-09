@@ -63,7 +63,9 @@ int main() {
     UIManager uiManager(window, font);
     RouteManager routeManager(map);
     CarController carController(carSprite, 100.f, carTextureUp, carTextureDown, carTextureLeft, carTextureRight, uiManager, routeManager);
-
+    uiManager.toggleAlgorithmOptions(true);   
+    uiManager.toggleStartOption(false);        
+    uiManager.toggleRouteOptions(false);
     bool useDijkstra = true, startMovement = false, routeCalculated = false, algorithmSelected = false;
     bool showWeights = false;
     bool showStreets = true;
@@ -150,19 +152,16 @@ int main() {
 
                 if (uiManager.stopTripButton.getGlobalBounds().contains(mousePos) && !uiManager.isTripStopped) {
                     carController.stopAtNextNode();
-                    carController.actualizarInicio(routeManager); // Asegura que el nodo de inicio esté actualizado
+                    carController.actualizarInicio(routeManager); 
                     uiManager.isTripStopped = true;
                     std::cout << "Botón 'Detener viaje' presionado." << std::endl;
                 }
 
                 if (uiManager.continueTripButton.getGlobalBounds().contains(mousePos) && uiManager.isTripStopped) {
-                    // Recalcula la ruta desde el nodo actual del coche hasta el destino, evitando la calle cerrada
                     routeManager.calculateRoute(uiManager.isDijkstraSelected(), floydWarshallResult);
 
-                    // Actualiza el path del coche para que siga la nueva ruta calculada
                     carController.setPath(routeManager.getPath());
 
-                    // Continúa el movimiento del coche
                     carController.continueMovement(useDijkstra, floydWarshallResult);
 
                     uiManager.isTripStopped = false;
@@ -370,12 +369,17 @@ int main() {
 
                             isSelectingNewTrip = false;
                             newTrip = true;
+
+                            uiManager.setShowStartButton(true);
+                            uiManager.toggleStartOption(true);
                         }
                         else {
                             std::cerr << "Error: no se ha seleccionado una ruta válida." << std::endl;
                         }
                     }
                 }
+
+
 
 
                 if (uiManager.startButton.getGlobalBounds().contains(mousePos)) {
@@ -397,6 +401,8 @@ int main() {
                     newTrip = false;
                     uiManager.setTotalWeight(totalWeight);
                     uiManager.setTotalCost(totalCost);
+                    uiManager.toggleStartOption(false);     
+                    uiManager.toggleRouteOptions(true);
                 }
 
 
@@ -418,25 +424,22 @@ int main() {
                     uiManager.resetAlgorithmSelected();
                     uiManager.setTotalWeight(0.0f);
                     uiManager.setTotalCost(0.0f);
+                    uiManager.toggleAlgorithmOptions(true); 
+                    uiManager.toggleStartOption(false);      
+                    uiManager.toggleRouteOptions(false);
                 }
 
                 if (uiManager.dijkstraCheckBox.getGlobalBounds().contains(mousePos)) {
-                    useDijkstra = true;
                     algorithmSelected = true;
-                    uiManager.setAlgorithmSelected(true);
-                    std::cout << "Algoritmo Dijkstra seleccionado." << std::endl;
-                    routeManager.resetRoute();
+                    uiManager.setAlgorithmSelected(true);     
+                    uiManager.toggleStartOption(true);        
+                }
+                else if (uiManager.floydCheckBox.getGlobalBounds().contains(mousePos)) {
+                    algorithmSelected = true;
+                    uiManager.setAlgorithmSelected(false);    
+                    uiManager.toggleStartOption(true);       
                 }
 
-                if (uiManager.floydCheckBox.getGlobalBounds().contains(mousePos)) {
-                    useDijkstra = false;
-                    algorithmSelected = true;
-                    floydWarshallResult = map.floydWarshall();
-                    uiManager.setAlgorithmSelected(false);
-                    std::cout << "Algoritmo Floyd-Warshall seleccionado." << std::endl;
-                    routeManager.calculateRoute(useDijkstra, floydWarshallResult);
-                    routeCalculated = true;
-                }
 
                 if (uiManager.toggleWeightsButton.getGlobalBounds().contains(mousePos)) {
                     showWeights = !showWeights;

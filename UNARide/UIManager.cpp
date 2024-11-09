@@ -171,75 +171,102 @@ void UIManager::initializeComboBox(sf::Font& font) {
 void UIManager::resizeUI(sf::RenderWindow& window) {
     clearButton.setPosition(20.f, 300.f);
     centerTextInButton(clearButtonText, clearButton);
+
     startButton.setPosition(window.getSize().x - 120.f, 20.f);
     centerTextInButton(startButtonText, startButton);
-    changeRouteButton.setPosition(window.getSize().x - 120.f, 80.f);
+
+    changeRouteButton.setPosition(window.getSize().x - 120.f, 70.f);  
     centerTextInButton(changeRouteButtonText, changeRouteButton);
-    newTripButton.setPosition(window.getSize().x - 120.f, 140.f);
+
+    stopTripButton.setPosition(window.getSize().x - 120.f, 120.f); 
+    centerTextInButton(stopTripButtonText, stopTripButton);
+
+    continueTripButton.setPosition(window.getSize().x - 120.f, 170.f);
+    centerTextInButton(continueTripButtonText, continueTripButton);
+
+    newTripButton.setPosition(window.getSize().x - 120.f, 220.f); 
     centerTextInButton(newTripButtonText, newTripButton);
+
     dijkstraCheckBox.setPosition(20.f, 20.f);
     floydCheckBox.setPosition(20.f, 60.f);
     dijkstraText.setPosition(50.f, 20.f);
     floydText.setPosition(50.f, 60.f);
+
     trafficComboBox.setPosition(20.f, 120.f);
     selectedTrafficText.setPosition(trafficComboBox.getPosition().x + 10.f, trafficComboBox.getPosition().y + 5.f);
+
     assignAccidentButton.setPosition(20.f, 180.f);
-    openStreetButton.setPosition(20.f, 400.f);
-    centerTextInButton(openStreetText, openStreetButton);
+    assignAccidentButton.setSize(sf::Vector2f(120.f, 30.f));
     centerTextInButton(assignAccidentButtonText, assignAccidentButton);
+
+    openStreetButton.setPosition(20.f, 420.f);  
+    openStreetButton.setSize(sf::Vector2f(120.f, 30.f));
+    centerTextInButton(openStreetText, openStreetButton);
+
     coseviButton.setPosition(20.f, 240.f);
     centerTextInButton(coseviButtonText, coseviButton);
+
     toggleWeightsButton.setPosition(window.getSize().x - 120.f, window.getSize().y - 60.f);
     centerTextInButton(toggleWeightsButtonText, toggleWeightsButton);
     toggleStreetsButton.setPosition(window.getSize().x - 120.f, window.getSize().y - 120.f);
     centerTextInButton(toggleStreetsButtonText, toggleStreetsButton);
+
     totalWeightText.setPosition(20.f, window.getSize().y - 80.f);
     totalCostText.setPosition(20.f, window.getSize().y - 40.f);
 }
 
+
 void UIManager::drawUI(sf::RenderWindow& window) {
-    if (showStartButton) {
+    if (showAlgorithmOptions) {
+        window.draw(dijkstraCheckBox);
+        window.draw(floydCheckBox);
+        window.draw(dijkstraText);
+        window.draw(floydText);
+    }
+
+    if (showStartButton && showStartOption) {
         window.draw(startButton);
         window.draw(startButtonText);
     }
+
     window.draw(clearButton);
     window.draw(clearButtonText);
-    window.draw(dijkstraCheckBox);
-    window.draw(floydCheckBox);
-    window.draw(dijkstraText);
-    window.draw(floydText);
     window.draw(toggleWeightsButton);
     window.draw(toggleWeightsButtonText);
     window.draw(toggleStreetsButton);
     window.draw(toggleStreetsButtonText);
-    window.draw(trafficComboBox);
-    window.draw(selectedTrafficText);
-    window.draw(assignAccidentButton);
-    window.draw(assignAccidentButtonText);
-    window.draw(openStreetButton);
-    window.draw(openStreetText);
-    window.draw(coseviButton);
-    window.draw(coseviButtonText);
 
-    if (carroEnMovimiento && !isTripStopped) {
-        window.draw(stopTripButton);
-        window.draw(stopTripButtonText);
-    }
+    if (showRouteOptions) {
+        window.draw(trafficComboBox);
+        window.draw(selectedTrafficText);
+        window.draw(assignAccidentButton);
+        window.draw(assignAccidentButtonText);
+        window.draw(openStreetButton);
+        window.draw(openStreetText);
+        window.draw(coseviButton);
+        window.draw(coseviButtonText);
 
-    if (isTripStopped) {
-        window.draw(continueTripButton);
-        window.draw(continueTripButtonText);
-    }
+        if (carroEnMovimiento && !isTripStopped) {
+            window.draw(stopTripButton);
+            window.draw(stopTripButtonText);
+        }
 
-    if (!carroEnMovimiento) {
-        window.draw(totalWeightText);
-        window.draw(totalCostText);
-    }
-    if (showNewTripButton) {
-        window.draw(newTripButton);
-        window.draw(newTripButtonText);
+        if (isTripStopped) {
+            window.draw(continueTripButton);
+            window.draw(continueTripButtonText);
+        }
+
+        if (!carroEnMovimiento) {
+            window.draw(totalWeightText);
+            window.draw(totalCostText);
+        }
+        if (showNewTripButton) {
+            window.draw(newTripButton);
+            window.draw(newTripButtonText);
+        }
     }
 }
+
 
 void UIManager::isCarMoving(sf::RenderWindow& window, bool carroEnMovimiento) {
     if (carroEnMovimiento) {
@@ -326,4 +353,16 @@ void UIManager::setShowNewTrip(bool value) {
 
 bool UIManager::isShowNewTrip() const {
     return showNewTripButton;
+}
+
+void UIManager::toggleAlgorithmOptions(bool visible) {
+    showAlgorithmOptions = visible;
+}
+
+void UIManager::toggleStartOption(bool visible) {
+    showStartOption = visible;
+}
+
+void UIManager::toggleRouteOptions(bool visible) {
+    showRouteOptions = visible;
 }

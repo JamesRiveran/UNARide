@@ -8,14 +8,14 @@ CarController::CarController(sf::Sprite& carSprite, float speed, sf::Texture& up
     leftTexture(leftTexture), rightTexture(rightTexture), currentNodeInPath(0), moving(false), progress(0.0f),
     uiManager(uiManager), routeManager(routeManager), isMoving(false), shouldStopAtNextNode(false),
     finalDestinationReached(false), shouldCalculateTotals(false), accumulatedWeight(0.0f),
-    previousAccumulatedWeight(0.0f) 
+    previousAccumulatedWeight(0.0f), useDijkstra(false) 
 {
 }
 
 void CarController::startMovement(const std::vector<std::size_t>& newRoute, const Map& map, bool isNewRoute, bool isNewTrip) {
     if (!newRoute.empty()) {
+        routeManager.updateCostPerKm();
         if (isNewTrip) {
-            // Solo reinicia `currentNodeInPath` si es un viaje nuevo
             currentNodeInPath = 0;
         }
 
@@ -131,7 +131,6 @@ void CarController::update(float deltaTime, const Map& map) {
     progress += speed * deltaTime / distance;
 
     if (progress >= 1.0f) {
-        // Almacenar el nodo actual en `traversedNodes` antes de avanzar al siguiente
         traversedNodes.push_back(currentNode);
 
         currentNodeInPath++;
@@ -139,7 +138,6 @@ void CarController::update(float deltaTime, const Map& map) {
 
         actualizarInicio(routeManager);
 
-        // Código para manejar el peso acumulado
         std::cout << "Intentando obtener calle entre nodo " << currentNode << " y nodo " << nextNode << "." << std::endl;
         const Street* street = map.getStreetBetweenNodes(currentNode, nextNode);
 
@@ -154,7 +152,6 @@ void CarController::update(float deltaTime, const Map& map) {
                 << " y nodo " << nextNode << "." << std::endl;
         }
 
-        // Detener el carro en el siguiente nodo si `shouldStopAtNextNode` es verdadero
         if (shouldStopAtNextNode && moving) {
             moving = false;
             isMoving = false;
@@ -192,11 +189,26 @@ void CarController::stopMovement() {
     uiManager.setCarroEnMovimiento(false);
 }
 
+std::size_t CarController::findClosestNode(const sf::Vector2f& position, const std::vector<std::size_t>& path, const Map& map) {
+    float minDistance = std::numeric_limits<float>::max();
+    std::size_t closestNode = std::numeric_limits<std::size_t>::max();
+
+    for (std::size_t node : path) {
+        float distance = std::hypot(position.x - map.getNodes()[node].getPosition().x,
+            position.y - map.getNodes()[node].getPosition().y);
+        if (distance < minDistance) {
+            minDistance = distance;
+            closestNode = node;
+        }
+    }
+
+    return closestNode;
+}
+
 void CarController::changeRoute(const std::vector<std::size_t>& newPath) {
     if (isMoving && !newPath.empty()) {
         std::cout << "Ruta cambiada. Peso acumulado hasta el momento: " << accumulatedWeight << " km." << std::endl;
-
-        // No se borra `traversedNodes`, solo se cambia la ruta.
+        routeManager.updateCostPerKm();
         path = newPath;
         currentNodeInPath = 0;
         progress = 0.0f;
@@ -234,13 +246,13 @@ std::size_t CarController::getCurrentNode(const Map& map) {
 }
 
 void CarController::stopAtNextNode() {
-    shouldStopAtNextNode = true;  // Señaliza detener en el siguiente nodo
+    shouldStopAtNextNode = true;  
     std::cout << "Carro se detendrá en el siguiente nodo." << std::endl;
 }
 
 void CarController::actualizarInicio(RouteManager& routeManager) {
     std::size_t nodoActual = getCurrentNode();
-    routeManager.setStartNode(nodoActual); // Actualiza el nodo de inicio en el gestor de rutas
+    routeManager.setStartNode(nodoActual); 
 }
 std::size_t CarController::getCurrentNode() const {
     return path[currentNodeInPath];
@@ -248,18 +260,15 @@ std::size_t CarController::getCurrentNode() const {
 
 void CarController::continueMovement(bool useDijkstra, const std::pair<std::vector<std::vector<float>>, std::vector<std::vector<int>>>& floydWarshallResult) {
     if (!isMoving && !path.empty()) {
-        // Asegura que el nodo de inicio es el nodo actual, no el nodo de inicio original
         routeManager.setStartNode(getCurrentNode());
 
         routeManager.calculateRoute(useDijkstra, floydWarshallResult);
 
-        // Establece la nueva ruta calculada
         setPath(routeManager.getPath());
 
-        // Configura para continuar el movimiento
         isMoving = true;
         moving = true;
-        shouldStopAtNextNode = false; // Asegura que la señal de detención esté desactivada
+        shouldStopAtNextNode = false;
         uiManager.setCarroEnMovimiento(true);
         std::cout << "El carro continúa su viaje desde el nodo actual." << std::endl;
     }
@@ -267,7 +276,6 @@ void CarController::continueMovement(bool useDijkstra, const std::pair<std::vect
 
 void CarController::setPath(const std::vector<std::size_t>& newPath) {
     path = newPath;
-    currentNodeInPath = 0; // Reinicia el progreso en la nueva ruta
-    progress = 0.0f;       // Restablece el progreso del coche
+    currentNodeInPath = 0; 
+    progress = 0.0f;       
 }
-

@@ -25,15 +25,15 @@ public:
     bool isAtDestination() const;
     void stopAtNextNode();
     void continueMovement(bool useDijkstra, const std::pair<std::vector<std::vector<float>>, std::vector<std::vector<int>>>& floydWarshallResult);
-    void actualizarInicio(RouteManager& routeManager); // Nuevo método para actualizar el nodo de inicio
-    std::size_t getCurrentNode() const; // Nuevo método para obtener el nodo actual
-    void setPath(const std::vector<std::size_t>& newPath); // Nuevo método para actualizar la ruta del coche
-    std::vector<std::size_t> nodosRecorridos; // Lista de nodos recorridos
+    void actualizarInicio(RouteManager& routeManager); 
+    std::size_t getCurrentNode() const;
+    void setPath(const std::vector<std::size_t>& newPath);
+    std::vector<std::size_t> nodosRecorridos; 
     const std::vector<std::size_t>& getTraversedNodes() const {
         return traversedNodes;
     }
 private:
-    std::vector<std::size_t> traversedNodes;  // Declara aquí los nodos recorridos
+    std::vector<std::size_t> traversedNodes; 
     UIManager& uiManager;
     RouteManager& routeManager;
     void moveTowardsNextNode(sf::Vector2f start, sf::Vector2f end, float deltaTime);
