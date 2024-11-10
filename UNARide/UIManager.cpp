@@ -265,6 +265,11 @@ void UIManager::drawUI(sf::RenderWindow& window) {
             window.draw(newTripButtonText);
         }
     }
+    if (showChangeRoute) {
+        window.draw(changeRouteButton);
+        window.draw(changeRouteButtonText);
+    }
+
 }
 
 
@@ -319,6 +324,11 @@ void UIManager::setTotalWeight(float totalWeight) {
         totalWeightText.setString(oss.str());
     }
 }
+
+void UIManager::showChangeRouteButton(bool show) {
+    showChangeRoute = show;
+}
+
 
 void UIManager::setTotalCost(float totalCost) {
     if (totalCost == 0.0f) {

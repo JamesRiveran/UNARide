@@ -12,18 +12,12 @@ CarController::CarController(sf::Sprite& carSprite, float speed, sf::Texture& up
 {
 }
 
-void CarController::startMovement(const std::vector<std::size_t>& newRoute, const Map& map, bool isNewRoute, bool isNewTrip) {
-    if (!newRoute.empty()) {
-        routeManager.updateCostPerKm();
-        if (isNewTrip) {
-            currentNodeInPath = 0;
-        }
+void CarController::startMovement(const std::vector<std::size_t>& path, const Map& map, bool isNewRoute, bool isNewTrip) {
+    if (!path.empty()) {
+        this->path = path;
+        currentNodeInPath = 0;
 
-        path = newRoute;
-        if (currentNodeInPath < path.size()) {
-            carSprite.setPosition(map.getNodes()[path[currentNodeInPath]].getPosition());
-        }
-
+        carSprite.setPosition(map.getNodes()[path[currentNodeInPath]].getPosition());
         moving = true;
         progress = 0.0f;
         isMoving = true;
@@ -38,7 +32,12 @@ void CarController::startMovement(const std::vector<std::size_t>& newRoute, cons
         shouldCalculateTotals = false;
         finalDestinationReached = false;
 
-        std::cout << "Movimiento iniciado desde el nodo actual. Peso acumulado reiniciado a " << accumulatedWeight << " km." << std::endl;
+        std::cout << "Movimiento iniciado. Peso acumulado reiniciado a " << accumulatedWeight << " km." << std::endl;
+
+        if (isNewRoute && !routeManager.hasChangedRoute) {
+            routeManager.hasChangedRoute = true;
+            routeManager.nodesSinceFirstChange.clear();
+        }
     }
 }
 
@@ -94,17 +93,18 @@ void CarController::update(float deltaTime, const Map& map) {
             moving = false;
             isMoving = false;
             uiManager.setCarroEnMovimiento(false);
+
             finalDestinationReached = true;
 
-            if (finalDestinationReached) {
-                float totalWeight = previousAccumulatedWeight + accumulatedWeight;
-                if (totalWeight > 0) {
-                    float totalCost = totalWeight * routeManager.getCostPerKm();
-                    uiManager.setTotalWeight(totalWeight);
-                    uiManager.setTotalCost(totalCost);
-                    std::cout << "Llegada al destino final. Peso total acumulado (incluyendo rutas anteriores): "
-                        << totalWeight << " km. Total a pagar: " << totalCost << " colones." << std::endl;
-                }
+            float totalWeight = previousAccumulatedWeight + accumulatedWeight;
+            if (totalWeight > 0) {
+                // Actualizar el costo por kilómetro antes de calcular el costo total
+                routeManager.updateCostPerKm();
+                float totalCost = totalWeight * routeManager.getCostPerKm();
+                uiManager.setTotalWeight(totalWeight);
+                uiManager.setTotalCost(totalCost);
+                std::cout << "Llegada al destino final. Peso total acumulado (incluyendo rutas anteriores): "
+                    << totalWeight << " km. Total a pagar: " << totalCost << " colones." << std::endl;
             }
             return;
         }
@@ -131,14 +131,12 @@ void CarController::update(float deltaTime, const Map& map) {
     progress += speed * deltaTime / distance;
 
     if (progress >= 1.0f) {
-        traversedNodes.push_back(currentNode);
-
         currentNodeInPath++;
         progress = 0.0f;
 
-        actualizarInicio(routeManager);
+        std::size_t currentNode = path[currentNodeInPath - 1];
+        std::size_t nextNode = path[currentNodeInPath];
 
-        std::cout << "Intentando obtener calle entre nodo " << currentNode << " y nodo " << nextNode << "." << std::endl;
         const Street* street = map.getStreetBetweenNodes(currentNode, nextNode);
 
         if (street) {
@@ -152,12 +150,18 @@ void CarController::update(float deltaTime, const Map& map) {
                 << " y nodo " << nextNode << "." << std::endl;
         }
 
-        if (shouldStopAtNextNode && moving) {
+        if (shouldStopAtNextNode) {
             moving = false;
             isMoving = false;
             shouldStopAtNextNode = false;
             uiManager.setCarroEnMovimiento(false);
-            std::cout << "El carro se detiene en el siguiente nodo." << std::endl;
+
+            if (routeManager.hasChangedRoute && !routeManager.nodesSinceFirstChange.empty() &&
+                routeManager.nodesSinceFirstChange.back() != currentNode) {
+                routeManager.nodesSinceFirstChange.push_back(currentNode);
+            }
+
+            std::cout << "El auto se ha detenido en el nodo más cercano: " << currentNode << std::endl;
             return;
         }
 
@@ -166,6 +170,8 @@ void CarController::update(float deltaTime, const Map& map) {
             isMoving = false;
             uiManager.setCarroEnMovimiento(false);
 
+            // Actualizar el costo por kilómetro antes de calcular el costo total
+            routeManager.updateCostPerKm();
             float totalCost = (previousAccumulatedWeight + accumulatedWeight) * routeManager.getCostPerKm();
             uiManager.setTotalWeight(previousAccumulatedWeight + accumulatedWeight);
             uiManager.setTotalCost(totalCost);
@@ -176,7 +182,6 @@ void CarController::update(float deltaTime, const Map& map) {
 
             uiManager.showNewTripButton = true;
         }
-
     }
     else {
         carSprite.setPosition(startPos + direction * progress);
@@ -186,8 +191,14 @@ void CarController::update(float deltaTime, const Map& map) {
 
 void CarController::stopMovement() {
     isMoving = false;
+    moving = false;
+    shouldStopAtNextNode = false;
+    accumulatedWeight = 0.0f;
+    previousAccumulatedWeight = 0.0f;
     uiManager.setCarroEnMovimiento(false);
+    std::cout << "Movimiento del auto detenido y peso acumulado reiniciado." << std::endl;
 }
+
 
 std::size_t CarController::findClosestNode(const sf::Vector2f& position, const std::vector<std::size_t>& path, const Map& map) {
     float minDistance = std::numeric_limits<float>::max();
@@ -207,14 +218,18 @@ std::size_t CarController::findClosestNode(const sf::Vector2f& position, const s
 
 void CarController::changeRoute(const std::vector<std::size_t>& newPath) {
     if (isMoving && !newPath.empty()) {
-        std::cout << "Ruta cambiada. Peso acumulado hasta el momento: " << accumulatedWeight << " km." << std::endl;
-        routeManager.updateCostPerKm();
+        std::cout << "Cambiando ruta. Peso acumulado hasta el momento: " << accumulatedWeight << " km." << std::endl;
+
         path = newPath;
         currentNodeInPath = 0;
         progress = 0.0f;
-
-        shouldCalculateTotals = false;
+        moving = true;
+        isMoving = true;
+        shouldStopAtNextNode = false;
         finalDestinationReached = false;
+        uiManager.setCarroEnMovimiento(true);
+
+        std::cout << "Nueva ruta asignada. El carro reiniciará el movimiento desde el primer nodo de la nueva ruta." << std::endl;
     }
 }
 
@@ -246,9 +261,15 @@ std::size_t CarController::getCurrentNode(const Map& map) {
 }
 
 void CarController::stopAtNextNode() {
-    shouldStopAtNextNode = true;  
-    std::cout << "Carro se detendrá en el siguiente nodo." << std::endl;
+    if (isMoving) {
+        shouldStopAtNextNode = true;
+        std::size_t currentNode = getCurrentNode();
+        routeManager.setStartNode(currentNode);
+        std::cout << "El auto se detendrá en el siguiente nodo y actualizará el nodo de inicio a: " << currentNode << std::endl;
+    }
 }
+
+
 
 void CarController::actualizarInicio(RouteManager& routeManager) {
     std::size_t nodoActual = getCurrentNode();
@@ -260,7 +281,8 @@ std::size_t CarController::getCurrentNode() const {
 
 void CarController::continueMovement(bool useDijkstra, const std::pair<std::vector<std::vector<float>>, std::vector<std::vector<int>>>& floydWarshallResult) {
     if (!isMoving && !path.empty()) {
-        routeManager.setStartNode(getCurrentNode());
+        std::size_t currentNode = getCurrentNode();
+        routeManager.setStartNode(currentNode);
 
         routeManager.calculateRoute(useDijkstra, floydWarshallResult);
 
@@ -270,9 +292,10 @@ void CarController::continueMovement(bool useDijkstra, const std::pair<std::vect
         moving = true;
         shouldStopAtNextNode = false;
         uiManager.setCarroEnMovimiento(true);
-        std::cout << "El carro continúa su viaje desde el nodo actual." << std::endl;
+        std::cout << "El carro continúa su viaje desde el nodo actual: " << currentNode << std::endl;
     }
 }
+
 
 void CarController::setPath(const std::vector<std::size_t>& newPath) {
     path = newPath;

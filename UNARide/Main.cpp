@@ -25,6 +25,7 @@ int main() {
     bool carVisible = false;  
     bool readyToStartNewTrip = false;
     bool newTrip = false;
+    bool newTripActualy = false;
     bool newRoute = false;
     bool deleteNewTrip = false;
     int nodesSelected = 0;
@@ -149,24 +150,15 @@ int main() {
                     awaitingStreetOpen = true;
                     nodesSelected = 0;
                 }
-
                 if (uiManager.stopTripButton.getGlobalBounds().contains(mousePos) && !uiManager.isTripStopped) {
                     carController.stopAtNextNode();
-                    carController.actualizarInicio(routeManager); 
+                    carController.actualizarInicio(routeManager);
                     uiManager.isTripStopped = true;
-                    std::cout << "Botón 'Detener viaje' presionado." << std::endl;
+                    uiManager.showChangeRouteButton(true);
+                    std::cout << "Botón 'Detener viaje' presionado. Mostrando botón 'Cambiar ruta'." << std::endl;
                 }
 
-                if (uiManager.continueTripButton.getGlobalBounds().contains(mousePos) && uiManager.isTripStopped) {
-                    routeManager.calculateRoute(uiManager.isDijkstraSelected(), floydWarshallResult);
-
-                    carController.setPath(routeManager.getPath());
-
-                    carController.continueMovement(useDijkstra, floydWarshallResult);
-
-                    uiManager.isTripStopped = false;
-                    std::cout << "Botón 'Continuar viaje' presionado. Recalculando ruta desde el nodo actual." << std::endl;
-                }
+ 
 
 
                 if (awaitingStreetOpen) {
@@ -196,7 +188,29 @@ int main() {
                     }
                 }
 
+                if (uiManager.continueTripButton.getGlobalBounds().contains(mousePos) && uiManager.isTripStopped) {
+                    std::size_t currentCarNode = carController.getCurrentNode(map);
+                    routeManager.setStartNode(currentCarNode);
+                    std::cout << "Nodo actual del auto al continuar viaje: " << currentCarNode << std::endl;
 
+                    if (newRoute && routeManager.isNewPathCalculated()) {
+                        carController.startMovement(routeManager.getNewPath(), map, true, false);
+                        std::cout << "Continuando viaje con la nueva ruta calculada (newPath)." << std::endl;
+                        std::cout << "Continuando viaje con la nueva ruta calculada (newPath)." << std::endl;
+                    }
+                    else {
+                        std::size_t updatedEndNode = routeManager.getUpdatedEndNode();
+                        routeManager.calculateNewRoute(updatedEndNode, currentCarNode, uiManager.isDijkstraSelected(), floydWarshallResult, carController.getPreviousAccumulatedWeight());
+                        carController.startMovement(routeManager.getNewPath(), map, true, false);
+                        std::cout << "Continuando viaje con la ruta recalculada hacia el nuevo destino." << std::endl;
+                    }
+
+
+
+                    uiManager.isTripStopped = false;
+                    newRoute = false;
+                    uiManager.showChangeRouteButton(false);
+                }
 
                 if (applyingTrafficChanges && carController.isStopped()) {
                     if (routeManager.isStartNodeSelected() && carController.hasValidRoute()) {
@@ -267,7 +281,11 @@ int main() {
                     isChangingRoute = true;
                     uiManager.setTotalWeight(0.0f);
                     uiManager.setTotalCost(0.0f);
+
+                    // Ocultar el botón de "Nueva ruta"
+                    uiManager.showChangeRouteButton(false);
                 }
+
 
                 if (awaitingNodeSelection) {
                     std::size_t selectedNode = routeManager.findClosestNode(mousePos);
@@ -296,38 +314,39 @@ int main() {
                     }
                 }
 
-                if (isChangingRoute) {
-                    std::size_t newDestination = routeManager.findClosestNode(mousePos);
-                    if (newDestination != std::size_t(-1)) {
-                        std::size_t currentCarNode = carController.getCurrentNode(map);
+              if (isChangingRoute) {
+    std::size_t newDestination = routeManager.findClosestNode(mousePos);
+    if (newDestination != std::size_t(-1)) {
+        std::size_t currentCarNode = carController.getCurrentNode(map);
 
-                        bool useDijkstra = uiManager.isDijkstraSelected();
-                        auto floydWarshallResult = map.floydWarshall();
+        bool useDijkstra = uiManager.isDijkstraSelected();
+        auto floydWarshallResult = map.floydWarshall();
 
-                        routeManager.setTotalWeight(0.0f);
-                        uiManager.setTotalWeight(0.0f);
-                        uiManager.setTotalCost(0.0f);
-                        float previousAccumulatedWeight = carController.getPreviousAccumulatedWeight();
-                        routeManager.calculateNewRoute(newDestination, currentCarNode, useDijkstra, floydWarshallResult, previousAccumulatedWeight);
+        routeManager.setTotalWeight(0.0f);
+        uiManager.setTotalWeight(0.0f);
+        uiManager.setTotalCost(0.0f);
+        float previousAccumulatedWeight = carController.getPreviousAccumulatedWeight();
+        routeManager.calculateNewRoute(newDestination, currentCarNode, useDijkstra, floydWarshallResult, previousAccumulatedWeight);
 
-                        const auto& newRouteNodes = routeManager.getNewPath();
-                        std::cout << "Nodos de la nueva ruta: ";
-                        for (auto node : newRouteNodes) {
-                            std::cout << node << " ";
-                        }
-                        std::cout << std::endl;
+        const auto& newRouteNodes = routeManager.getNewPath();
+        std::cout << "Nueva ruta calculada. Nodos de la nueva ruta: ";
+        for (auto node : newRouteNodes) {
+            std::cout << node << " ";
+        }
+        std::cout << std::endl;
 
-                        float totalWeight = routeManager.calculateTotalWeight(currentCarNode);
-                        float totalCost = routeManager.calculateTotalCost();
+        float totalWeight = routeManager.calculateTotalWeight(currentCarNode);
+        float totalCost = routeManager.calculateTotalCost();
 
-                        uiManager.setTotalWeight(totalWeight);
-                        uiManager.setTotalCost(totalCost);
+       // uiManager.setTotalWeight(totalWeight);
+       // uiManager.setTotalCost(totalCost);
 
-                        carController.startMovement(newRouteNodes, map, true, false);
-                        isChangingRoute = false;
-                        newRoute = true;
-                    }
-                }
+        // Mostrar el botón de "Continuar viaje" en lugar de iniciar el movimiento
+        uiManager.setShowStartButton(true);
+        isChangingRoute = false;
+        newRoute = true;
+    }
+}
 
                 
                 if (uiManager.newTripButton.getGlobalBounds().contains(mousePos)) {
@@ -364,8 +383,9 @@ int main() {
                             float totalWeight = routeManager.calculateTotalWeight(currentCarNode);
                             float totalCost = routeManager.calculateTotalCost();
 
-                            uiManager.setTotalWeight(totalWeight);
-                            uiManager.setTotalCost(totalCost);
+                            uiManager.setTotalWeight(0.0f);
+                            uiManager.setTotalCost(0.0f);
+
 
                             isSelectingNewTrip = false;
                             newTrip = true;
@@ -386,6 +406,7 @@ int main() {
                     uiManager.showNewTripButton = false;
                     std::cout << "Comienza el primer viaje." << std::endl;
                     if (newTrip) {
+                        newTripActualy = true;
                         carController.startMovement(routeManager.getNewPath(), map, false, true);
                     }
                     else {
@@ -473,7 +494,7 @@ int main() {
 
         window.clear();
         window.draw(mapSprite);
-        routeManager.drawTraversedPath(window, carController.getTraversedNodes());
+       // routeManager.drawTraversedPath(window, carController.getTraversedNodes());
         if (showStreets) {
             map.draw(window);
         }
@@ -483,7 +504,7 @@ int main() {
         }
         
        // routeManager.drawNewTrips(window);
-
+        
         routeManager.drawRoute(window);
 
         routeManager.drawNewRoute(window);

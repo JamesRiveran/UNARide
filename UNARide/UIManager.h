@@ -70,9 +70,16 @@ private:
     sf::Text floydText;
     sf::Text totalWeightText;
     sf::Text totalCostText;
+    bool showChangeRoute = false;
     bool carroEnMovimiento;
     void centerTextInButton(sf::Text& text, const sf::RectangleShape& button);
     void initializeComboBox(sf::Font& font);
+
+public:
+    void showChangeRouteButton(bool show);
+
 };
+
+
 
 #endif

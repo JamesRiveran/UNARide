@@ -28,7 +28,8 @@ public:
     bool areNodesConnected(std::size_t node1, std::size_t node2);
     std::vector<std::pair<std::vector<std::size_t>, sf::Color>> previousRoutes;
     std::vector<std::pair<std::vector<std::size_t>, sf::Color>> newTrips; 
-
+    bool isNewPathCalculated() const;
+    std::size_t getUpdatedEndNode() const;
     std::vector<sf::Color> routeColors = {
         sf::Color::Red, sf::Color::Green, sf::Color::Blue, sf::Color::Yellow, sf::Color::Magenta
     };
