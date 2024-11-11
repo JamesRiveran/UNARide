@@ -14,6 +14,11 @@ int main() {
         std::cerr << "Error loading map texture." << std::endl;
         return 1;
     }
+    sf::Clock travelClock;
+    bool isTimerRunning = false;
+    float timeCostPerSecond = 2.0f;
+    float totalTimeCost = 0.0f;
+    float totalCompleteCost = 0.0f;
 
     std::size_t node1 = std::numeric_limits<std::size_t>::max();
     std::size_t node2 = std::numeric_limits<std::size_t>::max();
@@ -27,6 +32,7 @@ int main() {
     bool newTrip = false;
     bool newTripActualy = false;
     bool newRoute = false;
+    bool newRouteActive = false;
     bool deleteNewTrip = false;
     int nodesSelected = 0;
 
@@ -63,8 +69,8 @@ int main() {
 
     UIManager uiManager(window, font);
     RouteManager routeManager(map);
-    CarController carController(carSprite, 100.f, carTextureUp, carTextureDown, carTextureLeft, carTextureRight, uiManager, routeManager);
-    uiManager.toggleAlgorithmOptions(true);   
+    CarController carController(carSprite, 100.f, carTextureUp, carTextureDown, carTextureLeft, carTextureRight, uiManager, routeManager, travelClock);
+    uiManager.toggleAlgorithmOptions(true);
     uiManager.toggleStartOption(false);        
     uiManager.toggleRouteOptions(false);
     bool useDijkstra = true, startMovement = false, routeCalculated = false, algorithmSelected = false;
@@ -150,11 +156,15 @@ int main() {
                     awaitingStreetOpen = true;
                     nodesSelected = 0;
                 }
+
+
+
                 if (uiManager.stopTripButton.getGlobalBounds().contains(mousePos) && !uiManager.isTripStopped) {
                     carController.stopAtNextNode();
                     carController.actualizarInicio(routeManager);
                     uiManager.isTripStopped = true;
                     uiManager.showChangeRouteButton(true);
+                    newRouteActive = false;
                     std::cout << "Botón 'Detener viaje' presionado. Mostrando botón 'Cambiar ruta'." << std::endl;
                 }
 
@@ -281,7 +291,7 @@ int main() {
                     isChangingRoute = true;
                     uiManager.setTotalWeight(0.0f);
                     uiManager.setTotalCost(0.0f);
-
+                    newRouteActive = true;
                     // Ocultar el botón de "Nueva ruta"
                     uiManager.showChangeRouteButton(false);
                 }
@@ -314,7 +324,7 @@ int main() {
                     }
                 }
 
-              if (isChangingRoute) {
+        if (isChangingRoute) {
     std::size_t newDestination = routeManager.findClosestNode(mousePos);
     if (newDestination != std::size_t(-1)) {
         std::size_t currentCarNode = carController.getCurrentNode(map);
@@ -386,7 +396,6 @@ int main() {
                             uiManager.setTotalWeight(0.0f);
                             uiManager.setTotalCost(0.0f);
 
-
                             isSelectingNewTrip = false;
                             newTrip = true;
 
@@ -412,9 +421,13 @@ int main() {
                     else {
                         carController.startMovement(routeManager.getPath(), map, false, false);
                     }
+                    uiManager.startClock();
                     startMovement = true;
-                    carVisible = true;
+                    uiManager.updateClock();
 
+                    carVisible = true;
+                    isTimerRunning = true;
+                    travelClock.restart(); // Iniciar el cronómetro
                     uiManager.setShowStartButton(false);
 
                     float totalWeight = routeManager.calculateTotalWeightUnique();
@@ -488,9 +501,17 @@ int main() {
         }
 
         float deltaTime = gameClock.restart().asSeconds();
+
+        // Llama a la actualización del cronómetro en cada iteración
+        if (uiManager.getIsClockRunning()) {
+            uiManager.updateClock();
+        }
+
+
         if (startMovement) {
             carController.update(deltaTime, map);
         }
+        
 
         window.clear();
         window.draw(mapSprite);
@@ -503,12 +524,12 @@ int main() {
             map.drawWeights(window, font);
         }
         
-       // routeManager.drawNewTrips(window);
+    
         
         routeManager.drawRoute(window);
-
+        
         routeManager.drawNewRoute(window);
-
+            
         routeManager.drawNewTrips(window);
 
         routeManager.drawClosedStreets(window);

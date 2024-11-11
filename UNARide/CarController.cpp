@@ -3,13 +3,12 @@
 #include <iostream>
 
 CarController::CarController(sf::Sprite& carSprite, float speed, sf::Texture& upTexture, sf::Texture& downTexture,
-    sf::Texture& leftTexture, sf::Texture& rightTexture, UIManager& uiManager, RouteManager& routeManager)
+    sf::Texture& leftTexture, sf::Texture& rightTexture, UIManager& uiManager, RouteManager& routeManager, sf::Clock& travelClock)
     : carSprite(carSprite), speed(speed), upTexture(upTexture), downTexture(downTexture),
-    leftTexture(leftTexture), rightTexture(rightTexture), currentNodeInPath(0), moving(false), progress(0.0f),
-    uiManager(uiManager), routeManager(routeManager), isMoving(false), shouldStopAtNextNode(false),
-    finalDestinationReached(false), shouldCalculateTotals(false), accumulatedWeight(0.0f),
-    previousAccumulatedWeight(0.0f), useDijkstra(false) 
-{
+    leftTexture(leftTexture), rightTexture(rightTexture), uiManager(uiManager), routeManager(routeManager),
+    travelClock(travelClock), isMoving(false), shouldStopAtNextNode(false),
+    finalDestinationReached(false), shouldCalculateTotals(false),
+    accumulatedWeight(0.0f), previousAccumulatedWeight(0.0f) {
 }
 
 void CarController::startMovement(const std::vector<std::size_t>& path, const Map& map, bool isNewRoute, bool isNewTrip) {
@@ -22,6 +21,7 @@ void CarController::startMovement(const std::vector<std::size_t>& path, const Ma
         progress = 0.0f;
         isMoving = true;
         uiManager.setCarroEnMovimiento(true);
+    
 
         if (isNewRoute) {
             previousAccumulatedWeight = accumulatedWeight;
@@ -169,19 +169,37 @@ void CarController::update(float deltaTime, const Map& map) {
             moving = false;
             isMoving = false;
             uiManager.setCarroEnMovimiento(false);
+            isTimerRunning = false;
 
-            // Actualizar el costo por kilómetro antes de calcular el costo total
+            // Obtener el tiempo transcurrido desde que inició el viaje
+            double elapsedTime = travelClock.getElapsedTime().asSeconds();
+            double realElapsedTime = std::floor(elapsedTime);
+            timeCost = realElapsedTime * timeCostPerSecond;
+            // Usar floor para redondear hacia abajo
+
+            // Calcular el costo por tiempo correctamente
+            double timeCost = realElapsedTime * timeCostPerSecond;
+
+            // Actualizar el costo total considerando el peso y el tiempo
             routeManager.updateCostPerKm();
-            float totalCost = (previousAccumulatedWeight + accumulatedWeight) * routeManager.getCostPerKm();
+            double totalWeightCost = (previousAccumulatedWeight + accumulatedWeight) * routeManager.getCostPerKm();
+            double totalCompleteCost = totalWeightCost + timeCost;
+
+            // Asignar los valores a la interfaz de usuario
             uiManager.setTotalWeight(previousAccumulatedWeight + accumulatedWeight);
-            uiManager.setTotalCost(totalCost);
+            uiManager.setTotalCost(totalWeightCost);
+            uiManager.setTotalTimeCost();
+            uiManager.setTotalCompleteCost(totalCompleteCost);
 
-            std::cout << "Llegada al destino final. Peso total acumulado: "
-                << previousAccumulatedWeight + accumulatedWeight
-                << " km. Total a pagar: " << totalCost << " colones." << std::endl;
+            // Imprimir los valores para depuración
+            std::cout << "realElapsedTime: " << realElapsedTime << " segundos, timeCost: " << timeCost
+                << ", totalWeightCost: " << totalWeightCost << ", totalCompleteCost: " << totalCompleteCost << std::endl;
 
+
+            uiManager.stopClock();
             uiManager.showNewTripButton = true;
         }
+
     }
     else {
         carSprite.setPosition(startPos + direction * progress);

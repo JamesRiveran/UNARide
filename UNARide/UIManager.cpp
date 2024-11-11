@@ -153,6 +153,44 @@ UIManager::UIManager(sf::RenderWindow& window, sf::Font& font) : showNewTripButt
 
     initializeComboBox(font);
     resizeUI(window);
+    initializeClockDisplay(font,window);
+    elapsedTimeInSeconds = 0;
+    costPerSecond = 2.0f;
+
+    timeElapsedText.setFont(font);
+    timeElapsedText.setCharacterSize(18);
+    timeElapsedText.setFillColor(sf::Color::Black);
+    timeElapsedText.setPosition(20.f, 20.f);
+
+    timeCostText.setFont(font);
+    timeCostText.setCharacterSize(18);
+    timeCostText.setFillColor(sf::Color::Black);
+    timeCostText.setPosition(20.f, 60.f);
+
+    totalCompleteCostText.setFont(font);
+    totalCompleteCostText.setCharacterSize(18);
+    totalCompleteCostText.setFillColor(sf::Color::Black);
+    totalCompleteCostText.setPosition(20.f, window.getSize().y - 120.f);
+    timeElapsedText.setFont(font);
+    timeElapsedText.setCharacterSize(18);
+    timeElapsedText.setFillColor(sf::Color::Black);
+    timeElapsedText.setPosition(window.getSize().x / 2 - -307, 440.f);
+    timeElapsedText.setString("00:00");
+    isClockRunning = false;
+    elapsedTimeInSeconds = 0;
+
+
+    timeCostText.setFont(font);
+    timeCostText.setCharacterSize(18);
+    timeCostText.setFillColor(sf::Color::Black);
+    timeCostText.setPosition(221.f, window.getSize().y  -60.f);
+    timeCostText.setString("Costo Tiempo:");
+
+    totalCompleteCostText.setFont(font);
+    totalCompleteCostText.setCharacterSize(18);
+    totalCompleteCostText.setFillColor(sf::Color::Black);
+    totalCompleteCostText.setPosition(221.f, window.getSize().y - 40.f);
+    totalCompleteCostText.setString("Total a pagar:");
 }
 
 void UIManager::initializeComboBox(sf::Font& font) {
@@ -213,6 +251,11 @@ void UIManager::resizeUI(sf::RenderWindow& window) {
 
     totalWeightText.setPosition(20.f, window.getSize().y - 80.f);
     totalCostText.setPosition(20.f, window.getSize().y - 40.f);
+    timeElapsedText.setPosition(20.f, window.getSize().y - 100.f);
+    timeCostText.setPosition(20.f, window.getSize().y - 70.f);
+    totalCompleteCostText.setPosition(20.f, window.getSize().y - 40.f);
+
+
 }
 
 
@@ -269,6 +312,13 @@ void UIManager::drawUI(sf::RenderWindow& window) {
         window.draw(changeRouteButton);
         window.draw(changeRouteButtonText);
     }
+    window.draw(timeCostText);
+    window.draw(totalCompleteCostText);
+    window.draw(timeElapsedText);
+    window.draw(timeCostText);
+    window.draw(totalCompleteCostText);
+
+    window.draw(timeElapsedText);
 
 }
 
@@ -325,6 +375,65 @@ void UIManager::setTotalWeight(float totalWeight) {
     }
 }
 
+
+    void UIManager::initializeClockDisplay(sf::Font & font, sf::RenderWindow & window) {
+        timeElapsedText.setFont(font);
+        timeElapsedText.setCharacterSize(18);
+        timeElapsedText.setFillColor(sf::Color::Black);
+        timeElapsedText.setPosition(20.f, window.getSize().y - 100.f);
+
+        timeCostText.setFont(font);
+        timeCostText.setCharacterSize(18);
+        timeCostText.setFillColor(sf::Color::Black);
+        timeCostText.setPosition(20.f, window.getSize().y - 70.f);
+
+        totalCompleteCostText.setFont(font);
+        totalCompleteCostText.setCharacterSize(18);
+        totalCompleteCostText.setFillColor(sf::Color::Black);
+        totalCompleteCostText.setPosition(20.f, window.getSize().y - 40.f);
+
+        timeElapsedText.setString("Tiempo transcurrido: 0 segundos");
+        timeCostText.setString("Costo por tiempo: 0 colones");
+        totalCompleteCostText.setString("Total completo a pagar: 0 colones");
+    }
+
+
+void UIManager::updateTimer() {
+    elapsedTimeInSeconds = static_cast<int>(clock.getElapsedTime().asSeconds());
+    std::ostringstream oss;
+    oss << "Tiempo transcurrido: " << elapsedTimeInSeconds << " segundos";
+    timeElapsedText.setString(oss.str());
+}
+
+void UIManager::updateTimeCost() {
+    float timeCost = elapsedTimeInSeconds * costPerSecond;
+    std::ostringstream oss;
+    oss << "Costo Tiempo: " << timeCost;
+    timeCostText.setString(oss.str());
+}
+
+void UIManager::updateTotalCompleteCost(float totalCost) {
+    float timeCost = elapsedTimeInSeconds * costPerSecond;
+    float completeTotalCost = totalCost + timeCost;
+    std::ostringstream oss;
+    oss << "Total a pagar: " << completeTotalCost;
+    totalCompleteCostText.setString(oss.str());
+}
+void UIManager::setTotalTimeCost() {
+    double timeCost = elapsedTimeInSeconds * costPerSecond; // Multiplicar por el costo por segundo
+    std::ostringstream oss;
+    oss << "Costo Tiempo: " << static_cast<int>(timeCost) << " colones";
+    timeCostText.setString(oss.str());
+}
+
+
+void UIManager::setTotalCompleteCost(double totalCost) {
+    std::ostringstream oss;
+    oss << "Total a pagar: " << static_cast<int>(totalCost) << " colones";
+    totalCompleteCostText.setString(oss.str());
+}
+
+
 void UIManager::showChangeRouteButton(bool show) {
     showChangeRoute = show;
 }
@@ -336,7 +445,7 @@ void UIManager::setTotalCost(float totalCost) {
     }
     else {
         std::ostringstream oss;
-        oss << "Total a pagar: " << totalCost;
+        oss << "Costo pesos: " << totalCost;
         totalCostText.setString(oss.str());
     }
 }
@@ -375,4 +484,36 @@ void UIManager::toggleStartOption(bool visible) {
 
 void UIManager::toggleRouteOptions(bool visible) {
     showRouteOptions = visible;
+}
+void UIManager::startClock() {
+    isClockRunning = true;
+    clock.restart();
+}
+
+void UIManager::stopClock() {
+    isClockRunning = false;
+}
+
+void UIManager::resetClock() {
+    elapsedTimeInSeconds = 0;
+    timeElapsedText.setString("00:00");
+}
+
+bool UIManager::getIsClockRunning() const {
+    return isClockRunning;
+}
+void UIManager::updateClock() {
+    if (isClockRunning) {
+        elapsedTimeInSeconds = static_cast<int>(clock.getElapsedTime().asSeconds());
+        int minutes = elapsedTimeInSeconds / 60;
+        int seconds = elapsedTimeInSeconds % 60;
+
+        std::ostringstream oss;
+        oss << (minutes < 10 ? "0" : "") << minutes << ":"
+            << (seconds < 10 ? "0" : "") << seconds;
+        timeElapsedText.setString(oss.str());
+    }
+}
+float UIManager::getCostPerSecond() const {
+    return costPerSecond;
 }

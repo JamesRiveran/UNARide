@@ -1,2 +1,3 @@
-﻿  Main.cpp
+﻿  CarController.cpp
+C:\Users\Raquel\Desktop\Semestre 2 2024\Estructuras de Datos\Proyecto(190,36): warning C4244: 'argumento': conversión de 'double' a 'float'; posible pérdida de datos
   UNARide.vcxproj -> C:\Users\Raquel\Desktop\Semestre 2 2024\Estructuras de Datos\Proyecto#2\UNARide\x64\Debug\UNARide.exe
