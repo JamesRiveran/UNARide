@@ -38,6 +38,15 @@ void RouteManager::selectNode(sf::Vector2f mousePos) {
         }
     }
 }
+void RouteManager::resetForChangeRoute() {
+    hasChangedRoute = false;
+    newPathCalculated = false;
+    nodesSinceFirstChange.clear();
+    newPath.clear();
+    //totalWeight = 0.0f;
+    std::cout << "Estados de RouteManager reseteados para cambio de ruta." << std::endl;
+}
+
 
 void RouteManager::drawRoute(sf::RenderWindow& window) {
     for (const auto& routePair : previousRoutes) {
@@ -469,3 +478,25 @@ std::size_t RouteManager::getUpdatedEndNode() const {
     return !newPath.empty() ? newPath.back() : endNode;
 }
 
+void RouteManager::resetForNewTrip() {
+    clearRoutes();
+    startNodeSelected = false;
+    endNodeSelected = false;
+    routeCalculated = false;
+    hasChangedRoute = false;
+    previousRoutes.clear();  // Limpia la ruta negra original
+    std::cout << "Reset completado para un nuevo viaje. Rutas previas eliminadas." << std::endl;
+}
+
+
+void RouteManager::clearRoutes() {
+    previousRoutes.clear();  // Limpia todas las rutas previas (negra y morada)
+    newPath.clear();         // Limpia la nueva ruta (azul)
+    nodesSinceFirstChange.clear(); // Limpia los nodos desde el primer cambio
+    newTrips.clear();        // Limpia los viajes nuevos (azul)
+    totalWeight = 0.0f;      // Reinicia el peso total acumulado
+    hasChangedRoute = false; // Restablece el estado de cambio de ruta
+    newPathCalculated = false; // Indica que no hay una nueva ruta calculada
+
+    std::cout << "Rutas y datos reiniciados para un nuevo viaje." << std::endl;
+}

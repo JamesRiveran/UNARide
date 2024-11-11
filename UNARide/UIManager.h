@@ -76,7 +76,10 @@ public:
     bool getIsClockRunning() const;
     bool isClockRunning;
     float getCostPerSecond() const;
-
+    void setShowCostLabels(bool show);
+    void resetForNewTrip();
+    void resetCostLabels();
+    void showTrafficButtons(bool show);
 private:
     sf::Text timeCostText;
     sf::Text totalCompleteCostText;
@@ -94,10 +97,12 @@ private:
     void centerTextInButton(sf::Text& text, const sf::RectangleShape& button);
     void initializeComboBox(sf::Font& font);
     sf::Text timeElapsedText;
-    sf::Clock clock; // Cronómetro para medir el tiempo
-    int elapsedTimeInSeconds; // Tiempo transcurrido en segundos
-    float costPerSecond; // Costo por segundo (2 colones por segundo)
-   
+    sf::Clock clock; 
+    int elapsedTimeInSeconds; 
+    float costPerSecond; 
+    bool showCostLabels = false; 
+    bool showTrafficOptions;
+
 public:
     void showChangeRouteButton(bool show);
 

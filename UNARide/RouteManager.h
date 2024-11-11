@@ -51,8 +51,9 @@ public:
     void clearNewTrips();
     void setStartNode(std::size_t newStartNode);
     void drawTraversedPath(sf::RenderWindow& window, const std::vector<std::size_t>& traversedNodes);
-
-
+    void resetForNewTrip();
+    void clearRoutes();
+    void resetForChangeRoute();
 private:
     float costPerKm;
     float totalWeight;

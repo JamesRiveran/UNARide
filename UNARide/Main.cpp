@@ -122,6 +122,7 @@ int main() {
                         if (nodesSelected == 0) {
                             node1 = selectedNode;
                             nodesSelected++;
+                            std::cout << "Nodo inicial seleccionado para accidente: " << node1 << std::endl;
                         }
                         else if (nodesSelected == 1) {
                             if (routeManager.areNodesConnected(node1, selectedNode)) {
@@ -131,19 +132,27 @@ int main() {
                                 for (auto& street : map.getStreets()) {
                                     if ((street.getNode1() == node1 && street.getNode2() == node2) ||
                                         (street.getNode1() == node2 && street.getNode2() == node1)) {
-                                        bool closeFromNode1ToNode2 = true;
+                                        street.closeStreetDirection(node1, node2);
 
-                                        if (closeFromNode1ToNode2) {
-                                            street.closeStreetDirection(node1, node2);
-                                        }
-                                        else {
-                                            street.closeStreetDirection(node2, node1);
-                                        }
-
-                                        std::cout << "Calle cerrada entre los nodos " << node1 << " y " << node2 << " en la dirección seleccionada." << std::endl;
+                                        std::cout << "Calle cerrada en la dirección de " << node1 << " hacia " << node2 << "." << std::endl;
                                     }
                                 }
+
                                 nodesSelected = 0;
+                                trafficStartNode = std::size_t(-1);
+                                trafficEndNode = std::size_t(-1);
+                                applyingTrafficChanges = false;
+                                carController.stopAtNextNode();
+                                std::size_t currentCarNode = carController.getCurrentNode(map);
+                                std::size_t newDestination = routeManager.getEndNode();
+
+                                routeManager.calculateNewRoute(newDestination, currentCarNode, uiManager.isDijkstraSelected(), floydWarshallResult, carController.getPreviousAccumulatedWeight());
+
+                                std::cout << "Ruta recalculada para evitar la calle cerrada. Esperando 'Continuar viaje'." << std::endl;
+
+                                uiManager.isTripStopped = true;
+                                uiManager.showChangeRouteButton(true);
+                                uiManager.showTrafficButtons(true);
                             }
                             else {
                                 std::cout << "El segundo nodo no es adyacente al primero." << std::endl;
@@ -151,6 +160,7 @@ int main() {
                         }
                     }
                 }
+
 
                 if (uiManager.openStreetButton.getGlobalBounds().contains(window.mapPixelToCoords(sf::Mouse::getPosition(window)))) {
                     awaitingStreetOpen = true;
@@ -165,6 +175,8 @@ int main() {
                     uiManager.isTripStopped = true;
                     uiManager.showChangeRouteButton(true);
                     newRouteActive = false;
+                    uiManager.showTrafficButtons(true); 
+
                     std::cout << "Botón 'Detener viaje' presionado. Mostrando botón 'Cambiar ruta'." << std::endl;
                 }
 
@@ -206,7 +218,6 @@ int main() {
                     if (newRoute && routeManager.isNewPathCalculated()) {
                         carController.startMovement(routeManager.getNewPath(), map, true, false);
                         std::cout << "Continuando viaje con la nueva ruta calculada (newPath)." << std::endl;
-                        std::cout << "Continuando viaje con la nueva ruta calculada (newPath)." << std::endl;
                     }
                     else {
                         std::size_t updatedEndNode = routeManager.getUpdatedEndNode();
@@ -215,12 +226,12 @@ int main() {
                         std::cout << "Continuando viaje con la ruta recalculada hacia el nuevo destino." << std::endl;
                     }
 
-
-
                     uiManager.isTripStopped = false;
                     newRoute = false;
                     uiManager.showChangeRouteButton(false);
+                    uiManager.showTrafficButtons(false);
                 }
+
 
                 if (applyingTrafficChanges && carController.isStopped()) {
                     if (routeManager.isStartNodeSelected() && carController.hasValidRoute()) {
@@ -237,20 +248,15 @@ int main() {
                                 std::cout << "Nuevo peso de la calle entre los nodos " << trafficStartNode
                                     << " y " << trafficEndNode << ": " << newWeight << std::endl;
 
-                                float previousAccumulatedWeight = carController.getPreviousAccumulatedWeight();
-                                routeManager.calculateNewRoute(newDestination, currentCarNode, useDijkstra, floydWarshallResult, previousAccumulatedWeight);
-                                float totalWeight = routeManager.calculateTotalWeight(currentCarNode, previousAccumulatedWeight);
-                                float totalCost = routeManager.calculateTotalCost(); 
-                                uiManager.setTotalWeight(totalWeight);  
-
-                                uiManager.setTotalCost(totalCost);
-                                carController.startMovement(routeManager.getNewPath(), map, true, false);
+                                trafficStartNode = std::size_t(-1);
+                                trafficEndNode = std::size_t(-1);
+                                selectingTrafficNodes = false;
                                 applyingTrafficChanges = false;
+                                carController.stopAtNextNode();
+
+                                std::cout << "Operación de tráfico completada. El auto permanecerá detenido." << std::endl;
                             }
                         }
-                    }
-                    else {
-                        std::cerr << "Error: no se ha seleccionado una ruta válida." << std::endl;
                     }
                 }
 
@@ -287,14 +293,26 @@ int main() {
 
                 if (uiManager.changeRouteButton.getGlobalBounds().contains(mousePos)) {
                     std::cout << "Botón 'Cambiar ruta' presionado. El carro se detendrá en el siguiente nodo más cercano." << std::endl;
+
+                    // Detener cualquier operación de tráfico o cierre de calles
+                    applyingTrafficChanges = false;
+                    selectingTrafficNodes = false;
+                    awaitingStreetClose = false;
+                    awaitingStreetOpen = false;
+
+                    // Limpiar selección de nodos para tráfico
+                    trafficStartNode = std::size_t(-1);
+                    trafficEndNode = std::size_t(-1);
+
+                    // Detener el auto y preparar para cambiar la ruta
                     carController.stopAtNextNode();
                     isChangingRoute = true;
                     uiManager.setTotalWeight(0.0f);
                     uiManager.setTotalCost(0.0f);
                     newRouteActive = true;
-                    // Ocultar el botón de "Nueva ruta"
                     uiManager.showChangeRouteButton(false);
                 }
+
 
 
                 if (awaitingNodeSelection) {
@@ -359,20 +377,26 @@ int main() {
 }
 
                 
-                if (uiManager.newTripButton.getGlobalBounds().contains(mousePos)) {
-                    if (deleteNewTrip) {
-                        routeManager.clearNewTrips();
-                    }
-                    std::cout << "Botón 'Nuevo Viaje' presionado. Selecciona un nuevo destino." << std::endl;
-                    isSelectingNewTrip = true;
-                    selectingNewDestination = true;
-                    readyToStartNewTrip = false;
-                    uiManager.setShowStartButton(true);
-                    newRoute = true;
-                    deleteNewTrip = true;
-                    uiManager.showNewTripButton = false;
+        if (uiManager.newTripButton.getGlobalBounds().contains(mousePos)) {
+            std::cout << "Botón 'Nuevo Viaje' presionado. Preparando para un nuevo destino." << std::endl;
+            selectingNewDestination = true;
+            uiManager.resetForNewTrip();
+            routeManager.resetForNewTrip();
+            carController.resetAccumulatedValues();
+            uiManager.resetCostLabels();
 
-                }
+            isSelectingNewTrip = true;
+           
+            readyToStartNewTrip = false;
+            uiManager.setShowStartButton(true);
+            newRoute = true;
+            deleteNewTrip = true;
+            uiManager.showNewTripButton = false;
+            routeManager.resetRoute();
+
+        }
+
+
 
                 if (isSelectingNewTrip) {
                     std::size_t newDestination = routeManager.findClosestNode(mousePos);
@@ -413,6 +437,8 @@ int main() {
 
                 if (uiManager.startButton.getGlobalBounds().contains(mousePos)) {
                     uiManager.showNewTripButton = false;
+                    uiManager.toggleRouteOptions(false); // Ocultar botones y ComboBox
+
                     std::cout << "Comienza el primer viaje." << std::endl;
                     if (newTrip) {
                         newTripActualy = true;
@@ -427,7 +453,7 @@ int main() {
 
                     carVisible = true;
                     isTimerRunning = true;
-                    travelClock.restart(); // Iniciar el cronómetro
+                    travelClock.restart();
                     uiManager.setShowStartButton(false);
 
                     float totalWeight = routeManager.calculateTotalWeightUnique();
@@ -454,7 +480,8 @@ int main() {
                     uiManager.setShowStartButton(true);
                     uiManager.selectedTrafficIndex = 0;
                     uiManager.selectedTrafficText.setString(uiManager.trafficOptions[uiManager.selectedTrafficIndex]);
-
+                    uiManager.setShowCostLabels(false);
+                    uiManager.resetClock();
                     uiManager.resetAlgorithmSelected();
                     uiManager.setTotalWeight(0.0f);
                     uiManager.setTotalCost(0.0f);

@@ -32,6 +32,7 @@ public:
     const std::vector<std::size_t>& getTraversedNodes() const {
         return traversedNodes;
     }
+    void resetAccumulatedValues();
 private:
     std::vector<std::size_t> traversedNodes; 
     UIManager& uiManager;
