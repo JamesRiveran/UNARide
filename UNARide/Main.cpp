@@ -35,6 +35,7 @@ int main() {
     bool newRouteActive = false;
     bool deleteNewTrip = false;
     int nodesSelected = 0;
+    bool drawOriginalRoute = true;
 
     std::size_t currentCarNode = std::size_t(-1);
     std::size_t newDestination = std::size_t(-1);
@@ -205,19 +206,29 @@ int main() {
                     routeManager.setStartNode(currentCarNode);
                     std::cout << "Nodo actual del auto al continuar viaje: " << currentCarNode << std::endl;
 
-                    if (newRoute && routeManager.isNewPathCalculated()) {
+                    if (newTripActualy) {
+                        // Caso para el nuevo viaje
+                        std::size_t newDestination = routeManager.getUpdatedEndNode();
+                        routeManager.calculateNewRoute(newDestination, currentCarNode, uiManager.isDijkstraSelected(), floydWarshallResult, carController.getPreviousAccumulatedWeight());
+                        carController.startMovement(routeManager.getNewPath(), map, true, true);
+                        std::cout << "Continuando viaje con el nuevo destino del nuevo viaje." << std::endl;
+                    }
+                    else if (newRoute && routeManager.isNewPathCalculated()) {
+                        // Caso para cambio de ruta
                         carController.startMovement(routeManager.getNewPath(), map, true, false);
                         std::cout << "Continuando viaje con la nueva ruta calculada (newPath)." << std::endl;
                     }
                     else {
+                        // Caso para la ruta original
                         std::size_t updatedEndNode = routeManager.getUpdatedEndNode();
                         routeManager.calculateNewRoute(updatedEndNode, currentCarNode, uiManager.isDijkstraSelected(), floydWarshallResult, carController.getPreviousAccumulatedWeight());
                         carController.startMovement(routeManager.getNewPath(), map, true, false);
-                        std::cout << "Continuando viaje con la ruta recalculada hacia el nuevo destino." << std::endl;
+                        std::cout << "Continuando viaje con la ruta recalculada hacia el destino original." << std::endl;
                     }
 
                     uiManager.isTripStopped = false;
                     newRoute = false;
+                    newTripActualy = false; // Resetear el estado del nuevo viaje
                     uiManager.showChangeRouteButton(false);
                     uiManager.showTrafficButtons(false);
                 }
@@ -367,7 +378,6 @@ int main() {
             uiManager.resetCostLabels();
 
             isSelectingNewTrip = true;
-           
             readyToStartNewTrip = false;
             uiManager.setShowStartButton(true);
             newRoute = true;
@@ -375,7 +385,9 @@ int main() {
             uiManager.showNewTripButton = false;
             routeManager.resetRoute();
 
+            drawOriginalRoute = false; // Desactivar el dibujo de la ruta original
         }
+
 
 
 
@@ -419,7 +431,7 @@ int main() {
                 if (uiManager.startButton.getGlobalBounds().contains(mousePos)) {
                     uiManager.showNewTripButton = false;
                     uiManager.toggleRouteOptions(false); 
-
+                    
                     std::cout << "Comienza el primer viaje." << std::endl;
                     if (newTrip) {
                         newTripActualy = true;
@@ -457,6 +469,7 @@ int main() {
                     algorithmSelected = false;
                     isChangingRoute = false;
                     showStreets = true;
+                    drawOriginalRoute = true; 
                     uiManager.showNewTripButton = false;
                     uiManager.setShowStartButton(true);
                     uiManager.selectedTrafficIndex = 0;
@@ -530,13 +543,13 @@ int main() {
             map.drawWeights(window, font);
         }
         
- 
-        routeManager.drawRoute(window);
-           
-        routeManager.drawNewTrips(window);
-
+        if (drawOriginalRoute && !newTrip && !newTripActualy) {
+            routeManager.drawRoute(window);
+        }
         routeManager.drawNewRoute(window);
 
+
+        routeManager.drawNewTrips(window);
         routeManager.drawClosedStreets(window);
 
             float totalWeight = routeManager.calculateTotalWeightUnique();
