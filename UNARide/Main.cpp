@@ -76,7 +76,7 @@ int main() {
     uiManager.toggleRouteOptions(false);
     bool useDijkstra = true, startMovement = false, routeCalculated = false, algorithmSelected = false;
     bool showWeights = false;
-    bool showStreets = true;
+    bool showStreets = false;
     bool applyingTrafficChanges = false;
     bool isChangingRoute = false;
     sf::Clock gameClock;
@@ -207,19 +207,16 @@ int main() {
                     std::cout << "Nodo actual del auto al continuar viaje: " << currentCarNode << std::endl;
 
                     if (newTripActualy) {
-                        // Caso para el nuevo viaje
                         std::size_t newDestination = routeManager.getUpdatedEndNode();
                         routeManager.calculateNewRoute(newDestination, currentCarNode, uiManager.isDijkstraSelected(), floydWarshallResult, carController.getPreviousAccumulatedWeight());
                         carController.startMovement(routeManager.getNewPath(), map, true, true);
                         std::cout << "Continuando viaje con el nuevo destino del nuevo viaje." << std::endl;
                     }
                     else if (newRoute && routeManager.isNewPathCalculated()) {
-                        // Caso para cambio de ruta
                         carController.startMovement(routeManager.getNewPath(), map, true, false);
                         std::cout << "Continuando viaje con la nueva ruta calculada (newPath)." << std::endl;
                     }
                     else {
-                        // Caso para la ruta original
                         std::size_t updatedEndNode = routeManager.getUpdatedEndNode();
                         routeManager.calculateNewRoute(updatedEndNode, currentCarNode, uiManager.isDijkstraSelected(), floydWarshallResult, carController.getPreviousAccumulatedWeight());
                         carController.startMovement(routeManager.getNewPath(), map, true, false);
@@ -228,7 +225,7 @@ int main() {
 
                     uiManager.isTripStopped = false;
                     newRoute = false;
-                    newTripActualy = false; // Resetear el estado del nuevo viaje
+                    newTripActualy = false; 
                     uiManager.showChangeRouteButton(false);
                     uiManager.showTrafficButtons(false);
                 }
@@ -385,7 +382,7 @@ int main() {
             uiManager.showNewTripButton = false;
             routeManager.resetRoute();
 
-            drawOriginalRoute = false; // Desactivar el dibujo de la ruta original
+            drawOriginalRoute = false; 
         }
 
 
@@ -460,7 +457,6 @@ int main() {
 
 
                 if (uiManager.clearButton.getGlobalBounds().contains(mousePos)) {
-                    // Reiniciar variables de estado y control
                     node1 = std::numeric_limits<std::size_t>::max();
                     node2 = std::numeric_limits<std::size_t>::max();
                     currentCarNode = std::size_t(-1);
@@ -468,7 +464,6 @@ int main() {
                     trafficStartNode = std::size_t(-1);
                     trafficEndNode = std::size_t(-1);
 
-                    // Reiniciar contadores y banderas
                     nodesSelected = 0;
                     totalTimeCost = 0.0f;
                     totalCompleteCost = 0.0f;

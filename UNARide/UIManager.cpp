@@ -3,6 +3,45 @@
 #include <iostream>
 
 UIManager::UIManager(sf::RenderWindow& window, sf::Font& font) : showNewTripButton(false), showStartButton(true), isTripStopped(false) {
+    float buttonWidth = 120.f;   
+    float buttonHeight = 40.f;   
+    float leftOffset = 20.f;     
+    float initialYPosition = 180.f;
+    float verticalSpacing = 10.f; 
+
+    assignAccidentButton.setSize(sf::Vector2f(buttonWidth, buttonHeight));
+    assignAccidentButton.setFillColor(sf::Color::Black);
+    assignAccidentButton.setOutlineColor(sf::Color::White);
+    assignAccidentButton.setOutlineThickness(2.f);
+    assignAccidentButton.setPosition(leftOffset, initialYPosition);
+    assignAccidentButtonText.setFont(font);
+    assignAccidentButtonText.setString("Accidente");
+    assignAccidentButtonText.setCharacterSize(18);
+    assignAccidentButtonText.setFillColor(sf::Color::White);
+    centerTextInButton(assignAccidentButtonText, assignAccidentButton);
+
+    coseviButton.setSize(sf::Vector2f(buttonWidth, buttonHeight));
+    coseviButton.setFillColor(sf::Color::Black);
+    coseviButton.setOutlineColor(sf::Color::White);
+    coseviButton.setOutlineThickness(2.f);
+    coseviButton.setPosition(leftOffset, initialYPosition + buttonHeight + verticalSpacing);
+    coseviButtonText.setFont(font);
+    coseviButtonText.setString("COSEVI");
+    coseviButtonText.setCharacterSize(18);
+    coseviButtonText.setFillColor(sf::Color::White);
+    centerTextInButton(coseviButtonText, coseviButton);
+
+    openStreetButton.setSize(sf::Vector2f(buttonWidth, buttonHeight));
+    openStreetButton.setFillColor(sf::Color::Black);
+    openStreetButton.setOutlineColor(sf::Color::White);
+    openStreetButton.setOutlineThickness(2.f);
+    openStreetButton.setPosition(leftOffset, initialYPosition + 2 * (buttonHeight + verticalSpacing));
+    openStreetText.setFont(font);
+    openStreetText.setString("Abrir calle");
+    openStreetText.setCharacterSize(18);
+    openStreetText.setFillColor(sf::Color::White);
+    centerTextInButton(openStreetText, openStreetButton);
+
     clearButton.setSize(sf::Vector2f(100.f, 40.f));
     clearButton.setFillColor(sf::Color::Black);
     clearButton.setOutlineColor(sf::Color::White);
@@ -12,26 +51,6 @@ UIManager::UIManager(sf::RenderWindow& window, sf::Font& font) : showNewTripButt
     startButton.setFillColor(sf::Color::Black);
     startButton.setOutlineColor(sf::Color::White);
     startButton.setOutlineThickness(2.f);
-
-    assignAccidentButton.setSize(sf::Vector2f(150.f, 40.f));
-    assignAccidentButton.setFillColor(sf::Color::Black);
-    assignAccidentButton.setOutlineColor(sf::Color::White);
-    assignAccidentButton.setOutlineThickness(2.f);
-
-    assignAccidentButtonText.setFont(font);
-    assignAccidentButtonText.setString("Accidente");
-    assignAccidentButtonText.setCharacterSize(18);
-    assignAccidentButtonText.setFillColor(sf::Color::White);
-
-    openStreetButton.setSize(sf::Vector2f(150.f, 40.f));
-    openStreetButton.setFillColor(sf::Color::Black);
-    openStreetButton.setOutlineColor(sf::Color::White);
-    openStreetButton.setOutlineThickness(2.f);
-
-    openStreetText.setFont(font);
-    openStreetText.setString("Abrir calle");
-    openStreetText.setCharacterSize(18);
-    openStreetText.setFillColor(sf::Color::White);
 
     dijkstraCheckBox.setSize(sf::Vector2f(20.f, 20.f));
     dijkstraCheckBox.setFillColor(sf::Color::White);
@@ -86,14 +105,14 @@ UIManager::UIManager(sf::RenderWindow& window, sf::Font& font) : showNewTripButt
     totalWeightText.setFont(font);
     totalWeightText.setCharacterSize(18);
     totalWeightText.setFillColor(sf::Color::Black);
-    totalWeightText.setPosition(20.f, window.getSize().y - 80.f);
+    totalWeightText.setPosition(20.f, window.getSize().y - 120.f);
 
     totalCostText.setFont(font);
     totalCostText.setCharacterSize(18);
     totalCostText.setFillColor(sf::Color::Black);
-    totalCostText.setPosition(20.f, window.getSize().y - 40.f);
+    totalCostText.setPosition(20.f, window.getSize().y - 90.f);
 
-    changeRouteButton.setSize(sf::Vector2f(100.f, 40.f));
+    changeRouteButton.setSize(sf::Vector2f(130.f, 40.f));
     changeRouteButton.setFillColor(sf::Color::Black);
     changeRouteButton.setOutlineColor(sf::Color::White);
     changeRouteButton.setOutlineThickness(2.f);
@@ -102,18 +121,9 @@ UIManager::UIManager(sf::RenderWindow& window, sf::Font& font) : showNewTripButt
     changeRouteButtonText.setString("Cambiar ruta");
     changeRouteButtonText.setCharacterSize(18);
     changeRouteButtonText.setFillColor(sf::Color::White);
+    centerTextInButton(changeRouteButtonText, changeRouteButton);
 
-    coseviButton.setSize(sf::Vector2f(100.f, 40.f));
-    coseviButton.setFillColor(sf::Color::Black);
-    coseviButton.setOutlineColor(sf::Color::White);
-    coseviButton.setOutlineThickness(2.f);
-
-    coseviButtonText.setFont(font);
-    coseviButtonText.setString("COSEVI");
-    coseviButtonText.setCharacterSize(18);
-    coseviButtonText.setFillColor(sf::Color::White);
-
-    newTripButton.setSize(sf::Vector2f(150.f, 40.f));
+    newTripButton.setSize(sf::Vector2f(130.f, 40.f));
     newTripButton.setFillColor(sf::Color::Black);
     newTripButton.setOutlineColor(sf::Color::White);
     newTripButton.setOutlineThickness(2.f);
@@ -122,11 +132,10 @@ UIManager::UIManager(sf::RenderWindow& window, sf::Font& font) : showNewTripButt
     newTripButtonText.setString("Nuevo Viaje");
     newTripButtonText.setCharacterSize(18);
     newTripButtonText.setFillColor(sf::Color::White);
-
-    newTripButton.setPosition(10.f, 300.f); 
+    newTripButton.setPosition(10.f, 300.f);
     centerTextInButton(newTripButtonText, newTripButton);
 
-    stopTripButton.setSize(sf::Vector2f(150.f, 40.f));
+    stopTripButton.setSize(sf::Vector2f(130.f, 40.f));
     stopTripButton.setFillColor(sf::Color::Black);
     stopTripButton.setOutlineColor(sf::Color::White);
     stopTripButton.setOutlineThickness(2.f);
@@ -136,7 +145,7 @@ UIManager::UIManager(sf::RenderWindow& window, sf::Font& font) : showNewTripButt
     stopTripButtonText.setCharacterSize(18);
     stopTripButtonText.setFillColor(sf::Color::White);
 
-    continueTripButton.setSize(sf::Vector2f(150.f, 40.f));
+    continueTripButton.setSize(sf::Vector2f(130.f, 40.f));
     continueTripButton.setFillColor(sf::Color::Black);
     continueTripButton.setOutlineColor(sf::Color::White);
     continueTripButton.setOutlineThickness(2.f);
@@ -153,7 +162,7 @@ UIManager::UIManager(sf::RenderWindow& window, sf::Font& font) : showNewTripButt
 
     initializeComboBox(font);
     resizeUI(window);
-    initializeClockDisplay(font,window);
+    initializeClockDisplay(font, window);
     elapsedTimeInSeconds = 0;
     costPerSecond = 2.0f;
 
@@ -162,15 +171,11 @@ UIManager::UIManager(sf::RenderWindow& window, sf::Font& font) : showNewTripButt
     timeElapsedText.setFillColor(sf::Color::Black);
     timeElapsedText.setPosition(20.f, 20.f);
 
-    timeCostText.setFont(font);
-    timeCostText.setCharacterSize(18);
-    timeCostText.setFillColor(sf::Color::Black);
-    timeCostText.setPosition(20.f, 60.f);
 
     totalCompleteCostText.setFont(font);
     totalCompleteCostText.setCharacterSize(18);
     totalCompleteCostText.setFillColor(sf::Color::Black);
-    totalCompleteCostText.setPosition(20.f, window.getSize().y - 120.f);
+    totalCompleteCostText.setPosition(window.getSize().x / 2 + 20.f, window.getSize().y - 90.f); 
     timeElapsedText.setFont(font);
     timeElapsedText.setCharacterSize(18);
     timeElapsedText.setFillColor(sf::Color::Black);
@@ -179,11 +184,10 @@ UIManager::UIManager(sf::RenderWindow& window, sf::Font& font) : showNewTripButt
     isClockRunning = false;
     elapsedTimeInSeconds = 0;
 
-
     timeCostText.setFont(font);
     timeCostText.setCharacterSize(18);
     timeCostText.setFillColor(sf::Color::Black);
-    timeCostText.setPosition(221.f, window.getSize().y  -60.f);
+    timeCostText.setPosition(221.f, window.getSize().y - 80.f);
     timeCostText.setString("Costo Tiempo:");
 
     totalCompleteCostText.setFont(font);
@@ -192,8 +196,8 @@ UIManager::UIManager(sf::RenderWindow& window, sf::Font& font) : showNewTripButt
     totalCompleteCostText.setPosition(221.f, window.getSize().y - 40.f);
     totalCompleteCostText.setString("Total a pagar:");
     showTrafficOptions = false;
-
 }
+
 
 void UIManager::initializeComboBox(sf::Font& font) {
     trafficOptions = { "Normal", "Moderado", "Lento" };
@@ -209,56 +213,57 @@ void UIManager::initializeComboBox(sf::Font& font) {
 }
 
 void UIManager::resizeUI(sf::RenderWindow& window) {
-    clearButton.setPosition(20.f, 300.f);
+    float rightOffset = window.getSize().x - 140.f; 
+    float leftOffset = 10.f; 
+
+    clearButton.setPosition(leftOffset, 300.f);
     centerTextInButton(clearButtonText, clearButton);
 
-    startButton.setPosition(window.getSize().x - 120.f, 20.f);
+    startButton.setPosition(rightOffset, 20.f);
     centerTextInButton(startButtonText, startButton);
 
-    changeRouteButton.setPosition(window.getSize().x - 120.f, 70.f);  
+    changeRouteButton.setPosition(rightOffset, 70.f);
     centerTextInButton(changeRouteButtonText, changeRouteButton);
 
-    stopTripButton.setPosition(window.getSize().x - 120.f, 120.f); 
+    stopTripButton.setPosition(rightOffset, 120.f); 
     centerTextInButton(stopTripButtonText, stopTripButton);
 
-    continueTripButton.setPosition(window.getSize().x - 120.f, 170.f);
+    continueTripButton.setPosition(rightOffset, 170.f); 
     centerTextInButton(continueTripButtonText, continueTripButton);
 
-    newTripButton.setPosition(window.getSize().x - 120.f, 220.f); 
+    newTripButton.setPosition(rightOffset, 220.f);
     centerTextInButton(newTripButtonText, newTripButton);
 
-    dijkstraCheckBox.setPosition(20.f, 20.f);
-    floydCheckBox.setPosition(20.f, 60.f);
+    dijkstraCheckBox.setPosition(leftOffset, 20.f);
+    floydCheckBox.setPosition(leftOffset, 60.f);
     dijkstraText.setPosition(50.f, 20.f);
     floydText.setPosition(50.f, 60.f);
 
-    trafficComboBox.setPosition(20.f, 120.f);
+    trafficComboBox.setPosition(leftOffset, 120.f);
     selectedTrafficText.setPosition(trafficComboBox.getPosition().x + 10.f, trafficComboBox.getPosition().y + 5.f);
 
-    assignAccidentButton.setPosition(20.f, 180.f);
-    assignAccidentButton.setSize(sf::Vector2f(120.f, 30.f));
+    assignAccidentButton.setPosition(leftOffset, 180.f);
     centerTextInButton(assignAccidentButtonText, assignAccidentButton);
 
-    openStreetButton.setPosition(20.f, 420.f);  
-    openStreetButton.setSize(sf::Vector2f(120.f, 30.f));
+    openStreetButton.setPosition(leftOffset, 300.f);
     centerTextInButton(openStreetText, openStreetButton);
 
-    coseviButton.setPosition(20.f, 240.f);
+    coseviButton.setPosition(leftOffset, 240.f);
     centerTextInButton(coseviButtonText, coseviButton);
 
-    toggleWeightsButton.setPosition(window.getSize().x - 120.f, window.getSize().y - 60.f);
+    toggleWeightsButton.setPosition(rightOffset, window.getSize().y - 60.f);
     centerTextInButton(toggleWeightsButtonText, toggleWeightsButton);
-    toggleStreetsButton.setPosition(window.getSize().x - 120.f, window.getSize().y - 120.f);
+
+    toggleStreetsButton.setPosition(rightOffset, window.getSize().y - 120.f);
     centerTextInButton(toggleStreetsButtonText, toggleStreetsButton);
 
-    totalWeightText.setPosition(20.f, window.getSize().y - 80.f);
-    totalCostText.setPosition(20.f, window.getSize().y - 40.f);
-    timeElapsedText.setPosition(20.f, window.getSize().y - 100.f);
-    timeCostText.setPosition(20.f, window.getSize().y - 70.f);
-    totalCompleteCostText.setPosition(20.f, window.getSize().y - 40.f);
-
-
+    totalWeightText.setPosition(leftOffset, window.getSize().y - 80.f);
+    totalCostText.setPosition(leftOffset, window.getSize().y - 40.f);
+    timeElapsedText.setPosition(leftOffset, window.getSize().y - 100.f);
+    timeCostText.setPosition(leftOffset, window.getSize().y - 70.f);
+    totalCompleteCostText.setPosition(leftOffset, window.getSize().y - 40.f);
 }
+
 
 
 void UIManager::drawUI(sf::RenderWindow& window) {
@@ -367,13 +372,15 @@ void UIManager::centerTextInButton(sf::Text& text, const sf::RectangleShape& but
     );
 }
 
+
+
 void UIManager::setTotalWeight(float totalWeight) {
     if (totalWeight == 0.0f) {
         totalWeightText.setString("");
     }
     else {
         std::ostringstream oss;
-        oss << "Peso total: " << totalWeight;
+        oss << "Total Pesos: " << totalWeight;
         totalWeightText.setString(oss.str());
     }
 }
@@ -384,11 +391,6 @@ void UIManager::setTotalWeight(float totalWeight) {
         timeElapsedText.setCharacterSize(18);
         timeElapsedText.setFillColor(sf::Color::Black);
         timeElapsedText.setPosition(20.f, window.getSize().y - 100.f);
-
-        timeCostText.setFont(font);
-        timeCostText.setCharacterSize(18);
-        timeCostText.setFillColor(sf::Color::Black);
-        timeCostText.setPosition(20.f, window.getSize().y - 70.f);
 
         totalCompleteCostText.setFont(font);
         totalCompleteCostText.setCharacterSize(18);
@@ -423,7 +425,7 @@ void UIManager::updateTotalCompleteCost(float totalCost) {
     totalCompleteCostText.setString(oss.str());
 }
 void UIManager::setTotalTimeCost() {
-    double timeCost = elapsedTimeInSeconds * costPerSecond; // Multiplicar por el costo por segundo
+    double timeCost = elapsedTimeInSeconds * costPerSecond; 
     std::ostringstream oss;
     oss << "Costo Tiempo: " << static_cast<int>(timeCost) << " colones";
     timeCostText.setString(oss.str());
@@ -451,7 +453,7 @@ void UIManager::setTotalCost(float totalCost) {
     }
     else {
         std::ostringstream oss;
-        oss << "Costo pesos: " << totalCost;
+        oss << "Costo Total: " << totalCost;
         totalCostText.setString(oss.str());
     }
 }
