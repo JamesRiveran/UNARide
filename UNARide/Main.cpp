@@ -167,6 +167,7 @@ int main() {
                     uiManager.showChangeRouteButton(true);
                     newRouteActive = false;
                     uiManager.showTrafficButtons(true); 
+                    uiManager.toggleRouteOptions(true);
 
                     std::cout << "Botón 'Detener viaje' presionado. Mostrando botón 'Cambiar ruta'." << std::endl;
                 }
@@ -228,6 +229,7 @@ int main() {
                     newTripActualy = false; 
                     uiManager.showChangeRouteButton(false);
                     uiManager.showTrafficButtons(false);
+                    uiManager.toggleRouteOptions(false);
                 }
 
 
@@ -473,7 +475,7 @@ int main() {
                     routeCalculated = false;
                     algorithmSelected = false;
                     showWeights = false;
-                    showStreets = true;
+                    showStreets = false;
                     applyingTrafficChanges = false;
                     isChangingRoute = false;
                     selectingTrafficNodes = false;

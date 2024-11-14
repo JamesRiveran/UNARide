@@ -216,7 +216,7 @@ void UIManager::resizeUI(sf::RenderWindow& window) {
     float rightOffset = window.getSize().x - 140.f; 
     float leftOffset = 10.f; 
 
-    clearButton.setPosition(leftOffset, 300.f);
+    clearButton.setPosition(leftOffset, 450.f);
     centerTextInButton(clearButtonText, clearButton);
 
     startButton.setPosition(rightOffset, 20.f);
@@ -287,9 +287,6 @@ void UIManager::drawUI(sf::RenderWindow& window) {
     window.draw(toggleStreetsButtonText);
 
     if (showRouteOptions) {
-        window.draw(trafficComboBox);
-        window.draw(selectedTrafficText);
-
         if (isTripStopped) {
             window.draw(trafficComboBox);
             window.draw(selectedTrafficText);
@@ -300,14 +297,12 @@ void UIManager::drawUI(sf::RenderWindow& window) {
             window.draw(openStreetText);
             window.draw(coseviButton);
             window.draw(coseviButtonText);
+            window.draw(continueTripButton);
+            window.draw(continueTripButtonText);
         }
         if (carroEnMovimiento && !isTripStopped) {
             window.draw(stopTripButton);
             window.draw(stopTripButtonText);
-        }
-        if (isTripStopped) {
-            window.draw(continueTripButton);
-            window.draw(continueTripButtonText);
         }
         if (!carroEnMovimiento) {
             window.draw(totalWeightText);
@@ -325,6 +320,8 @@ void UIManager::drawUI(sf::RenderWindow& window) {
     window.draw(timeElapsedText);
 
     if (showCostLabels) {
+        window.draw(totalWeightText);
+        window.draw(totalCostText);
         window.draw(timeCostText);
         window.draw(totalCompleteCostText);
     }
