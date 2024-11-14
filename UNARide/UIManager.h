@@ -63,7 +63,29 @@ public:
     void toggleAlgorithmOptions(bool visible);
     void toggleStartOption(bool visible);
     void toggleRouteOptions(bool visible);
+    void setTotalTimeCost();
+    void setTotalCompleteCost(double totalCost);
+    void initializeClockDisplay(sf::Font& font, sf::RenderWindow& window);
+    void updateTimer();
+    void updateTimeCost();
+    void updateTotalCompleteCost(float totalCost);
+    void startClock();
+    void stopClock();
+    void resetClock();
+    void updateClock();
+    bool getIsClockRunning() const;
+    bool isClockRunning;
+    float getCostPerSecond() const;
+    void setShowCostLabels(bool show);
+    void resetForNewTrip();
+    void resetCostLabels();
+    void showTrafficButtons(bool show);
 private:
+    sf::Text timeCostText;
+    sf::Text totalCompleteCostText;
+    float timeCostPerSecond = 2.0f;
+    float totalTimeCost = 0.0f;
+    float totalCompleteCost = 0.0f;
     sf::Text clearButtonText;
     sf::Text startButtonText;
     sf::Text dijkstraText;
@@ -74,6 +96,12 @@ private:
     bool carroEnMovimiento;
     void centerTextInButton(sf::Text& text, const sf::RectangleShape& button);
     void initializeComboBox(sf::Font& font);
+    sf::Text timeElapsedText;
+    sf::Clock clock; 
+    int elapsedTimeInSeconds; 
+    float costPerSecond; 
+    bool showCostLabels = false; 
+    bool showTrafficOptions;
 
 public:
     void showChangeRouteButton(bool show);
