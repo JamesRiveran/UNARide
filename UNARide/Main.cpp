@@ -460,28 +460,59 @@ int main() {
 
 
                 if (uiManager.clearButton.getGlobalBounds().contains(mousePos)) {
-                    std::cout << "Botón 'Limpiar' presionado." << std::endl;
-                    routeManager.resetRoute();
+                    // Reiniciar variables de estado y control
+                    node1 = std::numeric_limits<std::size_t>::max();
+                    node2 = std::numeric_limits<std::size_t>::max();
+                    currentCarNode = std::size_t(-1);
+                    newDestination = std::size_t(-1);
+                    trafficStartNode = std::size_t(-1);
+                    trafficEndNode = std::size_t(-1);
+
+                    // Reiniciar contadores y banderas
+                    nodesSelected = 0;
+                    totalTimeCost = 0.0f;
+                    totalCompleteCost = 0.0f;
+                    timeCostPerSecond = 2.0f;
+                    isTimerRunning = false;
                     startMovement = false;
                     routeCalculated = false;
-                    carVisible = false;
-                    showWeights = false;
                     algorithmSelected = false;
-                    isChangingRoute = false;
+                    showWeights = false;
                     showStreets = true;
-                    drawOriginalRoute = true; 
-                    uiManager.showNewTripButton = false;
-                    uiManager.setShowStartButton(true);
-                    uiManager.selectedTrafficIndex = 0;
-                    uiManager.selectedTrafficText.setString(uiManager.trafficOptions[uiManager.selectedTrafficIndex]);
-                    uiManager.setShowCostLabels(false);
+                    applyingTrafficChanges = false;
+                    isChangingRoute = false;
+                    selectingTrafficNodes = false;
+                    awaitingNodeSelection = false;
+                    awaitingStreetClose = false;
+                    awaitingStreetOpen = false;
+                    isSelectingNewTrip = false;
+                    selectingNewDestination = false;
+                    carVisible = false;
+                    readyToStartNewTrip = false;
+                    newTrip = false;
+                    newTripActualy = false;
+                    newRoute = false;
+                    newRouteActive = false;
+                    deleteNewTrip = false;
+                    drawOriginalRoute = true;
+
                     uiManager.resetClock();
                     uiManager.resetAlgorithmSelected();
                     uiManager.setTotalWeight(0.0f);
                     uiManager.setTotalCost(0.0f);
-                    uiManager.toggleAlgorithmOptions(true); 
-                    uiManager.toggleStartOption(false);      
+                    uiManager.selectedTrafficIndex = 0;
+                    uiManager.selectedTrafficText.setString(uiManager.trafficOptions[0]);
+                    uiManager.setShowCostLabels(false);
+                    uiManager.toggleAlgorithmOptions(true);
+                    uiManager.toggleStartOption(false);
                     uiManager.toggleRouteOptions(false);
+                    uiManager.setShowStartButton(true);
+                    uiManager.showNewTripButton = false;
+
+                    routeManager.resetRoute();
+                    routeManager.resetForNewTrip();
+                    carController.resetAccumulatedValues();
+
                 }
 
                 if (uiManager.dijkstraCheckBox.getGlobalBounds().contains(mousePos)) {
