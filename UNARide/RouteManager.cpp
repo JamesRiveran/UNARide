@@ -38,6 +38,14 @@ void RouteManager::selectNode(sf::Vector2f mousePos) {
         }
     }
 }
+void RouteManager::resetForChangeRoute() {
+    hasChangedRoute = false;
+    newPathCalculated = false;
+    nodesSinceFirstChange.clear();
+    newPath.clear();
+    std::cout << "Estados de RouteManager reseteados para cambio de ruta." << std::endl;
+}
+
 
 void RouteManager::drawRoute(sf::RenderWindow& window) {
     for (const auto& routePair : previousRoutes) {
@@ -50,17 +58,7 @@ void RouteManager::drawRoute(sf::RenderWindow& window) {
             map.drawStreet(window, currentNode, nextNode, routeColor);  
         }
     }
-
-    if (routeCalculated) {
-        for (std::size_t i = 0; i < path.size() - 1; ++i) {
-            std::size_t currentNode = path[i];
-            std::size_t nextNode = path[i + 1];
-            map.drawStreet(window, currentNode, nextNode, sf::Color::Black); 
-        }
-    }
 }
-
-
 
 void RouteManager::resetRoute() {
     startNodeSelected = false;
@@ -69,16 +67,18 @@ void RouteManager::resetRoute() {
     newPathCalculated = false;
     hasChangedRoute = false;
 
-    path.clear();           
-    newPath.clear();        
-    previousRoutes.clear(); 
-    newTrips.clear();         
-
+    path.clear();
+    newPath.clear();
+    previousRoutes.clear();
+    newTrips.clear();
     nodesSinceFirstChange.clear();
-    totalWeight = 0.0f;       
 
-    std::cout << "Ruta y estado reiniciados." << std::endl;
+    totalWeight = 0.0f;
+    currentColorIndex = 0;
+
+    std::cout << "Ruta y estado completamente reiniciados." << std::endl;
 }
+
 
 void RouteManager::clearNewTrips() {
     newTrips.clear();
@@ -209,11 +209,10 @@ void RouteManager::calculateRoute(bool useDijkstra, const std::pair<std::vector<
             std::reverse(path.begin(), path.end());
         }
 
-        std::cout << "Ruta calculada desde el nodo actual: ";
-        for (auto node : path) {
-            std::cout << node << " ";
+        if (previousRoutes.empty()) {
+            previousRoutes.push_back({ path, sf::Color::Black });
+            std::cout << "Ruta original guardada en color negro." << std::endl;
         }
-        std::cout << std::endl;
 
         routeCalculated = true;
     }
@@ -234,27 +233,33 @@ std::size_t RouteManager::findClosestNode(const sf::Vector2f& mousePos) {
     return closestNode;
 }
 
-
-void RouteManager::setEndNode(std::size_t newEndNode) {
-    endNode = newEndNode;
-    endNodeSelected = true;
-    std::cout << "Nuevo nodo final actualizado: " << endNode << std::endl;
-}
-
 void RouteManager::calculateNewRoute(std::size_t newDestination, std::size_t currentCarNode, bool useDijkstra,
     const std::pair<std::vector<std::vector<float>>, std::vector<std::vector<int>>>& floydWarshallResult,
     float previousAccumulatedWeight) {
 
-    if (!path.empty()) {
-        previousRoutes.push_back({ path, routeColors[currentColorIndex] });
-        currentColorIndex = (currentColorIndex + 1) % routeColors.size();
+    if (!nodesSinceFirstChange.empty()) {
+        auto it = std::find(nodesSinceFirstChange.begin(), nodesSinceFirstChange.end(), currentCarNode);
+        if (it != nodesSinceFirstChange.end()) {
+            nodesSinceFirstChange.erase(it + 1, nodesSinceFirstChange.end());
+        }
+    }
+
+    if (nodesSinceFirstChange.empty() || nodesSinceFirstChange.back() != currentCarNode) {
+        nodesSinceFirstChange.push_back(currentCarNode);
+    }
+
+    if (!nodesSinceFirstChange.empty()) {
+        std::vector<std::size_t> traversedPath(nodesSinceFirstChange);
+        previousRoutes.push_back({ traversedPath, sf::Color(186, 85, 211) });
+        std::cout << "Parte recorrida de la ruta morada guardada en `previousRoutes`." << std::endl;
     }
 
     newPath.clear();
 
     if (useDijkstra) {
         newPath = map.dijkstra(currentCarNode, newDestination);
-    } else {
+    }
+    else {
         const auto& pred = floydWarshallResult.second;
 
         if (pred[currentCarNode][newDestination] == -1) {
@@ -272,13 +277,13 @@ void RouteManager::calculateNewRoute(std::size_t newDestination, std::size_t cur
     }
 
     newPathCalculated = true;
+    hasChangedRoute = true;
+
     float totalWeight = calculateTotalWeight(currentCarNode, previousAccumulatedWeight);
     setTotalWeight(totalWeight);
     float totalCost = calculateTotalCost();
 
-
-    std::cout << "Nuevo peso total de la ruta: " << totalWeight << " km" << std::endl;
-    std::cout << "Nuevo costo total del viaje: " << totalCost << " colones" << std::endl;
+    std::cout << "Nueva ruta calculada. Peso total: " << totalWeight << " km, Costo total: " << totalCost << " colones." << std::endl;
 }
 
 bool RouteManager::areNodesConnected(std::size_t node1, std::size_t node2) {
@@ -291,27 +296,22 @@ bool RouteManager::areNodesConnected(std::size_t node1, std::size_t node2) {
     return false; 
 }
 void RouteManager::drawNewRoute(sf::RenderWindow& window) {
-    if (newPathCalculated && !newPath.empty()) {
+    if (!newPath.empty()) {
         for (std::size_t i = 0; i < newPath.size() - 1; ++i) {
             std::size_t currentNode = newPath[i];
             std::size_t nextNode = newPath[i + 1];
-            if (currentNode < map.getNodes().size() && nextNode < map.getNodes().size()) {
-                map.drawStreet(window, currentNode, nextNode, sf::Color(186, 85, 211));
-            }
+            map.drawStreet(window, currentNode, nextNode, sf::Color(186, 85, 211));
         }
+    }
 
-        if (hasChangedRoute && nodesSinceFirstChange.size() > 1) {
-            for (std::size_t i = 0; i < nodesSinceFirstChange.size() - 1; ++i) {
-                std::size_t currentNode = nodesSinceFirstChange[i];
-                std::size_t nextNode = nodesSinceFirstChange[i + 1];
-                if (currentNode < map.getNodes().size() && nextNode < map.getNodes().size()) {
-                    map.drawStreet(window, currentNode, nextNode, sf::Color(186, 85, 211));
-                }
-            }
+    if (hasChangedRoute && !nodesSinceFirstChange.empty()) {
+        for (std::size_t i = 0; i < nodesSinceFirstChange.size() - 1; ++i) {
+            std::size_t currentNode = nodesSinceFirstChange[i];
+            std::size_t nextNode = nodesSinceFirstChange[i + 1];
+            map.drawStreet(window, currentNode, nextNode, sf::Color(186, 85, 211));
         }
     }
 }
-
 
 
 float RouteManager::calculateWeightFromCurrentToEnd(std::size_t currentCarNode) const {
@@ -369,9 +369,13 @@ void RouteManager::drawClosedStreets(sf::RenderWindow& window) {
 
 
 void RouteManager::calculateNewTrip(std::size_t newDestination, std::size_t currentCarNode, bool useDijkstra, const std::pair<std::vector<std::vector<float>>, std::vector<std::vector<int>>>& floydWarshallResult) {
-    if (!path.empty()) {
-        previousRoutes.push_back({ path, routeColors[currentColorIndex] });
-        currentColorIndex = (currentColorIndex + 1) % routeColors.size();
+    if (!path.empty() && previousRoutes.empty()) {
+        previousRoutes.push_back({ path, sf::Color::Black });
+        std::cout << "Ruta original guardada en color negro." << std::endl;
+    }
+
+    if (!newPath.empty()) {
+        previousRoutes.push_back({ newPath, sf::Color(186, 85, 211) }); 
     }
 
     newPath.clear();
@@ -381,7 +385,6 @@ void RouteManager::calculateNewTrip(std::size_t newDestination, std::size_t curr
     }
     else {
         const auto& pred = floydWarshallResult.second;
-
         if (pred[currentCarNode][newDestination] == -1) {
             std::cerr << "No se puede encontrar un camino válido con Floyd-Warshall." << std::endl;
             return;
@@ -397,13 +400,25 @@ void RouteManager::calculateNewTrip(std::size_t newDestination, std::size_t curr
     }
 
     newPathCalculated = true;
-
     newTrips.push_back({ newPath, sf::Color::Blue });
 
     float totalWeight = calculateTotalWeight(currentCarNode);
     setTotalWeight(totalWeight);
     float totalCost = calculateTotalCost();
+    if (!nodesSinceFirstChange.empty() && !newPath.empty()) {
+        std::size_t lastNode = nodesSinceFirstChange.back();
+        std::size_t firstNewNode = newPath.front();
+
+        if (lastNode != firstNewNode) {
+            previousRoutes.push_back({ {lastNode, firstNewNode}, sf::Color(186, 85, 211) });
+            std::cout << "Conectando el último nodo recorrido (" << lastNode << ") con el primer nodo de la nueva ruta (" << firstNewNode << ")." << std::endl;
+        }
+    }
+
+    std::cout << "Nuevo peso total de la ruta: " << totalWeight << " km" << std::endl;
+    std::cout << "Nuevo costo total del viaje: " << totalCost << " colones" << std::endl;
 }
+
 
 
 
@@ -449,13 +464,33 @@ void RouteManager::setStartNode(std::size_t newStartNode) {
     std::cout << "Nodo de inicio actualizado a: " << startNode << std::endl;
 }
 
-void RouteManager::drawTraversedPath(sf::RenderWindow& window, const std::vector<std::size_t>& traversedNodes) {
-    if (traversedNodes.size() > 1) {
-        for (std::size_t i = 0; i < traversedNodes.size() - 1; ++i) {
-            std::size_t currentNode = traversedNodes[i];
-            std::size_t nextNode = traversedNodes[i + 1];
-            map.drawStreet(window, currentNode, nextNode, sf::Color::Cyan);
-        }
-    }
+bool RouteManager::isNewPathCalculated() const {
+    return newPathCalculated;
 }
 
+std::size_t RouteManager::getUpdatedEndNode() const {
+    return !newPath.empty() ? newPath.back() : endNode;
+}
+
+void RouteManager::resetForNewTrip() {
+    clearRoutes();
+    startNodeSelected = false;
+    endNodeSelected = false;
+    routeCalculated = false;
+    hasChangedRoute = false;
+    previousRoutes.clear();  
+    std::cout << "Reset completado para un nuevo viaje. Rutas previas eliminadas." << std::endl;
+}
+
+
+void RouteManager::clearRoutes() {
+    previousRoutes.clear();
+    newPath.clear();      
+    nodesSinceFirstChange.clear(); 
+    newTrips.clear();       
+    totalWeight = 0.0f;  
+    hasChangedRoute = false; 
+    newPathCalculated = false; 
+
+    std::cout << "Rutas y datos reiniciados para un nuevo viaje." << std::endl;
+}
