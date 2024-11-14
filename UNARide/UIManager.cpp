@@ -2,7 +2,7 @@
 #include <sstream>
 #include <iostream>
 
-UIManager::UIManager(sf::RenderWindow& window, sf::Font& font) : showNewTripButton(false), showStartButton(true) {
+UIManager::UIManager(sf::RenderWindow& window, sf::Font& font) : showNewTripButton(false), showStartButton(true), isTripStopped(false) {
     clearButton.setSize(sf::Vector2f(100.f, 40.f));
     clearButton.setFillColor(sf::Color::Black);
     clearButton.setOutlineColor(sf::Color::White);
@@ -126,8 +126,73 @@ UIManager::UIManager(sf::RenderWindow& window, sf::Font& font) : showNewTripButt
     newTripButton.setPosition(10.f, 300.f); 
     centerTextInButton(newTripButtonText, newTripButton);
 
+    stopTripButton.setSize(sf::Vector2f(150.f, 40.f));
+    stopTripButton.setFillColor(sf::Color::Black);
+    stopTripButton.setOutlineColor(sf::Color::White);
+    stopTripButton.setOutlineThickness(2.f);
+
+    stopTripButtonText.setFont(font);
+    stopTripButtonText.setString("Detener viaje");
+    stopTripButtonText.setCharacterSize(18);
+    stopTripButtonText.setFillColor(sf::Color::White);
+
+    continueTripButton.setSize(sf::Vector2f(150.f, 40.f));
+    continueTripButton.setFillColor(sf::Color::Black);
+    continueTripButton.setOutlineColor(sf::Color::White);
+    continueTripButton.setOutlineThickness(2.f);
+
+    continueTripButtonText.setFont(font);
+    continueTripButtonText.setString("Continuar viaje");
+    continueTripButtonText.setCharacterSize(18);
+    continueTripButtonText.setFillColor(sf::Color::White);
+
+    stopTripButton.setPosition(window.getSize().x - 150.f, 180.f);
+    continueTripButton.setPosition(window.getSize().x - 150.f, 240.f);
+    centerTextInButton(stopTripButtonText, stopTripButton);
+    centerTextInButton(continueTripButtonText, continueTripButton);
+
     initializeComboBox(font);
     resizeUI(window);
+    initializeClockDisplay(font,window);
+    elapsedTimeInSeconds = 0;
+    costPerSecond = 2.0f;
+
+    timeElapsedText.setFont(font);
+    timeElapsedText.setCharacterSize(18);
+    timeElapsedText.setFillColor(sf::Color::Black);
+    timeElapsedText.setPosition(20.f, 20.f);
+
+    timeCostText.setFont(font);
+    timeCostText.setCharacterSize(18);
+    timeCostText.setFillColor(sf::Color::Black);
+    timeCostText.setPosition(20.f, 60.f);
+
+    totalCompleteCostText.setFont(font);
+    totalCompleteCostText.setCharacterSize(18);
+    totalCompleteCostText.setFillColor(sf::Color::Black);
+    totalCompleteCostText.setPosition(20.f, window.getSize().y - 120.f);
+    timeElapsedText.setFont(font);
+    timeElapsedText.setCharacterSize(18);
+    timeElapsedText.setFillColor(sf::Color::Black);
+    timeElapsedText.setPosition(window.getSize().x / 2 - -307, 440.f);
+    timeElapsedText.setString("00:00");
+    isClockRunning = false;
+    elapsedTimeInSeconds = 0;
+
+
+    timeCostText.setFont(font);
+    timeCostText.setCharacterSize(18);
+    timeCostText.setFillColor(sf::Color::Black);
+    timeCostText.setPosition(221.f, window.getSize().y  -60.f);
+    timeCostText.setString("Costo Tiempo:");
+
+    totalCompleteCostText.setFont(font);
+    totalCompleteCostText.setCharacterSize(18);
+    totalCompleteCostText.setFillColor(sf::Color::Black);
+    totalCompleteCostText.setPosition(221.f, window.getSize().y - 40.f);
+    totalCompleteCostText.setString("Total a pagar:");
+    showTrafficOptions = false;
+
 }
 
 void UIManager::initializeComboBox(sf::Font& font) {
@@ -146,69 +211,120 @@ void UIManager::initializeComboBox(sf::Font& font) {
 void UIManager::resizeUI(sf::RenderWindow& window) {
     clearButton.setPosition(20.f, 300.f);
     centerTextInButton(clearButtonText, clearButton);
+
     startButton.setPosition(window.getSize().x - 120.f, 20.f);
     centerTextInButton(startButtonText, startButton);
-    changeRouteButton.setPosition(window.getSize().x - 120.f, 80.f);
+
+    changeRouteButton.setPosition(window.getSize().x - 120.f, 70.f);  
     centerTextInButton(changeRouteButtonText, changeRouteButton);
-    newTripButton.setPosition(window.getSize().x - 120.f, 140.f);
+
+    stopTripButton.setPosition(window.getSize().x - 120.f, 120.f); 
+    centerTextInButton(stopTripButtonText, stopTripButton);
+
+    continueTripButton.setPosition(window.getSize().x - 120.f, 170.f);
+    centerTextInButton(continueTripButtonText, continueTripButton);
+
+    newTripButton.setPosition(window.getSize().x - 120.f, 220.f); 
     centerTextInButton(newTripButtonText, newTripButton);
+
     dijkstraCheckBox.setPosition(20.f, 20.f);
     floydCheckBox.setPosition(20.f, 60.f);
     dijkstraText.setPosition(50.f, 20.f);
     floydText.setPosition(50.f, 60.f);
+
     trafficComboBox.setPosition(20.f, 120.f);
     selectedTrafficText.setPosition(trafficComboBox.getPosition().x + 10.f, trafficComboBox.getPosition().y + 5.f);
+
     assignAccidentButton.setPosition(20.f, 180.f);
-    openStreetButton.setPosition(20.f, 400.f);
-    centerTextInButton(openStreetText, openStreetButton);
+    assignAccidentButton.setSize(sf::Vector2f(120.f, 30.f));
     centerTextInButton(assignAccidentButtonText, assignAccidentButton);
+
+    openStreetButton.setPosition(20.f, 420.f);  
+    openStreetButton.setSize(sf::Vector2f(120.f, 30.f));
+    centerTextInButton(openStreetText, openStreetButton);
+
     coseviButton.setPosition(20.f, 240.f);
     centerTextInButton(coseviButtonText, coseviButton);
+
     toggleWeightsButton.setPosition(window.getSize().x - 120.f, window.getSize().y - 60.f);
     centerTextInButton(toggleWeightsButtonText, toggleWeightsButton);
     toggleStreetsButton.setPosition(window.getSize().x - 120.f, window.getSize().y - 120.f);
     centerTextInButton(toggleStreetsButtonText, toggleStreetsButton);
+
     totalWeightText.setPosition(20.f, window.getSize().y - 80.f);
     totalCostText.setPosition(20.f, window.getSize().y - 40.f);
+    timeElapsedText.setPosition(20.f, window.getSize().y - 100.f);
+    timeCostText.setPosition(20.f, window.getSize().y - 70.f);
+    totalCompleteCostText.setPosition(20.f, window.getSize().y - 40.f);
+
+
 }
 
+
 void UIManager::drawUI(sf::RenderWindow& window) {
-    if (showStartButton) {
+    if (showAlgorithmOptions) {
+        window.draw(dijkstraCheckBox);
+        window.draw(floydCheckBox);
+        window.draw(dijkstraText);
+        window.draw(floydText);
+    }
+
+    if (showStartButton && showStartOption) {
         window.draw(startButton);
         window.draw(startButtonText);
     }
+
     window.draw(clearButton);
     window.draw(clearButtonText);
-    window.draw(dijkstraCheckBox);
-    window.draw(floydCheckBox);
-    window.draw(dijkstraText);
-    window.draw(floydText);
     window.draw(toggleWeightsButton);
     window.draw(toggleWeightsButtonText);
     window.draw(toggleStreetsButton);
     window.draw(toggleStreetsButtonText);
-    window.draw(trafficComboBox);
-    window.draw(selectedTrafficText);
-    window.draw(assignAccidentButton);
-    window.draw(assignAccidentButtonText);
-    window.draw(openStreetButton);
-    window.draw(openStreetText);
-    window.draw(coseviButton);
-    window.draw(coseviButtonText);
 
-    if (carroEnMovimiento) {
+    if (showRouteOptions) {
+        window.draw(trafficComboBox);
+        window.draw(selectedTrafficText);
+
+        if (isTripStopped) {
+            window.draw(trafficComboBox);
+            window.draw(selectedTrafficText);
+
+            window.draw(assignAccidentButton);
+            window.draw(assignAccidentButtonText);
+            window.draw(openStreetButton);
+            window.draw(openStreetText);
+            window.draw(coseviButton);
+            window.draw(coseviButtonText);
+        }
+        if (carroEnMovimiento && !isTripStopped) {
+            window.draw(stopTripButton);
+            window.draw(stopTripButtonText);
+        }
+        if (isTripStopped) {
+            window.draw(continueTripButton);
+            window.draw(continueTripButtonText);
+        }
+        if (!carroEnMovimiento) {
+            window.draw(totalWeightText);
+            window.draw(totalCostText);
+        }
+        if (showNewTripButton) {
+            window.draw(newTripButton);
+            window.draw(newTripButtonText);
+        }
+    }
+    if (showChangeRoute) {
         window.draw(changeRouteButton);
         window.draw(changeRouteButtonText);
     }
-    if (!carroEnMovimiento) {
-        window.draw(totalWeightText);
-        window.draw(totalCostText);
-    }
-    if (showNewTripButton) {
-        window.draw(newTripButton);
-        window.draw(newTripButtonText);
+    window.draw(timeElapsedText);
+
+    if (showCostLabels) {
+        window.draw(timeCostText);
+        window.draw(totalCompleteCostText);
     }
 }
+
 
 void UIManager::isCarMoving(sf::RenderWindow& window, bool carroEnMovimiento) {
     if (carroEnMovimiento) {
@@ -262,13 +378,80 @@ void UIManager::setTotalWeight(float totalWeight) {
     }
 }
 
+
+    void UIManager::initializeClockDisplay(sf::Font & font, sf::RenderWindow & window) {
+        timeElapsedText.setFont(font);
+        timeElapsedText.setCharacterSize(18);
+        timeElapsedText.setFillColor(sf::Color::Black);
+        timeElapsedText.setPosition(20.f, window.getSize().y - 100.f);
+
+        timeCostText.setFont(font);
+        timeCostText.setCharacterSize(18);
+        timeCostText.setFillColor(sf::Color::Black);
+        timeCostText.setPosition(20.f, window.getSize().y - 70.f);
+
+        totalCompleteCostText.setFont(font);
+        totalCompleteCostText.setCharacterSize(18);
+        totalCompleteCostText.setFillColor(sf::Color::Black);
+        totalCompleteCostText.setPosition(20.f, window.getSize().y - 40.f);
+
+        timeElapsedText.setString("Tiempo transcurrido: 0 segundos");
+        timeCostText.setString("Costo por tiempo: 0 colones");
+        totalCompleteCostText.setString("Total completo a pagar: 0 colones");
+    }
+
+
+void UIManager::updateTimer() {
+    elapsedTimeInSeconds = static_cast<int>(clock.getElapsedTime().asSeconds());
+    std::ostringstream oss;
+    oss << "Tiempo transcurrido: " << elapsedTimeInSeconds << " segundos";
+    timeElapsedText.setString(oss.str());
+}
+
+void UIManager::updateTimeCost() {
+    float timeCost = elapsedTimeInSeconds * costPerSecond;
+    std::ostringstream oss;
+    oss << "Costo Tiempo: " << timeCost;
+    timeCostText.setString(oss.str());
+}
+
+void UIManager::updateTotalCompleteCost(float totalCost) {
+    float timeCost = elapsedTimeInSeconds * costPerSecond;
+    float completeTotalCost = totalCost + timeCost;
+    std::ostringstream oss;
+    oss << "Total a pagar: " << completeTotalCost;
+    totalCompleteCostText.setString(oss.str());
+}
+void UIManager::setTotalTimeCost() {
+    double timeCost = elapsedTimeInSeconds * costPerSecond; // Multiplicar por el costo por segundo
+    std::ostringstream oss;
+    oss << "Costo Tiempo: " << static_cast<int>(timeCost) << " colones";
+    timeCostText.setString(oss.str());
+}
+
+
+void UIManager::setTotalCompleteCost(double totalCost) {
+    std::ostringstream oss;
+    oss << "Total a pagar: " << static_cast<int>(totalCost) << " colones";
+    totalCompleteCostText.setString(oss.str());
+}
+
+void UIManager::setShowCostLabels(bool show) {
+    showCostLabels = show;
+}
+
+void UIManager::showChangeRouteButton(bool show) {
+    showChangeRoute = show;
+}
+
+
 void UIManager::setTotalCost(float totalCost) {
     if (totalCost == 0.0f) {
         totalCostText.setString("");
     }
     else {
         std::ostringstream oss;
-        oss << "Total a pagar: " << totalCost;
+        oss << "Costo pesos: " << totalCost;
         totalCostText.setString(oss.str());
     }
 }
@@ -295,4 +478,66 @@ void UIManager::setShowNewTrip(bool value) {
 
 bool UIManager::isShowNewTrip() const {
     return showNewTripButton;
+}
+
+void UIManager::toggleAlgorithmOptions(bool visible) {
+    showAlgorithmOptions = visible;
+}
+
+void UIManager::toggleStartOption(bool visible) {
+    showStartOption = visible;
+}
+
+void UIManager::toggleRouteOptions(bool visible) {
+    showRouteOptions = visible;
+}
+void UIManager::startClock() {
+    isClockRunning = true;
+    clock.restart();
+}
+
+void UIManager::stopClock() {
+    isClockRunning = false;
+}
+
+void UIManager::resetClock() {
+    elapsedTimeInSeconds = 0;
+    timeElapsedText.setString("00:00");
+}
+
+bool UIManager::getIsClockRunning() const {
+    return isClockRunning;
+}
+void UIManager::updateClock() {
+    if (isClockRunning) {
+        elapsedTimeInSeconds = static_cast<int>(clock.getElapsedTime().asSeconds());
+        int minutes = elapsedTimeInSeconds / 60;
+        int seconds = elapsedTimeInSeconds % 60;
+
+        std::ostringstream oss;
+        oss << (minutes < 10 ? "0" : "") << minutes << ":"
+            << (seconds < 10 ? "0" : "") << seconds;
+        timeElapsedText.setString(oss.str());
+    }
+}
+float UIManager::getCostPerSecond() const {
+    return costPerSecond;
+}
+void UIManager::resetForNewTrip() {
+    setTotalWeight(0.0f);
+    setTotalCost(0.0f);
+    setTotalTimeCost();
+    setTotalCompleteCost(0.0f);
+    setShowCostLabels(false);
+    resetClock();
+}
+void UIManager::resetCostLabels() {
+    setTotalWeight(0.0f);
+    setTotalCost(0.0f);
+    setTotalTimeCost();
+    setTotalCompleteCost(0.0f);
+    std::cout << "Etiquetas de costo y peso reiniciadas." << std::endl;
+}
+void UIManager::showTrafficButtons(bool show) {
+    showTrafficOptions = show;
 }

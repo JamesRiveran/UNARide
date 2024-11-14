@@ -10,13 +10,12 @@
 class CarController {
 public:
     CarController(sf::Sprite& carSprite, float speed, sf::Texture& upTexture, sf::Texture& downTexture,
-        sf::Texture& leftTexture, sf::Texture& rightTexture, UIManager& uiManager, RouteManager& routeManager);
+        sf::Texture& leftTexture, sf::Texture& rightTexture, UIManager& uiManager, RouteManager& routeManager, sf::Clock& travelClock);
 
     void startMovement(const std::vector<std::size_t>& path, const Map& map, bool isNewRoute, bool isNewTrip);
     void update(float deltaTime, const Map& map);
     void stopMovement();
     void changeRoute(const std::vector<std::size_t>& newPath);
-    void stopAtNextNode();
     std::size_t getCurrentNode(const Map& map);
     size_t findClosestNode(const sf::Vector2f& position, const std::vector<std::size_t>& path, const Map& map);
     bool isStopped() const;
@@ -24,8 +23,18 @@ public:
     bool hasValidRoute() const { return !path.empty(); }
     float getPreviousAccumulatedWeight() const { return previousAccumulatedWeight; } 
     bool isAtDestination() const;
-
+    void stopAtNextNode();
+    void continueMovement(bool useDijkstra, const std::pair<std::vector<std::vector<float>>, std::vector<std::vector<int>>>& floydWarshallResult);
+    void actualizarInicio(RouteManager& routeManager); 
+    std::size_t getCurrentNode() const;
+    void setPath(const std::vector<std::size_t>& newPath);
+    std::vector<std::size_t> nodosRecorridos; 
+    const std::vector<std::size_t>& getTraversedNodes() const {
+        return traversedNodes;
+    }
+    void resetAccumulatedValues();
 private:
+    std::vector<std::size_t> traversedNodes; 
     UIManager& uiManager;
     RouteManager& routeManager;
     void moveTowardsNextNode(sf::Vector2f start, sf::Vector2f end, float deltaTime);
@@ -48,5 +57,14 @@ private:
     bool shouldCalculateTotals;
     float accumulatedWeight;
     float previousAccumulatedWeight; 
+    bool useDijkstra;
+    std::pair<std::vector<std::vector<float>>, std::vector<std::vector<int>>> floydWarshallResult;
+    bool isTimerRunning = false;
+    float totalTimeCost = 0.0f;
+    float timeCostPerSecond = 2.0f;
+    float totalCompleteCost = 0.0f;
+    sf::Clock& travelClock; // Añadir esta línea
+    double timeCost; // Declaración de timeCost
+
 };
 #endif

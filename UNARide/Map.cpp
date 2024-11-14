@@ -150,7 +150,6 @@ std::vector<std::size_t> Map::dijkstra(std::size_t start, std::size_t goal) {
         for (const auto& street : streets) {
             std::size_t neighbor = (current == street.getNode1()) ? street.getNode2() : street.getNode1();
 
-            // Verifica si la calle está cerrada en la dirección específica antes de usarla
             if ((street.getNode1() == current && !street.isClosedDirection(street.getNode1(), street.getNode2())) ||
                 (street.getNode2() == current && !street.isClosedDirection(street.getNode2(), street.getNode1()))) {
 

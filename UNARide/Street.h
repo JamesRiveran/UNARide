@@ -10,58 +10,29 @@ public:
 
     float getWeight() const;
     void setWeight(float newWeight);
-    
     const std::array<sf::Vertex, 2>& getLine() const;
-    bool isBidirectional() const;
     std::size_t getNode1() const;
     std::size_t getNode2() const;
-    
-    bool isClosed;
-    bool closedFromNode1ToNode2=false;
-    bool closedFromNode2ToNode1=false;
-    
-    
-    sf::Vector2f getStartPosition() const;
-    sf::Vector2f getEndPosition() const;
+
+    bool isBidirectional() const;
 
     void closeStreet();
-    bool isClosedDirection(std::size_t node1, std::size_t node2) const;
-        
-    bool isStreetClosed() const {
-        return isClosed;
-    }
+    void openStreet();
     void closeStreetDirection(std::size_t fromNode, std::size_t toNode);
     void openStreetDirection(std::size_t fromNode, std::size_t toNode);
-    Street() : closedFromNode1ToNode2(false), closedFromNode2ToNode1(false) {}
 
+    bool isClosedDirection(std::size_t node1, std::size_t node2) const;
 
-    void closeStreetFromNode1ToNode2() {
-        closedFromNode1ToNode2 = true;
-    }
-
-    void closeStreetFromNode2ToNode1() {
-        closedFromNode2ToNode1 = true;
-    }
-    bool isClosedInDirection(std::size_t node1, std::size_t node2) const {
-        if (node1 == getNode1() && node2 == getNode2()) {
-            return closedFromNode1ToNode2;
-        }
-        else if (node1 == getNode2() && node2 == getNode1()) {
-            return closedFromNode2ToNode1;
-        }
-        return false;
-    }
-
-    void openStreet();
+    Street() : node1(0), node2(0), bidirectional(false), weight(0.0f), closedFromNode1ToNode2(false), closedFromNode2ToNode1(false) {}
 
 private:
-   
-
     std::size_t node1, node2;
     bool bidirectional;
-   
     float weight;
     std::array<sf::Vertex, 2> line;
+
+    bool closedFromNode1ToNode2;
+    bool closedFromNode2ToNode1;
 };
 
-#endif
+#endif 
