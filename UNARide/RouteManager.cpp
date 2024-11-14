@@ -38,6 +38,14 @@ void RouteManager::selectNode(sf::Vector2f mousePos) {
         }
     }
 }
+void RouteManager::resetForChangeRoute() {
+    hasChangedRoute = false;
+    newPathCalculated = false;
+    nodesSinceFirstChange.clear();
+    newPath.clear();
+    std::cout << "Estados de RouteManager reseteados para cambio de ruta." << std::endl;
+}
+
 
 void RouteManager::drawRoute(sf::RenderWindow& window) {
     for (const auto& routePair : previousRoutes) {
@@ -201,7 +209,6 @@ void RouteManager::calculateRoute(bool useDijkstra, const std::pair<std::vector<
             std::reverse(path.begin(), path.end());
         }
 
-        // Guardar la ruta original solo si no ha sido guardada previamente
         if (previousRoutes.empty()) {
             previousRoutes.push_back({ path, sf::Color::Black });
             std::cout << "Ruta original guardada en color negro." << std::endl;
@@ -230,7 +237,6 @@ void RouteManager::calculateNewRoute(std::size_t newDestination, std::size_t cur
     const std::pair<std::vector<std::vector<float>>, std::vector<std::vector<int>>>& floydWarshallResult,
     float previousAccumulatedWeight) {
 
-    // Limpiar nodos no recorridos de la ruta morada
     if (!nodesSinceFirstChange.empty()) {
         auto it = std::find(nodesSinceFirstChange.begin(), nodesSinceFirstChange.end(), currentCarNode);
         if (it != nodesSinceFirstChange.end()) {
@@ -238,19 +244,16 @@ void RouteManager::calculateNewRoute(std::size_t newDestination, std::size_t cur
         }
     }
 
-    // Añadir el nodo actual a `nodesSinceFirstChange` si no está ya incluido
     if (nodesSinceFirstChange.empty() || nodesSinceFirstChange.back() != currentCarNode) {
         nodesSinceFirstChange.push_back(currentCarNode);
     }
 
-    // Guardar la ruta morada recorrida en `previousRoutes`
     if (!nodesSinceFirstChange.empty()) {
         std::vector<std::size_t> traversedPath(nodesSinceFirstChange);
         previousRoutes.push_back({ traversedPath, sf::Color(186, 85, 211) });
         std::cout << "Parte recorrida de la ruta morada guardada en `previousRoutes`." << std::endl;
     }
 
-    // Recalcular la nueva ruta
     newPath.clear();
 
     if (useDijkstra) {
@@ -372,7 +375,7 @@ void RouteManager::calculateNewTrip(std::size_t newDestination, std::size_t curr
     }
 
     if (!newPath.empty()) {
-        previousRoutes.push_back({ newPath, sf::Color(186, 85, 211) }); // Guardar la ruta morada antes de calcular el nuevo viaje
+        previousRoutes.push_back({ newPath, sf::Color(186, 85, 211) }); 
     }
 
     newPath.clear();
@@ -469,3 +472,25 @@ std::size_t RouteManager::getUpdatedEndNode() const {
     return !newPath.empty() ? newPath.back() : endNode;
 }
 
+void RouteManager::resetForNewTrip() {
+    clearRoutes();
+    startNodeSelected = false;
+    endNodeSelected = false;
+    routeCalculated = false;
+    hasChangedRoute = false;
+    previousRoutes.clear();  
+    std::cout << "Reset completado para un nuevo viaje. Rutas previas eliminadas." << std::endl;
+}
+
+
+void RouteManager::clearRoutes() {
+    previousRoutes.clear();
+    newPath.clear();      
+    nodesSinceFirstChange.clear(); 
+    newTrips.clear();       
+    totalWeight = 0.0f;  
+    hasChangedRoute = false; 
+    newPathCalculated = false; 
+
+    std::cout << "Rutas y datos reiniciados para un nuevo viaje." << std::endl;
+}

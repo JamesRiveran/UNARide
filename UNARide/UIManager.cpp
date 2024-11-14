@@ -191,6 +191,8 @@ UIManager::UIManager(sf::RenderWindow& window, sf::Font& font) : showNewTripButt
     totalCompleteCostText.setFillColor(sf::Color::Black);
     totalCompleteCostText.setPosition(221.f, window.getSize().y - 40.f);
     totalCompleteCostText.setString("Total a pagar:");
+    showTrafficOptions = false;
+
 }
 
 void UIManager::initializeComboBox(sf::Font& font) {
@@ -282,23 +284,26 @@ void UIManager::drawUI(sf::RenderWindow& window) {
     if (showRouteOptions) {
         window.draw(trafficComboBox);
         window.draw(selectedTrafficText);
-        window.draw(assignAccidentButton);
-        window.draw(assignAccidentButtonText);
-        window.draw(openStreetButton);
-        window.draw(openStreetText);
-        window.draw(coseviButton);
-        window.draw(coseviButtonText);
 
+        if (isTripStopped) {
+            window.draw(trafficComboBox);
+            window.draw(selectedTrafficText);
+
+            window.draw(assignAccidentButton);
+            window.draw(assignAccidentButtonText);
+            window.draw(openStreetButton);
+            window.draw(openStreetText);
+            window.draw(coseviButton);
+            window.draw(coseviButtonText);
+        }
         if (carroEnMovimiento && !isTripStopped) {
             window.draw(stopTripButton);
             window.draw(stopTripButtonText);
         }
-
         if (isTripStopped) {
             window.draw(continueTripButton);
             window.draw(continueTripButtonText);
         }
-
         if (!carroEnMovimiento) {
             window.draw(totalWeightText);
             window.draw(totalCostText);
@@ -312,14 +317,12 @@ void UIManager::drawUI(sf::RenderWindow& window) {
         window.draw(changeRouteButton);
         window.draw(changeRouteButtonText);
     }
-    window.draw(timeCostText);
-    window.draw(totalCompleteCostText);
-    window.draw(timeElapsedText);
-    window.draw(timeCostText);
-    window.draw(totalCompleteCostText);
-
     window.draw(timeElapsedText);
 
+    if (showCostLabels) {
+        window.draw(timeCostText);
+        window.draw(totalCompleteCostText);
+    }
 }
 
 
@@ -433,6 +436,9 @@ void UIManager::setTotalCompleteCost(double totalCost) {
     totalCompleteCostText.setString(oss.str());
 }
 
+void UIManager::setShowCostLabels(bool show) {
+    showCostLabels = show;
+}
 
 void UIManager::showChangeRouteButton(bool show) {
     showChangeRoute = show;
@@ -516,4 +522,22 @@ void UIManager::updateClock() {
 }
 float UIManager::getCostPerSecond() const {
     return costPerSecond;
+}
+void UIManager::resetForNewTrip() {
+    setTotalWeight(0.0f);
+    setTotalCost(0.0f);
+    setTotalTimeCost();
+    setTotalCompleteCost(0.0f);
+    setShowCostLabels(false);
+    resetClock();
+}
+void UIManager::resetCostLabels() {
+    setTotalWeight(0.0f);
+    setTotalCost(0.0f);
+    setTotalTimeCost();
+    setTotalCompleteCost(0.0f);
+    std::cout << "Etiquetas de costo y peso reiniciadas." << std::endl;
+}
+void UIManager::showTrafficButtons(bool show) {
+    showTrafficOptions = show;
 }

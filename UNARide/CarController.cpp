@@ -98,7 +98,6 @@ void CarController::update(float deltaTime, const Map& map) {
 
             float totalWeight = previousAccumulatedWeight + accumulatedWeight;
             if (totalWeight > 0) {
-                // Actualizar el costo por kilómetro antes de calcular el costo total
                 routeManager.updateCostPerKm();
                 float totalCost = totalWeight * routeManager.getCostPerKm();
                 uiManager.setTotalWeight(totalWeight);
@@ -170,28 +169,23 @@ void CarController::update(float deltaTime, const Map& map) {
             isMoving = false;
             uiManager.setCarroEnMovimiento(false);
             isTimerRunning = false;
+            uiManager.setShowCostLabels(true); // Mostrar las etiquetas al llegar al destino
 
-            // Obtener el tiempo transcurrido desde que inició el viaje
             double elapsedTime = travelClock.getElapsedTime().asSeconds();
             double realElapsedTime = std::floor(elapsedTime);
             timeCost = realElapsedTime * timeCostPerSecond;
-            // Usar floor para redondear hacia abajo
 
-            // Calcular el costo por tiempo correctamente
             double timeCost = realElapsedTime * timeCostPerSecond;
 
-            // Actualizar el costo total considerando el peso y el tiempo
             routeManager.updateCostPerKm();
             double totalWeightCost = (previousAccumulatedWeight + accumulatedWeight) * routeManager.getCostPerKm();
             double totalCompleteCost = totalWeightCost + timeCost;
 
-            // Asignar los valores a la interfaz de usuario
             uiManager.setTotalWeight(previousAccumulatedWeight + accumulatedWeight);
             uiManager.setTotalCost(totalWeightCost);
             uiManager.setTotalTimeCost();
             uiManager.setTotalCompleteCost(totalCompleteCost);
 
-            // Imprimir los valores para depuración
             std::cout << "realElapsedTime: " << realElapsedTime << " segundos, timeCost: " << timeCost
                 << ", totalWeightCost: " << totalWeightCost << ", totalCompleteCost: " << totalCompleteCost << std::endl;
 
@@ -319,4 +313,10 @@ void CarController::setPath(const std::vector<std::size_t>& newPath) {
     path = newPath;
     currentNodeInPath = 0; 
     progress = 0.0f;       
+}
+
+void CarController::resetAccumulatedValues() {
+    accumulatedWeight = 0.0f;
+    previousAccumulatedWeight = 0.0f;
+    std::cout << "Valores acumulados de peso y costo reiniciados." << std::endl;
 }
