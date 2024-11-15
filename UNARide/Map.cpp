@@ -93,12 +93,17 @@ std::pair<std::vector<std::vector<float>>, std::vector<std::vector<int>>> Map::f
     std::vector<std::vector<int>> pred(numNodes, std::vector<int>(numNodes, -1));
 
     for (const auto& street : streets) {
-        dist[street.getNode1()][street.getNode2()] = street.getWeight();
-        pred[street.getNode1()][street.getNode2()] = street.getNode1();
+        std::size_t u = street.getNode1();
+        std::size_t v = street.getNode2();
 
-        if (street.isBidirectional()) {
-            dist[street.getNode2()][street.getNode1()] = street.getWeight();
-            pred[street.getNode2()][street.getNode1()] = street.getNode2();
+        if (!street.isClosedDirection(u, v)) {
+            dist[u][v] = street.getWeight();
+            pred[u][v] = u;
+        }
+
+        if (street.isBidirectional() && !street.isClosedDirection(v, u)) {
+            dist[v][u] = street.getWeight();
+            pred[v][u] = v;
         }
     }
 
@@ -120,7 +125,7 @@ std::pair<std::vector<std::vector<float>>, std::vector<std::vector<int>>> Map::f
         }
     }
 
-    return { dist, pred }; 
+    return { dist, pred };
 }
 
 std::vector<std::size_t> Map::dijkstra(std::size_t start, std::size_t goal) {

@@ -132,16 +132,16 @@ int main() {
                                 for (auto& street : map.getStreets()) {
                                     if ((street.getNode1() == node1 && street.getNode2() == node2) ||
                                         (street.getNode1() == node2 && street.getNode2() == node1)) {
-                                        bool closeFromNode1ToNode2 = true;
+                                        street.closeStreetDirection(node1, node2);
 
-                                        if (closeFromNode1ToNode2) {
-                                            street.closeStreetDirection(node1, node2);
+                                        if (uiManager.isDijkstraSelected()) {
+                                            std::cout << "Recalculando con Dijkstra tras cerrar calle." << std::endl;
+                                            routeManager.calculateRoute(true, floydWarshallResult);
                                         }
                                         else {
-                                            street.closeStreetDirection(node2, node1);
+                                            std::cout << "Recalculando con Floyd-Warshall tras cerrar calle." << std::endl;
+                                            floydWarshallResult = map.floydWarshall();
                                         }
-
-                                        std::cout << "Calle cerrada entre los nodos " << node1 << " y " << node2 << " en la dirección seleccionada." << std::endl;
                                     }
                                 }
                                 nodesSelected = 0;
@@ -152,6 +152,7 @@ int main() {
                         }
                     }
                 }
+
 
                 if (uiManager.openStreetButton.getGlobalBounds().contains(window.mapPixelToCoords(sf::Mouse::getPosition(window)))) {
                     awaitingStreetOpen = true;
@@ -482,7 +483,7 @@ int main() {
                     uiManager.showChangeRouteButton(false);
                     uiManager.isClockRunning = false;
                     uiManager.resetClock();
-                    uiManager.isTripStopped = false;
+                    uiManager.isTripStopped=false;
                     nodesSelected = 0;
                     totalTimeCost = 0.0f;
                     totalCompleteCost = 0.0f;
