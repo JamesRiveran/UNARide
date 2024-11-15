@@ -1,8 +1,9 @@
-﻿  UIManager.cpp
-C:\Proyectos\UNARide\UNARide\UIManager.cpp(182,56): warning C4244: 'argumento': conversión de 'T' a 'float'; posible pérdida de datos
-C:\Proyectos\UNARide\UNARide\UIManager.cpp(182,56): warning C4244:         with
-C:\Proyectos\UNARide\UNARide\UIManager.cpp(182,56): warning C4244:         [
-C:\Proyectos\UNARide\UNARide\UIManager.cpp(182,56): warning C4244:             T=unsigned int
-C:\Proyectos\UNARide\UNARide\UIManager.cpp(182,56): warning C4244:         ]
-  LINK : no se encontró C:\Proyectos\UNARide\x64\Debug\UNARide.exe o no lo generó el último vínculo incremental; ejecutando vínculo completo
-  UNARide.vcxproj -> C:\Proyectos\UNARide\x64\Debug\UNARide.exe
+﻿  Could Not Find C:\Users\vraqu\OneDrive\Documents\Proyecto#2Estructuras de Datos\UNARide\x64\Debug\UNARide.exe
+  UIManager.cpp
+C:\Users\vraqu\OneDrive\Documents\Proyecto(182,56): warning C4244: 'argument': conversion from 'T' to 'float', possible loss of data
+C:\Users\vraqu\OneDrive\Documents\Proyecto(182,56): warning C4244:         with
+C:\Users\vraqu\OneDrive\Documents\Proyecto(182,56): warning C4244:         [
+C:\Users\vraqu\OneDrive\Documents\Proyecto(182,56): warning C4244:             T=unsigned int
+C:\Users\vraqu\OneDrive\Documents\Proyecto(182,56): warning C4244:         ]
+  LINK : C:\Users\vraqu\OneDrive\Documents\Proyecto#2Estructuras de Datos\UNARide\x64\Debug\UNARide.exe not found or not built by the last incremental link; performing full link
+  UNARide.vcxproj -> C:\Users\vraqu\OneDrive\Documents\Proyecto#2Estructuras de Datos\UNARide\x64\Debug\UNARide.exe

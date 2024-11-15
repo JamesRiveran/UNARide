@@ -286,6 +286,8 @@ void UIManager::drawUI(sf::RenderWindow& window) {
     window.draw(toggleStreetsButton);
     window.draw(toggleStreetsButtonText);
 
+    
+
     if (showRouteOptions) {
         if (isTripStopped) {
             window.draw(trafficComboBox);
@@ -300,10 +302,12 @@ void UIManager::drawUI(sf::RenderWindow& window) {
             window.draw(continueTripButton);
             window.draw(continueTripButtonText);
         }
+        
         if (carroEnMovimiento && !isTripStopped) {
             window.draw(stopTripButton);
             window.draw(stopTripButtonText);
         }
+
         if (!carroEnMovimiento) {
             window.draw(totalWeightText);
             window.draw(totalCostText);
@@ -540,3 +544,4 @@ void UIManager::resetCostLabels() {
 void UIManager::showTrafficButtons(bool show) {
     showTrafficOptions = show;
 }
+

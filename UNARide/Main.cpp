@@ -161,18 +161,37 @@ int main() {
 
 
                 if (uiManager.stopTripButton.getGlobalBounds().contains(mousePos) && !uiManager.isTripStopped) {
+                    uiManager.showStopTripButton = false;
                     carController.stopAtNextNode();
                     carController.actualizarInicio(routeManager);
                     uiManager.isTripStopped = true;
-                    uiManager.showChangeRouteButton(true);
-                    newRouteActive = false;
-                    uiManager.showTrafficButtons(true); 
-                    uiManager.toggleRouteOptions(true);
 
-                    std::cout << "Botón 'Detener viaje' presionado. Mostrando botón 'Cambiar ruta'." << std::endl;
+                    std::size_t currentCarNode = carController.getCurrentNode(map);
+                    std::size_t destinationNode = routeManager.getUpdatedEndNode();
+
+                    if (currentCarNode == destinationNode) {
+                        std::cout << "El carro ha llegado al destino. Mostrando solo botones 'Nuevo Viaje' y 'Limpiar'." << std::endl;
+
+                        // Ocultar todos los botones de ruta
+                        uiManager.showChangeRouteButton(false);
+                        uiManager.showTrafficButtons(false);
+                        uiManager.toggleRouteOptions(false);
+
+                        // Mostrar solo los botones necesarios
+                        uiManager.setShowNewTrip(true);
+                        uiManager.setShowStartButton(false);
+                    }
+                    else {
+                        std::cout << "El carro se ha detenido, pero no ha llegado al destino. Mostrando opciones de ruta." << std::endl;
+
+                        // Mostrar opciones de cambio de ruta
+                        uiManager.showChangeRouteButton(true);
+                        newRouteActive = false;
+                        uiManager.showTrafficButtons(true);
+                        uiManager.toggleRouteOptions(true);
+                        uiManager.setShowNewTrip(false);
+                    }
                 }
-
- 
 
 
                 if (awaitingStreetOpen) {
@@ -201,7 +220,6 @@ int main() {
                         }
                     }
                 }
-
                 if (uiManager.continueTripButton.getGlobalBounds().contains(mousePos) && uiManager.isTripStopped) {
                     std::size_t currentCarNode = carController.getCurrentNode(map);
                     routeManager.setStartNode(currentCarNode);
@@ -226,12 +244,11 @@ int main() {
 
                     uiManager.isTripStopped = false;
                     newRoute = false;
-                    newTripActualy = false; 
+                    newTripActualy = false;
                     uiManager.showChangeRouteButton(false);
                     uiManager.showTrafficButtons(false);
-                    uiManager.toggleRouteOptions(false);
+                    uiManager.showStopTripButton = true;
                 }
-
 
                 if (applyingTrafficChanges && carController.isStopped()) {
                     if (routeManager.isStartNodeSelected() && carController.hasValidRoute()) {
@@ -430,7 +447,7 @@ int main() {
                 if (uiManager.startButton.getGlobalBounds().contains(mousePos)) {
                     uiManager.showNewTripButton = false;
                     uiManager.toggleRouteOptions(false); 
-                    
+                    uiManager.showStopTripButton = true;
                     std::cout << "Comienza el primer viaje." << std::endl;
                     if (newTrip) {
                         newTripActualy = true;
@@ -576,8 +593,9 @@ int main() {
         }
         routeManager.drawNewRoute(window);
 
-
-        routeManager.drawNewTrips(window);
+       
+            routeManager.drawNewTrips(window);
+        
         routeManager.drawClosedStreets(window);
 
             float totalWeight = routeManager.calculateTotalWeightUnique();
