@@ -3,12 +3,12 @@
   "WorkspaceRootPath": "C:\\Users\\vraqu\\OneDrive\\Documents\\Proyecto#2Estructuras de Datos\\UNARide\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{4F681FCF-21DE-4223-91E7-405B677422CD}|UNARide\\UNARide.vcxproj|C:\\Users\\vraqu\\OneDrive\\Documents\\Proyecto#2Estructuras de Datos\\UNARide\\UNARide\\UIManager.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{4F681FCF-21DE-4223-91E7-405B677422CD}|UNARide\\UNARide.vcxproj|solutionrelative:UNARide\\UIManager.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{4F681FCF-21DE-4223-91E7-405B677422CD}|UNARide\\UNARide.vcxproj|C:\\Users\\vraqu\\OneDrive\\Documents\\Proyecto#2Estructuras de Datos\\UNARide\\UNARide\\Main.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{4F681FCF-21DE-4223-91E7-405B677422CD}|UNARide\\UNARide.vcxproj|solutionrelative:UNARide\\Main.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{4F681FCF-21DE-4223-91E7-405B677422CD}|UNARide\\UNARide.vcxproj|C:\\Users\\vraqu\\OneDrive\\Documents\\Proyecto#2Estructuras de Datos\\UNARide\\UNARide\\UIManager.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{4F681FCF-21DE-4223-91E7-405B677422CD}|UNARide\\UNARide.vcxproj|solutionrelative:UNARide\\UIManager.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{4F681FCF-21DE-4223-91E7-405B677422CD}|UNARide\\UNARide.vcxproj|C:\\Users\\vraqu\\OneDrive\\Documents\\Proyecto#2Estructuras de Datos\\UNARide\\UNARide\\UIManager.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
@@ -65,17 +65,17 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 2,
+          "SelectedChildIndex": 0,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 0,
               "Title": "Main.cpp",
               "DocumentMoniker": "C:\\Users\\vraqu\\OneDrive\\Documents\\Proyecto#2Estructuras de Datos\\UNARide\\UNARide\\Main.cpp",
               "RelativeDocumentMoniker": "UNARide\\Main.cpp",
               "ToolTip": "C:\\Users\\vraqu\\OneDrive\\Documents\\Proyecto#2Estructuras de Datos\\UNARide\\UNARide\\Main.cpp",
               "RelativeToolTip": "UNARide\\Main.cpp",
-              "ViewState": "AgIAAJsAAAAAAAAAAAAiwMIAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAIgAAAAAAAAAAAAQwIsAAAAuAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
               "WhenOpened": "2024-09-29T21:07:19.245Z",
               "IsPinned": true,
@@ -87,13 +87,13 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 1,
               "Title": "UIManager.cpp",
               "DocumentMoniker": "C:\\Users\\vraqu\\OneDrive\\Documents\\Proyecto#2Estructuras de Datos\\UNARide\\UNARide\\UIManager.cpp",
               "RelativeDocumentMoniker": "UNARide\\UIManager.cpp",
               "ToolTip": "C:\\Users\\vraqu\\OneDrive\\Documents\\Proyecto#2Estructuras de Datos\\UNARide\\UNARide\\UIManager.cpp",
               "RelativeToolTip": "UNARide\\UIManager.cpp",
-              "ViewState": "AgIAACcBAAAAAAAAAAAiwDMBAAAsAAAAAAAAAA==",
+              "ViewState": "AgIAAPABAAAAAAAAAAAAADMBAAAsAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
               "WhenOpened": "2024-10-04T04:13:55.735Z",
               "EditorCaption": ""
@@ -182,7 +182,7 @@
               "RelativeDocumentMoniker": "UNARide\\UIManager.h",
               "ToolTip": "C:\\Users\\vraqu\\OneDrive\\Documents\\Proyecto#2Estructuras de Datos\\UNARide\\UNARide\\UIManager.h",
               "RelativeToolTip": "UNARide\\UIManager.h",
-              "ViewState": "AgIAAEYAAAAAAAAAAAAAAFMAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAACwAAAAAAAAAAAAAAFMAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
               "WhenOpened": "2024-10-04T04:14:21.141Z",
               "EditorCaption": ""

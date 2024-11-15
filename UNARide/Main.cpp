@@ -172,19 +172,16 @@ int main() {
                     if (currentCarNode == destinationNode) {
                         std::cout << "El carro ha llegado al destino. Mostrando solo botones 'Nuevo Viaje' y 'Limpiar'." << std::endl;
 
-                        // Ocultar todos los botones de ruta
                         uiManager.showChangeRouteButton(false);
                         uiManager.showTrafficButtons(false);
                         uiManager.toggleRouteOptions(false);
 
-                        // Mostrar solo los botones necesarios
                         uiManager.setShowNewTrip(true);
                         uiManager.setShowStartButton(false);
                     }
                     else {
                         std::cout << "El carro se ha detenido, pero no ha llegado al destino. Mostrando opciones de ruta." << std::endl;
 
-                        // Mostrar opciones de cambio de ruta
                         uiManager.showChangeRouteButton(true);
                         newRouteActive = false;
                         uiManager.showTrafficButtons(true);
@@ -482,7 +479,10 @@ int main() {
                     newDestination = std::size_t(-1);
                     trafficStartNode = std::size_t(-1);
                     trafficEndNode = std::size_t(-1);
-
+                    uiManager.showChangeRouteButton(false);
+                    uiManager.isClockRunning = false;
+                    uiManager.resetClock();
+                    uiManager.isTripStopped = false;
                     nodesSelected = 0;
                     totalTimeCost = 0.0f;
                     totalCompleteCost = 0.0f;
@@ -510,7 +510,6 @@ int main() {
                     deleteNewTrip = false;
                     drawOriginalRoute = true;
 
-                    uiManager.resetClock();
                     uiManager.resetAlgorithmSelected();
                     uiManager.setTotalWeight(0.0f);
                     uiManager.setTotalCost(0.0f);
