@@ -127,7 +127,6 @@ std::pair<std::vector<std::vector<float>>, std::vector<std::vector<int>>> Map::f
 
     return { dist, pred };
 }
-
 std::vector<std::size_t> Map::dijkstra(std::size_t start, std::size_t goal) {
     std::vector<float> distances(nodes.size(), std::numeric_limits<float>::infinity());
     std::vector<std::size_t> predecessors(nodes.size(), std::numeric_limits<std::size_t>::max());

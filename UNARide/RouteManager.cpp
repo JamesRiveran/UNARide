@@ -113,7 +113,7 @@ float RouteManager::calculateTotalWeight(std::size_t currentCarNode, float previ
                         totalWeight += street.getWeight();
                         streetFound = true;
                         std::cout << "Añadiendo peso de la calle entre " << currentNode << " y " << nextNode
-                            << ": " << street.getWeight() << " km" << std::endl;
+                           << ": " << street.getWeight() << " km" << std::endl;
                         break;
                     }
                 }

@@ -250,6 +250,8 @@ int main() {
 
                 if (applyingTrafficChanges && carController.isStopped()) {
                     if (routeManager.isStartNodeSelected() && carController.hasValidRoute()) {
+                        uiManager.setAlgorithmSelected(true);  
+
                         std::size_t currentCarNode = carController.getCurrentNode(map);
                         std::size_t newDestination = routeManager.getEndNode();
 
@@ -263,17 +265,21 @@ int main() {
                                 std::cout << "Nuevo peso de la calle entre los nodos " << trafficStartNode
                                     << " y " << trafficEndNode << ": " << newWeight << std::endl;
 
-                                trafficStartNode = std::size_t(-1);
-                                trafficEndNode = std::size_t(-1);
+                                routeManager.calculateRoute(true, floydWarshallResult);
+
+                                routeCalculated = true;
                                 selectingTrafficNodes = false;
                                 applyingTrafficChanges = false;
                                 carController.stopAtNextNode();
 
-                                std::cout << "Operación de tráfico completada. El auto permanecerá detenido." << std::endl;
+                                std::cout << "Recalculando ruta usando Dijkstra tras cambio de tráfico." << std::endl;
                             }
                         }
                     }
                 }
+
+
+
 
                 if (selectingTrafficNodes) {
                     std::size_t selectedNode = routeManager.findClosestNode(mousePos);
