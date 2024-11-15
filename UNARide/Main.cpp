@@ -207,7 +207,19 @@ int main() {
                                 for (auto& street : map.getStreets()) {
                                     if ((street.getNode1() == node1 && street.getNode2() == node2) ||
                                         (street.getNode1() == node2 && street.getNode2() == node1)) {
-                                        street.openStreetDirection(node1,node2);
+                                        street.openStreetDirection(node1, node2);
+                                        std::cout << "Calle entre " << node1 << " y " << node2 << " ha sido abierta." << std::endl;
+                                        if (uiManager.isDijkstraSelected()) {
+                                            std::cout << "Recalculando ruta con Dijkstra tras abrir calle." << std::endl;
+                                            routeManager.calculateRoute(true, floydWarshallResult);
+                                        }
+                                        else {
+                                            std::cout << "Recalculando ruta con Floyd-Warshall tras abrir calle." << std::endl;
+                                            floydWarshallResult = map.floydWarshall();
+                                            routeManager.calculateRoute(false, floydWarshallResult);
+                                        }
+
+                                        routeCalculated = true;
                                     }
                                 }
                                 nodesSelected = 0;
@@ -218,6 +230,7 @@ int main() {
                         }
                     }
                 }
+
                 if (uiManager.continueTripButton.getGlobalBounds().contains(mousePos) && uiManager.isTripStopped) {
                     std::size_t currentCarNode = carController.getCurrentNode(map);
                     routeManager.setStartNode(currentCarNode);
