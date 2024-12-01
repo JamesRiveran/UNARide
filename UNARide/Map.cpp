@@ -93,12 +93,17 @@ std::pair<std::vector<std::vector<float>>, std::vector<std::vector<int>>> Map::f
     std::vector<std::vector<int>> pred(numNodes, std::vector<int>(numNodes, -1));
 
     for (const auto& street : streets) {
-        dist[street.getNode1()][street.getNode2()] = street.getWeight();
-        pred[street.getNode1()][street.getNode2()] = street.getNode1();
+        std::size_t u = street.getNode1();
+        std::size_t v = street.getNode2();
 
-        if (street.isBidirectional()) {
-            dist[street.getNode2()][street.getNode1()] = street.getWeight();
-            pred[street.getNode2()][street.getNode1()] = street.getNode2();
+        if (!street.isClosedDirection(u, v)) {
+            dist[u][v] = street.getWeight();
+            pred[u][v] = u;
+        }
+
+        if (street.isBidirectional() && !street.isClosedDirection(v, u)) {
+            dist[v][u] = street.getWeight();
+            pred[v][u] = v;
         }
     }
 
@@ -120,9 +125,8 @@ std::pair<std::vector<std::vector<float>>, std::vector<std::vector<int>>> Map::f
         }
     }
 
-    return { dist, pred }; 
+    return { dist, pred };
 }
-
 std::vector<std::size_t> Map::dijkstra(std::size_t start, std::size_t goal) {
     std::vector<float> distances(nodes.size(), std::numeric_limits<float>::infinity());
     std::vector<std::size_t> predecessors(nodes.size(), std::numeric_limits<std::size_t>::max());
@@ -148,8 +152,11 @@ std::vector<std::size_t> Map::dijkstra(std::size_t start, std::size_t goal) {
         if (current == goal) break;
 
         for (const auto& street : streets) {
-            if (street.getNode1() == current || (street.isBidirectional() && street.getNode2() == current)) {
-                std::size_t neighbor = (current == street.getNode1()) ? street.getNode2() : street.getNode1();
+            std::size_t neighbor = (current == street.getNode1()) ? street.getNode2() : street.getNode1();
+
+            if ((street.getNode1() == current && !street.isClosedDirection(street.getNode1(), street.getNode2())) ||
+                (street.getNode2() == current && !street.isClosedDirection(street.getNode2(), street.getNode1()))) {
+
                 float distance = street.getWeight();
 
                 if (distances[neighbor] > distances[current] + distance) {
@@ -174,6 +181,16 @@ std::vector<std::size_t> Map::dijkstra(std::size_t start, std::size_t goal) {
 }
 
 
+const Street* Map::getStreetBetweenNodes(std::size_t node1, std::size_t node2) const {
+    for (const auto& street : streets) {
+        if ((street.getNode1() == node1 && street.getNode2() == node2) ||
+            (street.getNode1() == node2 && street.getNode2() == node1)) {
+            return &street; 
+        }
+    }
+    return nullptr; 
+}
+
 
 void Map::draw(sf::RenderWindow& window) {
     for (const auto& street : streets) {
@@ -184,7 +201,7 @@ void Map::draw(sf::RenderWindow& window) {
     }
 }
 
-void Map::drawStreet(sf::RenderWindow& window, std::size_t startNode, std::size_t endNode) const {
+void Map::drawStreet(sf::RenderWindow& window, std::size_t startNode, std::size_t endNode, sf::Color color) const {
     if (startNode >= nodes.size() || endNode >= nodes.size()) {
         return;
     }
@@ -204,18 +221,23 @@ void Map::drawStreet(sf::RenderWindow& window, std::size_t startNode, std::size_
     line[2].position = p2 - offset;
     line[3].position = p1 - offset;
 
-    line[0].color = sf::Color::Black;
-    line[1].color = sf::Color::Black;
-    line[2].color = sf::Color::Black;
-    line[3].color = sf::Color::Black;
+    line[0].color = color;
+    line[1].color = color;
+    line[2].color = color;
+    line[3].color = color;
 
     window.draw(line);
 }
+
 
 const std::vector<Node>& Map::getNodes() const {
     return nodes;
 }
 
 const std::vector<Street>& Map::getStreets() const {
+    return streets;
+}
+
+std::vector<Street>& Map::getStreets() {
     return streets;
 }
