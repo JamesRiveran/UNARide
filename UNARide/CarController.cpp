@@ -320,3 +320,10 @@ void CarController::resetAccumulatedValues() {
     previousAccumulatedWeight = 0.0f;
     std::cout << "Valores acumulados de peso y costo reiniciados." << std::endl;
 }
+bool CarController::isCarMoving() const {
+    return isMoving;
+}
+
+void CarController::setCarroEnMovimiento(bool enMovimiento) {
+    isMoving = enMovimiento;
+}
