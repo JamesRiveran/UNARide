@@ -80,6 +80,8 @@ public:
     void resetForNewTrip();
     void resetCostLabels();
     void showTrafficButtons(bool show);
+    bool showStopTripButton = false;
+
 private:
     sf::Text timeCostText;
     sf::Text totalCompleteCostText;

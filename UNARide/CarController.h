@@ -33,6 +33,8 @@ public:
         return traversedNodes;
     }
     void resetAccumulatedValues();
+    bool isCarMoving() const;
+    void setCarroEnMovimiento(bool enMovimiento);
 private:
     std::vector<std::size_t> traversedNodes; 
     UIManager& uiManager;

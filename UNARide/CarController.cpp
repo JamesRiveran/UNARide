@@ -169,7 +169,7 @@ void CarController::update(float deltaTime, const Map& map) {
             isMoving = false;
             uiManager.setCarroEnMovimiento(false);
             isTimerRunning = false;
-            uiManager.setShowCostLabels(true); // Mostrar las etiquetas al llegar al destino
+            uiManager.setShowCostLabels(true); 
 
             double elapsedTime = travelClock.getElapsedTime().asSeconds();
             double realElapsedTime = std::floor(elapsedTime);
@@ -319,4 +319,11 @@ void CarController::resetAccumulatedValues() {
     accumulatedWeight = 0.0f;
     previousAccumulatedWeight = 0.0f;
     std::cout << "Valores acumulados de peso y costo reiniciados." << std::endl;
+}
+bool CarController::isCarMoving() const {
+    return isMoving;
+}
+
+void CarController::setCarroEnMovimiento(bool enMovimiento) {
+    isMoving = enMovimiento;
 }
